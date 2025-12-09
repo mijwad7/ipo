@@ -50,6 +50,8 @@ const Wizard = () => {
     const [otpSent, setOtpSent] = useState(false);
     const [pillarDescriptions, setPillarDescriptions] = useState({});
     const [customSlugManuallyEdited, setCustomSlugManuallyEdited] = useState(false);
+    const [electionDateError, setElectionDateError] = useState('');
+    const [customSlugError, setCustomSlugError] = useState('');
 
     const TOTAL_STEPS = 5;
 
@@ -91,10 +93,37 @@ const Wizard = () => {
         
         // Auto-clean custom_slug to remove invalid characters
         if (name === 'custom_slug') {
-            processedValue = value.toLowerCase().replace(/[^a-z0-9]/g, '');
+            // Validate original value before cleaning
+            const originalValue = value.toLowerCase();
+            const hasInvalidChars = /[^a-z0-9]/.test(originalValue);
+            
+            // Auto-clean: remove invalid characters
+            processedValue = originalValue.replace(/[^a-z0-9]/g, '');
+            
             // Mark as manually edited if user is typing in the custom_slug field
             if (!customSlugManuallyEdited) {
                 setCustomSlugManuallyEdited(true);
+            }
+            
+            // Show error if invalid characters were present
+            if (hasInvalidChars && processedValue) {
+                setCustomSlugError('Only letters and numbers allowed (no spaces, hyphens, or special characters). Invalid characters were removed.');
+            } else if (hasInvalidChars && !processedValue) {
+                setCustomSlugError('Only letters and numbers allowed (no spaces, hyphens, or special characters)');
+            } else {
+                setCustomSlugError('');
+            }
+        }
+        
+        // Validate election_date is in the future
+        if (name === 'election_date' && value) {
+            const selectedDate = new Date(value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (selectedDate <= today) {
+                setElectionDateError('Election date must be in the future');
+            } else {
+                setElectionDateError('');
             }
         }
         
@@ -178,9 +207,22 @@ const Wizard = () => {
             alert('Please verify your phone number first');
             return;
         }
-        if (step === 2 && (!formData.riding_zone_name || !formData.election_date)) {
-            alert('Please fill in all election details');
-            return;
+        if (step === 2) {
+            if (!formData.riding_zone_name || !formData.election_date) {
+                alert('Please fill in all election details');
+                return;
+            }
+            // Validate election date is in the future
+            if (formData.election_date) {
+                const selectedDate = new Date(formData.election_date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (selectedDate <= today) {
+                    setElectionDateError('Election date must be in the future');
+                    alert('Election date must be in the future');
+                    return;
+                }
+            }
         }
         if (step === 3 && (!formData.headshot || !formData.bio_text)) {
             alert('Please upload a headshot and provide a bio');
@@ -189,6 +231,14 @@ const Wizard = () => {
         if (step === 4 && (!formData.pillar_1 || !formData.pillar_2 || !formData.pillar_3)) {
             alert('Please select all 3 pillars');
             return;
+        }
+        if (step === 5) {
+            // Validate custom_slug format before submission
+            if (formData.custom_slug && !/^[a-z0-9]+$/.test(formData.custom_slug)) {
+                setCustomSlugError('Only letters and numbers allowed (no spaces, hyphens, or special characters)');
+                alert('Please fix the custom URL format. Only letters and numbers are allowed.');
+                return;
+            }
         }
         setStep(step + 1);
     };
@@ -347,11 +397,15 @@ const Wizard = () => {
                             <input 
                                 name="election_date" 
                                 type="date" 
-                                className="form-control mb-3" 
+                                className={`form-control mb-2 ${electionDateError ? 'is-invalid' : ''}`}
                                 value={formData.election_date}
-                                onChange={handleChange} 
+                                onChange={handleChange}
+                                min={new Date().toISOString().split('T')[0]}
                                 required
                             />
+                            {electionDateError && (
+                                <div className="text-danger small mb-3">{electionDateError}</div>
+                            )}
                             <div className="d-flex gap-2">
                                 <button className="btn btn-secondary" onClick={() => setStep(1)}>Back</button>
                                 <button className="btn btn-primary" onClick={handleNext}>Next</button>
@@ -486,12 +540,15 @@ const Wizard = () => {
                             <label className="form-label">Customizable temporary website address</label>
                             <input 
                                 type="text" 
-                                className="form-control mb-2" 
+                                className={`form-control mb-2 ${customSlugError ? 'is-invalid' : ''}`}
                                 name="custom_slug" 
                                 placeholder="e.g., jeffformayor, jeffwill, firstlast, johndoe" 
                                 value={formData.custom_slug}
                                 onChange={handleChange}
                             />
+                            {customSlugError && (
+                                <div className="text-danger small mb-2">{customSlugError}</div>
+                            )}
                             <small className="text-muted mb-3 d-block">
                                 Your site will be at: {window.location.origin}/temp/{formData.custom_slug || 'yourname'}
                             </small>
