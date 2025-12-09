@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -6,12 +6,111 @@ const MirrorPage = () => {
     const { slug } = useParams();
     const [data, setData] = useState(null);
     const [error, setError] = useState(false);
+    const [requiresPassword, setRequiresPassword] = useState(false);
+    const [password, setPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    // Get stored password from localStorage
+    const getStoredPassword = () => {
+        return localStorage.getItem(`campaign_password_${slug}`) || '';
+    };
+
+    // Store password in localStorage
+    const storePassword = (pwd) => {
+        localStorage.setItem(`campaign_password_${slug}`, pwd);
+    };
+
+    // Load campaign data
+    const loadCampaign = useCallback(async (pwd = null) => {
+        setLoading(true);
+        setPasswordError('');
+        
+        try {
+            const storedPwd = pwd || getStoredPassword();
+            const url = storedPwd 
+                ? `/api/mirror/${slug}/?password=${encodeURIComponent(storedPwd)}`
+                : `/api/mirror/${slug}/`;
+            
+            const res = await axios.get(url);
+            setData(res.data);
+            setRequiresPassword(false);
+            if (storedPwd) {
+                storePassword(storedPwd);
+            }
+            setError(false);
+        } catch (err) {
+            if (err.response?.status === 401) {
+                // Password required or incorrect
+                setRequiresPassword(true);
+                setError(false);
+                // Clear stored password if it was incorrect
+                if (err.response.data.error === 'Incorrect password') {
+                    localStorage.removeItem(`campaign_password_${slug}`);
+                    setPasswordError('Incorrect password. Please try again.');
+                } else {
+                    setPasswordError('');
+                }
+            } else if (err.response?.status === 404) {
+                setError(true);
+                setRequiresPassword(false);
+            } else {
+                setError(true);
+                setRequiresPassword(false);
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, [slug]);
 
     useEffect(() => {
-        axios.get(`/api/mirror/${slug}/`)
-            .then(res => setData(res.data))
-            .catch(() => setError(true));
-    }, [slug]);
+        // Try to load with stored password first
+        loadCampaign();
+    }, [slug, loadCampaign]);
+
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        if (!password.trim()) {
+            setPasswordError('Please enter a password');
+            return;
+        }
+        await loadCampaign(password);
+    };
+
+    // Password form
+    if (requiresPassword) {
+        return (
+            <div className="d-flex align-items-center justify-content-center vh-100 bg-dark text-white">
+                <div className="text-center" style={{ maxWidth: '400px' }}>
+                    <h1 className="display-5 fw-bold mb-4">Password Protected</h1>
+                    <p className="lead text-white-50 mb-4">
+                        This campaign page is password protected. Please enter the password to continue.
+                    </p>
+                    <form onSubmit={handlePasswordSubmit}>
+                        <div className="mb-3">
+                            <input
+                                type="password"
+                                className="form-control form-control-lg"
+                                placeholder="Enter password"
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    setPasswordError('');
+                                }}
+                                autoFocus
+                            />
+                            {passwordError && (
+                                <div className="text-danger mt-2 small">{passwordError}</div>
+                            )}
+                        </div>
+                        <button type="submit" className="btn btn-primary btn-lg w-100">
+                            Access Campaign
+                        </button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
 
     if (error) return (
         <div className="d-flex align-items-center justify-content-center vh-100 bg-dark text-white">
@@ -22,7 +121,7 @@ const MirrorPage = () => {
         </div>
     );
 
-    if (!data) return (
+    if (loading || !data) return (
         <div className="d-flex align-items-center justify-content-center vh-100 bg-white">
             <div className="spinner-border text-primary" role="status">
                 <span className="visually-hidden">Loading...</span>

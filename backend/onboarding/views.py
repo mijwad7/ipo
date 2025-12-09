@@ -11,10 +11,77 @@ class SubmissionCreateView(generics.CreateAPIView):
     serializer_class = CampaignSubmissionSerializer
     parser_classes = (MultiPartParser, FormParser)
 
-class MirrorView(generics.RetrieveAPIView):
-    queryset = CampaignSubmission.objects.all()
-    serializer_class = CampaignSubmissionSerializer
-    lookup_field = 'slug'
+class MirrorView(APIView):
+    """
+    Retrieve campaign by slug. Supports password protection.
+    Accepts password via query parameter (?password=xxx) or POST body.
+    """
+    def get_object(self, slug):
+        try:
+            return CampaignSubmission.objects.get(slug=slug)
+        except CampaignSubmission.DoesNotExist:
+            return None
+    
+    def get(self, request, slug):
+        campaign = self.get_object(slug)
+        if not campaign:
+            return Response(
+                {'error': 'Campaign not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Check if password protection is enabled
+        if campaign.is_password_protected:
+            # Get password from query parameters
+            provided_password = request.query_params.get('password')
+            
+            if not provided_password:
+                return Response(
+                    {'error': 'Password required', 'requires_password': True},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            
+            # Verify password
+            if provided_password != campaign.password:
+                return Response(
+                    {'error': 'Incorrect password', 'requires_password': True},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+        
+        # Password is correct or no password protection - return the data
+        serializer = CampaignSubmissionSerializer(campaign)
+        return Response(serializer.data)
+    
+    def post(self, request, slug):
+        """Handle password verification via POST"""
+        campaign = self.get_object(slug)
+        if not campaign:
+            return Response(
+                {'error': 'Campaign not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Check if password protection is enabled
+        if campaign.is_password_protected:
+            # Get password from request data
+            provided_password = request.data.get('password')
+            
+            if not provided_password:
+                return Response(
+                    {'error': 'Password required', 'requires_password': True},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            
+            # Verify password
+            if provided_password != campaign.password:
+                return Response(
+                    {'error': 'Incorrect password', 'requires_password': True},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+        
+        # Password is correct or no password protection - return the data
+        serializer = CampaignSubmissionSerializer(campaign)
+        return Response(serializer.data)
 
 class OTPRequestView(APIView):
     def post(self, request):
