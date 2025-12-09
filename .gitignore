@@ -1,0 +1,82 @@
+############################
+# OS / Editor
+############################
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+############################
+# Python / Django
+############################
+venv/
+.env
+.env.*
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+*.log
+*.pot
+*.py[cod]
+*.coverage
+.coverage.*
+.cache/
+.python-version
+
+# Django stuff
+db.sqlite3
+/media/
+staticfiles/
+staticroot/
+**/migrations/__pycache__/
+**/migrations/*.pyc
+
+############################
+# Build / Dist
+############################
+build/
+dist/
+.eggs/
+*.egg-info/
+*.egg
+
+############################
+# Node / React (Vite)
+############################
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+frontend/.env.*
+
+# If you sometimes run vite in root
+node_modules/
+dist/
+.vite/
+
+############################
+# Test / Coverage
+############################
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+pytest-debug.log
+pytestcache/
+.pytest_cache/
+
+############################
+# Logs / Misc
+############################
+*.log
+logs/
+*.bak
+*.tmp
+*.orig
+*.rej
