@@ -52,6 +52,7 @@ const Wizard = () => {
     const [customSlugManuallyEdited, setCustomSlugManuallyEdited] = useState(false);
     const [electionDateError, setElectionDateError] = useState('');
     const [customSlugError, setCustomSlugError] = useState('');
+    const [customPillarMode, setCustomPillarMode] = useState({ 1: false, 2: false, 3: false });
 
     const TOTAL_STEPS = 5;
 
@@ -164,15 +165,23 @@ const Wizard = () => {
                 [pillarField]: pillarName
             };
             
-            // Auto-fill description if available and field is empty
+            // Auto-fill description when pillar changes (always update for new selections)
             if (pillarName && pillarName !== 'Custom' && pillarDescriptions[pillarName]) {
-                // Only auto-fill if the description field is currently empty
-                if (!prev[descField] || prev[descField].trim() === '') {
+                // Get the previous pillar value to check if it's actually changing
+                const previousPillar = prev[pillarField];
+                
+                // If pillar is actually changing (not the same), update the description
+                if (previousPillar !== pillarName) {
                     updates[descField] = pillarDescriptions[pillarName];
                 }
             } else if (pillarName === 'Custom') {
-                // Clear description when Custom is selected
+                // Clear description and set custom mode when Custom is selected
                 updates[descField] = '';
+                updates[pillarField] = ''; // Clear the pillar value so custom input can be used
+                setCustomPillarMode(prev => ({ ...prev, [pillarNum]: true }));
+            } else {
+                // Not custom, so disable custom mode
+                setCustomPillarMode(prev => ({ ...prev, [pillarNum]: false }));
             }
             
             return updates;
@@ -459,17 +468,24 @@ const Wizard = () => {
                                         className="form-control mb-2" 
                                         name={`pillar_${i}`} 
                                         onChange={(e) => handlePillarChange(e, i)} 
-                                        value={formData[`pillar_${i}`]}
+                                        value={customPillarMode[i] ? 'Custom' : (formData[`pillar_${i}`] || '')}
                                     >
                                         <option value="">Select...</option>
                                         {PILLAR_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                                     </select>
-                                    {formData[`pillar_${i}`] === 'Custom' && (
+                                    {customPillarMode[i] && (
                                         <input 
                                             className="form-control mb-2" 
                                             placeholder="Type custom pillar title" 
-                                            name={`pillar_${i}`} 
-                                            onChange={handleChange} 
+                                            name={`pillar_${i}_custom`} 
+                                            value={formData[`pillar_${i}`] || ''}
+                                            onChange={(e) => {
+                                                // When user types in custom field, update the pillar value directly
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    [`pillar_${i}`]: e.target.value
+                                                }));
+                                            }} 
                                         />
                                     )}
 
