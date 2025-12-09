@@ -51,10 +51,14 @@ const SuccessPage = () => {
             alert('Please enter an email address');
             return;
         }
+        
         const subject = encodeURIComponent('Check out my campaign site');
         const body = encodeURIComponent(messageText);
-        const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;
-        window.location.href = mailtoUrl;
+        const recipientEmail = email.trim();
+        
+        // Open Gmail with pre-filled content
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipientEmail)}&su=${subject}&body=${body}`;
+        window.open(gmailUrl, '_blank');
     };
 
     return (
@@ -73,39 +77,51 @@ const SuccessPage = () => {
                 </div>
 
                 {/* Progress Timeline Visualization */}
-                <div className="card bg-light mb-4">
-                    <div className="card-body">
-                        <h5 className="text-center mb-3">Build Timeline</h5>
-                        <div className="d-flex justify-content-between align-items-center">
-                            {[
-                                { step: 1, name: 'Identity', time: '30sec' },
-                                { step: 2, name: 'Election Details', time: '30sec' },
-                                { step: 3, name: 'Bio Setup', time: '30sec' },
-                                { step: 4, name: 'Platform', time: '30sec' },
-                                { step: 5, name: 'Customization', time: '30sec' }
-                            ].map((item, idx) => (
-                                <div key={item.step} className="text-center" style={{ flex: 1 }}>
-                                    <div className="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
-                                         style={{ width: '40px', height: '40px', fontSize: '1.2rem', fontWeight: 'bold' }}>
-                                        ✓
+                <div className="card bg-light mb-4" style={{ position: 'relative', overflow: 'hidden' }}>
+                    {/* Green line at the top */}
+                    <div style={{ 
+                        position: 'absolute', 
+                        top: 0, 
+                        left: 0, 
+                        right: 0, 
+                        height: '4px', 
+                        backgroundColor: '#28a745',
+                        zIndex: 1
+                    }}></div>
+                    
+                    <div className="card-body" style={{ paddingTop: '20px' }}>
+                        <h5 className="text-center mb-4 fw-bold" style={{ color: '#333', position: 'relative', zIndex: 2 }}>Build Timeline</h5>
+                        
+                         <div className="position-relative" style={{ padding: '20px 0' }}>
+                            <div className="d-flex justify-content-between align-items-start" style={{ position: 'relative', zIndex: 1 }}>
+                                {[
+                                    { step: 1, name: 'Identity', time: '30sec' },
+                                    { step: 2, name: 'Election Details', time: '30sec' },
+                                    { step: 3, name: 'Bio Setup', time: '30sec' },
+                                    { step: 4, name: 'Platform', time: '30sec' },
+                                    { step: 5, name: 'Customization', time: '30sec' }
+                                ].map((item, idx) => (
+                                    <div key={item.step} className="text-center" style={{ flex: 1, position: 'relative' }}>
+                                        <div className="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                                             style={{ 
+                                                 width: '40px', 
+                                                 height: '40px', 
+                                                 fontSize: '1.2rem', 
+                                                 fontWeight: 'bold',
+                                                 position: 'relative',
+                                                 zIndex: 2
+                                             }}>
+                                            ✓
+                                        </div>
+                                        <div className="small">
+                                            <div className="fw-bold" style={{ color: '#333' }}>{item.name}</div>
+                                            <div className="text-muted">{item.time}</div>
+                                        </div>
                                     </div>
-                                    <div className="small">
-                                        <div className="fw-bold">{item.name}</div>
-                                        <div className="text-muted">{item.time}</div>
-                                    </div>
-                                    {idx < 4 && (
-                                        <div className="position-absolute" style={{ 
-                                            left: `${(idx + 1) * 20}%`, 
-                                            top: '20px',
-                                            width: '20%',
-                                            height: '2px',
-                                            backgroundColor: '#28a745',
-                                            zIndex: 0
-                                        }}></div>
-                                    )}
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
+                        
                         <div className="text-center mt-3">
                             <small className="text-muted">Total time: ~2.5 minutes | Build your campaign in under 3 minutes - 1 minute per page</small>
                         </div>
@@ -197,6 +213,7 @@ const SuccessPage = () => {
                                 className="btn btn-primary flex-fill"
                                 onClick={handleSendEmail}
                                 disabled={!email.trim()}
+                                type="button"
                             >
                                 <i className="bi bi-envelope me-2"></i>
                                 Send Email
