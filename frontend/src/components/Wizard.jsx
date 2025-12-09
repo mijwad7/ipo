@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
 
 const Wizard = () => {
@@ -524,16 +524,73 @@ const Wizard = () => {
                             <h4 className="mb-4">Step 5: Customization</h4>
                             
                             <label className="form-label">Template Style</label>
-                            <select 
-                                className="form-control mb-3" 
-                                name="template_style" 
-                                value={formData.template_style}
-                                onChange={handleChange}
-                            >
-                                <option value="modern">Modern</option>
-                                <option value="traditional">Traditional</option>
-                                <option value="bold">Bold</option>
-                            </select>
+                            <div className="mb-3">
+                                <div className="row g-3">
+                                    <div className="col-md-4">
+                                        <div 
+                                            className={`card h-100 ${formData.template_style === 'modern' ? 'border-primary border-2' : 'border'}`}
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => setFormData(prev => ({ ...prev, template_style: 'modern' }))}
+                                        >
+                                            <div className="card-body text-center">
+                                                <h5 className="card-title">Modern</h5>
+                                                <p className="card-text small text-muted">Clean, contemporary design with smooth gradients</p>
+                                                <Link 
+                                                    to="/preview/modern" 
+                                                    target="_blank"
+                                                    className="btn btn-sm btn-outline-primary"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    Preview
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <div 
+                                            className={`card h-100 ${formData.template_style === 'traditional' ? 'border-primary border-2' : 'border'}`}
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => setFormData(prev => ({ ...prev, template_style: 'traditional' }))}
+                                        >
+                                            <div className="card-body text-center">
+                                                <h5 className="card-title">Traditional</h5>
+                                                <p className="card-text small text-muted">Classic, professional layout with serif typography</p>
+                                                <Link 
+                                                    to="/preview/traditional" 
+                                                    target="_blank"
+                                                    className="btn btn-sm btn-outline-primary"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    Preview
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <div 
+                                            className={`card h-100 ${formData.template_style === 'bold' ? 'border-primary border-2' : 'border'}`}
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => setFormData(prev => ({ ...prev, template_style: 'bold' }))}
+                                        >
+                                            <div className="card-body text-center">
+                                                <h5 className="card-title">Bold</h5>
+                                                <p className="card-text small text-muted">Striking, high-impact design with bold typography</p>
+                                                <Link 
+                                                    to="/preview/bold" 
+                                                    target="_blank"
+                                                    className="btn btn-sm btn-outline-primary"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    Preview
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small className="text-muted d-block mt-2">
+                                    Click on a template card to select it, or click "Preview" to see a full preview in a new tab.
+                                </small>
+                            </div>
 
                             <label className="form-label">Primary Color</label>
                             <input 
