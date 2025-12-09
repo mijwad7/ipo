@@ -2,7 +2,7 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import CampaignSubmission
+from .models import CampaignSubmission, PillarDescription
 from .serializers import CampaignSubmissionSerializer
 import random # Stub for OTP generator
 
@@ -35,3 +35,10 @@ class OTPVerifyView(APIView):
         if code and len(code) == 4:
              return Response({'message': 'Verified', 'verified': True})
         return Response({'message': 'Invalid Code'}, status=status.HTTP_400_BAD_REQUEST)
+
+class PillarDescriptionsView(APIView):
+    def get(self, request):
+        """Returns a dictionary mapping pillar names to their default descriptions"""
+        pillars = PillarDescription.objects.all()
+        descriptions_dict = {pillar.pillar_name: pillar.default_description for pillar in pillars}
+        return Response(descriptions_dict, status=status.HTTP_200_OK)

@@ -1,5 +1,19 @@
 from django.db import models
 from django.utils.text import slugify
+import re
+
+class PillarDescription(models.Model):
+    pillar_name = models.CharField(max_length=100, unique=True)
+    default_description = models.TextField()
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.pillar_name
+    
+    class Meta:
+        ordering = ['pillar_name']
 
 class CampaignSubmission(models.Model):
     TEMPLATE_CHOICES = [
@@ -36,6 +50,15 @@ class CampaignSubmission(models.Model):
     
     slug = models.SlugField(unique=True, blank=True)
     
+    # Election details
+    riding_zone_name = models.CharField(max_length=200, blank=True, null=True)
+    election_date = models.DateField(blank=True, null=True)
+    
+    # Custom URL and password protection
+    custom_slug = models.CharField(max_length=100, blank=True, null=True)
+    is_password_protected = models.BooleanField(default=False)
+    password = models.CharField(max_length=100, blank=True, null=True)
+    
     otp_code = models.CharField(max_length=6, blank=True, null=True)
     otp_verified = models.BooleanField(default=False)
     
@@ -43,13 +66,27 @@ class CampaignSubmission(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(f"{self.first_name}-{self.last_name}")
+            # Use custom_slug if provided, otherwise generate from first_name + last_name (no hyphens)
+            if self.custom_slug:
+                # Clean the custom_slug: lowercase, remove spaces and special chars except alphanumeric
+                base_slug = re.sub(r'[^a-zA-Z0-9]', '', self.custom_slug.lower())
+            else:
+                # Generate from first_name + last_name (no hyphens, just concatenate)
+                base_slug = f"{self.first_name}{self.last_name}".lower()
+                # Remove any spaces or special characters
+                base_slug = re.sub(r'[^a-zA-Z0-9]', '', base_slug)
+            
             slug = base_slug
             counter = 1
             while CampaignSubmission.objects.filter(slug=slug).exists():
-                slug = f"{base_slug}-{counter}"
+                slug = f"{base_slug}{counter}"
                 counter += 1
             self.slug = slug
+        
+        # Set default password if password protection is enabled but password is not set
+        if self.is_password_protected and not self.password:
+            self.password = "run"
+        
         super().save(*args, **kwargs)
 
     def __str__(self):

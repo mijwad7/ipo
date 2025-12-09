@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import SubmissionCreateView, MirrorView, OTPRequestView, OTPVerifyView
+from .views import SubmissionCreateView, MirrorView, OTPRequestView, OTPVerifyView, PillarDescriptionsView
 
 urlpatterns = [
     path('submissions/', SubmissionCreateView.as_view(), name='submission-create'),
     path('mirror/<slug:slug>/', MirrorView.as_view(), name='mirror-detail'),
     path('otp/send/', OTPRequestView.as_view(), name='otp-send'),
     path('otp/verify/', OTPVerifyView.as_view(), name='otp-verify'),
+    path('pillars/', PillarDescriptionsView.as_view(), name='pillar-descriptions'),
 ]
