@@ -294,7 +294,7 @@ const Wizard = () => {
                             <small className="text-muted">~{currentStepConfig.time}</small>
                         </div>
                         <div className="text-end">
-                            <small className="text-muted">Build your campaign in under 3 minutes</small>
+                            <small className="text-muted">Build your campaign in under 3 minutes - 1 minute per page</small>
                         </div>
                     </div>
                     <div className="progress" style={{ height: '25px' }}>
