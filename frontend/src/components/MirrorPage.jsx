@@ -169,19 +169,40 @@ const MirrorPage = () => {
                             transform: translateY(-2px);
                             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
                         }
+                        .btn-secondary-modern {
+                            border-color: var(--secondary);
+                            color: var(--secondary);
+                            background: transparent;
+                            padding: 12px 30px;
+                            font-weight: 600;
+                            border-radius: 8px;
+                            border-width: 2px;
+                            transition: all 0.3s;
+                        }
+                        .btn-secondary-modern:hover {
+                            background-color: var(--secondary);
+                            color: white;
+                            transform: translateY(-2px);
+                        }
+                        .bg-secondary-modern {
+                            background-color: var(--secondary);
+                            color: white;
+                        }
                         .hero-modern {
-                            background: linear-gradient(135deg, var(--primary) 0%, #0b5ed7 100%);
+                            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
                             padding: 120px 0 80px;
                             clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
                         }
                         .card-modern {
                             border-radius: 16px;
                             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-                            transition: transform 0.3s, box-shadow 0.3s;
+                            border: 2px solid transparent;
+                            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
                         }
                         .card-modern:hover {
                             transform: translateY(-5px);
                             box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+                            border-color: var(--secondary);
                         }
                     `}
                 </style>
@@ -217,7 +238,7 @@ const MirrorPage = () => {
                                             DONATE NOW
                                         </a>
                                     )}
-                                    <button className="btn btn-outline-light btn-lg px-4 rounded-pill" onClick={() => document.getElementById('contact').scrollIntoView()}>
+                                    <button className="btn btn-secondary-modern btn-lg px-4 rounded-pill" onClick={() => document.getElementById('contact').scrollIntoView()}>
                                         Get Involved
                                     </button>
                                 </div>
@@ -240,7 +261,7 @@ const MirrorPage = () => {
                     <div className="container py-5">
                         <div className="text-center mb-5">
                             <h2 className="display-5 fw-bold mb-3">My Top Issues & Concerns</h2>
-                            <div className="mx-auto bg-primary-modern" style={{ width: '80px', height: '4px', borderRadius: '2px' }}></div>
+                            <div className="mx-auto mb-2" style={{ width: '80px', height: '4px', borderRadius: '2px', background: `linear-gradient(to right, var(--primary), var(--secondary))` }}></div>
                         </div>
                         <div className="row g-4">
                             {[
@@ -249,7 +270,7 @@ const MirrorPage = () => {
                                 { title: data.pillar_3, desc: data.pillar_3_desc, img: data.action_shot_3 },
                             ].filter(p => p.title).map((pillar, idx) => (
                                 <div key={idx} className="col-md-4">
-                                    <div className="card card-modern h-100 border-0">
+                                    <div className="card card-modern h-100" style={{ border: '2px solid var(--secondary)' }}>
                                         <div 
                                             className="bg-primary-modern text-white p-4 text-center"
                                             style={{ minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -306,7 +327,7 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <footer className="bg-dark text-white py-5">
+                <footer className="bg-primary-modern text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
                     <div className="container text-center">
                         <h5 className="mb-3">{data.first_name} {data.last_name}</h5>
                         <p className="text-white-50 mb-4">
@@ -359,25 +380,47 @@ const MirrorPage = () => {
                             background-color: #5a6268;
                             color: white;
                         }
+                        .btn-secondary-traditional {
+                            border-color: var(--secondary);
+                            color: var(--secondary);
+                            background: transparent;
+                            padding: 10px 25px;
+                            font-weight: 500;
+                            border-radius: 4px;
+                            border-width: 2px;
+                        }
+                        .btn-secondary-traditional:hover {
+                            background-color: var(--secondary);
+                            color: white;
+                        }
+                        .bg-secondary-traditional {
+                            background-color: var(--secondary);
+                            color: white;
+                        }
                         .hero-traditional {
                             background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
                             padding: 100px 0 60px;
                             border-bottom: 4px solid var(--primary);
+                            border-top: 2px solid var(--secondary);
                         }
                         .card-traditional {
-                            border: 1px solid #dee2e6;
+                            border: 2px solid var(--secondary);
                             border-radius: 4px;
                             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                         }
                         .pillar-section-traditional {
                             border-left: 4px solid var(--primary);
+                            border-bottom: 2px solid var(--secondary);
                             padding-left: 20px;
+                            padding-bottom: 10px;
                             margin-bottom: 30px;
                         }
                         .traditional-divider {
                             border-top: 2px solid var(--primary);
+                            border-bottom: 1px solid var(--secondary);
                             width: 100px;
                             margin: 20px auto;
+                            height: 3px;
                         }
                     `}
                 </style>
@@ -421,7 +464,7 @@ const MirrorPage = () => {
                                             DONATE NOW
                                         </a>
                                     )}
-                                    <button className="btn btn-outline-secondary btn-lg px-4 rounded-0" onClick={() => document.getElementById('contact').scrollIntoView()}>
+                                    <button className="btn btn-secondary-traditional btn-lg px-4 rounded-0" onClick={() => document.getElementById('contact').scrollIntoView()}>
                                         Get Involved
                                     </button>
                                 </div>
@@ -468,11 +511,11 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <section id="contact" className="py-5 bg-light">
+                <section id="contact" className="py-5 bg-light" style={{ borderTop: `3px solid var(--secondary)` }}>
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-lg-8">
-                                <div className="card card-traditional border-0 p-5">
+                                <div className="card card-traditional p-5" style={{ borderColor: 'var(--secondary)' }}>
                                     <h2 className="text-center fw-bold mb-4" style={{ color: '#212529' }}>Get in Touch</h2>
                                     <div className="traditional-divider"></div>
                                     <p className="text-center text-muted mb-4">
@@ -503,7 +546,7 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <footer className="bg-dark text-white py-5">
+                <footer className="bg-primary-traditional text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
                     <div className="container text-center">
                         <h5 className="mb-3">{data.first_name} {data.last_name}</h5>
                         <p className="text-white-50 mb-4">
@@ -562,12 +605,34 @@ const MirrorPage = () => {
                             border-color: #c82333;
                             transform: scale(1.05);
                         }
+                        .btn-secondary-bold {
+                            border-color: var(--secondary);
+                            color: var(--secondary);
+                            background: transparent;
+                            padding: 15px 40px;
+                            font-weight: 900;
+                            text-transform: uppercase;
+                            letter-spacing: 2px;
+                            border-radius: 0;
+                            border-width: 3px;
+                            transition: all 0.3s;
+                        }
+                        .btn-secondary-bold:hover {
+                            background-color: var(--secondary);
+                            color: white;
+                            transform: scale(1.05);
+                        }
+                        .bg-secondary-bold {
+                            background-color: var(--secondary);
+                            color: white;
+                        }
                         .hero-bold {
                             background: #000;
                             color: white;
                             padding: 140px 0 100px;
                             position: relative;
                             overflow: hidden;
+                            border-bottom: 6px solid var(--secondary);
                         }
                         .hero-bold::before {
                             content: '';
@@ -576,26 +641,29 @@ const MirrorPage = () => {
                             left: 0;
                             right: 0;
                             bottom: 0;
-                            background: linear-gradient(45deg, var(--primary) 0%, transparent 50%);
+                            background: linear-gradient(45deg, var(--primary) 0%, var(--secondary) 50%, transparent 100%);
                             opacity: 0.3;
                         }
                         .card-bold {
-                            border: 4px solid #000;
+                            border: 4px solid var(--secondary);
                             border-radius: 0;
                             background: white;
                             box-shadow: 8px 8px 0 rgba(0,0,0,0.2);
                         }
                         .pillar-card-bold {
                             border: 4px solid var(--primary);
+                            border-top: 6px solid var(--secondary);
                             background: white;
                             transition: transform 0.3s;
                         }
                         .pillar-card-bold:hover {
                             transform: translateY(-8px);
                             box-shadow: 12px 12px 0 rgba(220, 53, 69, 0.3);
+                            border-color: var(--primary);
+                            border-top-color: var(--secondary);
                         }
                         .bold-accent {
-                            background: var(--primary);
+                            background: linear-gradient(to right, var(--primary), var(--secondary));
                             height: 8px;
                             width: 150px;
                             margin: 20px auto;
@@ -634,7 +702,7 @@ const MirrorPage = () => {
                                             DONATE NOW
                                         </a>
                                     )}
-                                    <button className="btn btn-outline-light btn-lg px-4 fw-bold" style={{ borderWidth: '3px' }} onClick={() => document.getElementById('contact').scrollIntoView()}>
+                                    <button className="btn btn-secondary-bold btn-lg px-4" onClick={() => document.getElementById('contact').scrollIntoView()}>
                                         GET INVOLVED
                                     </button>
                                 </div>
@@ -695,11 +763,11 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <section id="contact" className="py-5 bg-black text-white">
+                <section id="contact" className="py-5 bg-black text-white" style={{ borderTop: `6px solid var(--secondary)` }}>
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-lg-8">
-                                <div className="card card-bold border-primary-bold p-5 bg-white text-dark">
+                                <div className="card card-bold p-5 bg-white text-dark" style={{ borderColor: 'var(--secondary)' }}>
                                     <h2 className="text-center fw-black mb-4 text-uppercase" style={{ letterSpacing: '2px' }}>
                                         Get in Touch
                                     </h2>
@@ -732,7 +800,7 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <footer className="bg-black text-white py-5 border-top border-4 border-primary-bold">
+                <footer className="bg-primary-bold text-white py-5" style={{ borderTop: `6px solid var(--primary)` }}>
                     <div className="container text-center">
                         <h4 className="mb-3 fw-black text-uppercase" style={{ letterSpacing: '2px' }}>
                             {data.first_name} {data.last_name}

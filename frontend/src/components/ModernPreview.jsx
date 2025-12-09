@@ -18,8 +18,8 @@ const ModernPreview = () => {
     };
 
     const styles = {
-        '--primary': '#0d6efd',
-        '--secondary': '#6c757d',
+        '--primary': '#1D3557',
+        '--secondary': '#F1FAEE',
     };
 
     return (
@@ -52,25 +52,53 @@ const ModernPreview = () => {
                         transform: translateY(-2px);
                         box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
                     }
+                    .btn-secondary-modern {
+                        border-color: var(--secondary);
+                        color: var(--secondary);
+                        background: transparent;
+                        padding: 12px 30px;
+                        font-weight: 600;
+                        border-radius: 8px;
+                        border-width: 2px;
+                        transition: all 0.3s;
+                    }
+                    .btn-secondary-modern:hover {
+                        background-color: var(--secondary);
+                        color: white;
+                        transform: translateY(-2px);
+                    }
+                    .text-secondary-modern {
+                        color: var(--secondary);
+                    }
+                    .bg-secondary-modern {
+                        background-color: var(--secondary);
+                        color: white;
+                    }
                     .hero-modern {
-                        background: linear-gradient(135deg, var(--primary) 0%, #0b5ed7 100%);
+                        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
                         padding: 120px 0 80px;
                         clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
                     }
                     .card-modern {
                         border-radius: 16px;
                         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-                        transition: transform 0.3s, box-shadow 0.3s;
+                        border: 2px solid transparent;
+                        transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
                     }
                     .card-modern:hover {
                         transform: translateY(-5px);
                         box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+                        border-color: var(--secondary);
                     }
                     .pillar-card {
-                        border: none;
+                        border: 2px solid var(--secondary);
                         border-radius: 12px;
                         overflow: hidden;
                         background: white;
+                    }
+                    .form-control-modern:focus {
+                        border-color: var(--secondary);
+                        box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
                     }
                     .preview-header {
                         background: white;
@@ -127,7 +155,7 @@ const ModernPreview = () => {
                                 <a href="#" className="btn btn-light btn-lg px-5 fw-bold rounded-pill shadow">
                                     DONATE NOW
                                 </a>
-                                <button className="btn btn-outline-light btn-lg px-4 rounded-pill">
+                                <button className="btn btn-secondary-modern btn-lg px-4 rounded-pill">
                                     Get Involved
                                 </button>
                             </div>
@@ -158,7 +186,7 @@ const ModernPreview = () => {
                 <div className="container py-5">
                     <div className="text-center mb-5">
                         <h2 className="display-5 fw-bold mb-3">My Top Issues & Concerns</h2>
-                        <div className="mx-auto bg-primary-modern" style={{ width: '80px', height: '4px', borderRadius: '2px' }}></div>
+                        <div className="mx-auto mb-2" style={{ width: '80px', height: '4px', borderRadius: '2px', background: `linear-gradient(to right, var(--primary), var(--secondary))` }}></div>
                     </div>
 
                     <div className="row g-4">
@@ -219,14 +247,14 @@ const ModernPreview = () => {
                                     <div className="mb-3">
                                         <input 
                                             type="email" 
-                                            className="form-control form-control-lg" 
+                                            className="form-control form-control-lg form-control-modern" 
                                             placeholder="Email Address" 
                                             disabled
                                         />
                                     </div>
                                     <div className="mb-4">
                                         <textarea 
-                                            className="form-control form-control-lg" 
+                                            className="form-control form-control-lg form-control-modern" 
                                             rows="4" 
                                             placeholder="Your Message" 
                                             disabled
@@ -245,7 +273,7 @@ const ModernPreview = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-dark text-white py-5">
+            <footer className="bg-primary-modern text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
                 <div className="container text-center">
                     <h5 className="mb-3">{previewData.first_name} {previewData.last_name}</h5>
                     <p className="text-white-50 mb-4">

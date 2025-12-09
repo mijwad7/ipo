@@ -51,19 +51,42 @@ const TraditionalPreview = () => {
                         background-color: #5a6268;
                         color: white;
                     }
+                    .btn-secondary-traditional {
+                        border-color: var(--secondary);
+                        color: var(--secondary);
+                        background: transparent;
+                        padding: 10px 25px;
+                        font-weight: 500;
+                        border-radius: 4px;
+                        border-width: 2px;
+                    }
+                    .btn-secondary-traditional:hover {
+                        background-color: var(--secondary);
+                        color: white;
+                    }
+                    .text-secondary-traditional {
+                        color: var(--secondary);
+                    }
+                    .bg-secondary-traditional {
+                        background-color: var(--secondary);
+                        color: white;
+                    }
                     .hero-traditional {
                         background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
                         padding: 100px 0 60px;
                         border-bottom: 4px solid var(--primary);
+                        border-top: 2px solid var(--secondary);
                     }
                     .card-traditional {
-                        border: 1px solid #dee2e6;
+                        border: 2px solid var(--secondary);
                         border-radius: 4px;
                         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                     }
                     .pillar-section-traditional {
                         border-left: 4px solid var(--primary);
+                        border-bottom: 2px solid var(--secondary);
                         padding-left: 20px;
+                        padding-bottom: 10px;
                         margin-bottom: 30px;
                     }
                     .preview-header {
@@ -71,11 +94,14 @@ const TraditionalPreview = () => {
                         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                         padding: 20px 0;
                         margin-bottom: 0;
+                        border-bottom: 2px solid var(--secondary);
                     }
                     .traditional-divider {
                         border-top: 2px solid var(--primary);
+                        border-bottom: 1px solid var(--secondary);
                         width: 100px;
                         margin: 20px auto;
+                        height: 3px;
                     }
                 `}
             </style>
@@ -140,7 +166,7 @@ const TraditionalPreview = () => {
                                 <a href="#" className="btn btn-primary-traditional btn-lg px-4 rounded-0">
                                     DONATE NOW
                                 </a>
-                                <button className="btn btn-outline-secondary btn-lg px-4 rounded-0">
+                                <button className="btn btn-secondary-traditional btn-lg px-4 rounded-0">
                                     Get Involved
                                 </button>
                             </div>
@@ -186,11 +212,11 @@ const TraditionalPreview = () => {
             </section>
 
             {/* Contact Section */}
-            <section className="py-5 bg-light">
+            <section className="py-5 bg-light" style={{ borderTop: `3px solid var(--secondary)` }}>
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-lg-8">
-                            <div className="card card-traditional border-0 p-5">
+                            <div className="card card-traditional p-5" style={{ borderColor: 'var(--secondary)' }}>
                                 <h2 className="text-center fw-bold mb-4" style={{ color: '#212529' }}>Get in Touch</h2>
                                 <div className="traditional-divider"></div>
                                 <p className="text-center text-muted mb-4">
@@ -244,7 +270,7 @@ const TraditionalPreview = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-dark text-white py-5">
+            <footer className="bg-secondary-traditional text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
                 <div className="container text-center">
                     <h5 className="mb-3">{previewData.first_name} {previewData.last_name}</h5>
                     <p className="text-white-50 mb-4">

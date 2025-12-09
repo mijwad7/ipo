@@ -36,8 +36,8 @@ const Wizard = () => {
 
         // Customization
         template_style: 'modern',
-        primary_color: '#0d6efd',
-        secondary_color: '#6c757d',
+        primary_color: '#1D3557',
+        secondary_color: '#F1FAEE',
         custom_slug: '',
         is_password_protected: false,
         password: 'run',

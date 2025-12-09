@@ -56,12 +56,37 @@ const BoldPreview = () => {
                         border-color: #c82333;
                         transform: scale(1.05);
                     }
+                    .btn-secondary-bold {
+                        border-color: var(--secondary);
+                        color: var(--secondary);
+                        background: transparent;
+                        padding: 15px 40px;
+                        font-weight: 900;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        border-radius: 0;
+                        border-width: 3px;
+                        transition: all 0.3s;
+                    }
+                    .btn-secondary-bold:hover {
+                        background-color: var(--secondary);
+                        color: white;
+                        transform: scale(1.05);
+                    }
+                    .text-secondary-bold {
+                        color: var(--secondary);
+                    }
+                    .bg-secondary-bold {
+                        background-color: var(--secondary);
+                        color: white;
+                    }
                     .hero-bold {
                         background: #000;
                         color: white;
                         padding: 140px 0 100px;
                         position: relative;
                         overflow: hidden;
+                        border-bottom: 6px solid var(--secondary);
                     }
                     .hero-bold::before {
                         content: '';
@@ -70,23 +95,26 @@ const BoldPreview = () => {
                         left: 0;
                         right: 0;
                         bottom: 0;
-                        background: linear-gradient(45deg, var(--primary) 0%, transparent 50%);
+                        background: linear-gradient(45deg, var(--primary) 0%, var(--secondary) 50%, transparent 100%);
                         opacity: 0.3;
                     }
                     .card-bold {
-                        border: 4px solid #000;
+                        border: 4px solid var(--secondary);
                         border-radius: 0;
                         background: white;
                         box-shadow: 8px 8px 0 rgba(0,0,0,0.2);
                     }
                     .pillar-card-bold {
                         border: 4px solid var(--primary);
+                        border-top: 6px solid var(--secondary);
                         background: white;
                         transition: transform 0.3s;
                     }
                     .pillar-card-bold:hover {
                         transform: translateY(-8px);
                         box-shadow: 12px 12px 0 rgba(220, 53, 69, 0.3);
+                        border-color: var(--primary);
+                        border-top-color: var(--secondary);
                     }
                     .preview-header {
                         background: white;
@@ -94,9 +122,10 @@ const BoldPreview = () => {
                         padding: 20px 0;
                         margin-bottom: 0;
                         border-bottom: 4px solid var(--primary);
+                        border-top: 3px solid var(--secondary);
                     }
                     .bold-accent {
-                        background: var(--primary);
+                        background: linear-gradient(to right, var(--primary), var(--secondary));
                         height: 8px;
                         width: 150px;
                         margin: 20px auto;
@@ -150,7 +179,7 @@ const BoldPreview = () => {
                                 <a href="#" className="btn btn-primary-bold btn-lg px-5">
                                     DONATE NOW
                                 </a>
-                                <button className="btn btn-outline-light btn-lg px-4 fw-bold" style={{ borderWidth: '3px' }}>
+                                <button className="btn btn-secondary-bold btn-lg px-4">
                                     GET INVOLVED
                                 </button>
                             </div>
@@ -216,11 +245,11 @@ const BoldPreview = () => {
             </section>
 
             {/* Contact Section */}
-            <section className="py-5 bg-black text-white">
+            <section className="py-5 bg-black text-white" style={{ borderTop: `6px solid var(--secondary)` }}>
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-lg-8">
-                            <div className="card card-bold border-primary-bold p-5 bg-white text-dark">
+                            <div className="card card-bold p-5 bg-white text-dark" style={{ borderColor: 'var(--secondary)' }}>
                                 <h2 className="text-center fw-black mb-4 text-uppercase" style={{ letterSpacing: '2px' }}>
                                     Get in Touch
                                 </h2>
@@ -276,7 +305,7 @@ const BoldPreview = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-black text-white py-5 border-top border-4 border-primary-bold">
+            <footer className="bg-secondary-bold text-white py-5" style={{ borderTop: `6px solid var(--primary)` }}>
                 <div className="container text-center">
                     <h4 className="mb-3 fw-black text-uppercase" style={{ letterSpacing: '2px' }}>
                         {previewData.first_name} {previewData.last_name}
