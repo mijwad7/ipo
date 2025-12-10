@@ -39,6 +39,8 @@ class CampaignSubmission(models.Model):
     pillar_3_desc = models.TextField(blank=True, null=True)
     
     bio_text = models.TextField(max_length=1000)
+    position_running_for = models.CharField(max_length=200, blank=True, null=True)
+    tag_line = models.CharField(max_length=200, blank=True, null=True)
     donation_url = models.URLField(blank=True, null=True)
     event_calendar_url = models.CharField(max_length=200, blank=True, null=True) # Changed to char for flexibility
     

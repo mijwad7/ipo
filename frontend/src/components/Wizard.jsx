@@ -22,6 +22,8 @@ const Wizard = () => {
         // Bio
         headshot: null,
         bio_text: '',
+        position_running_for: '',
+        tag_line: '',
 
         // Platform
         pillar_1: '',
@@ -430,6 +432,29 @@ const Wizard = () => {
                     {step === 3 && (
                         <div className="card p-4">
                             <h4 className="mb-4">Step 3: Bio Setup</h4>
+                            
+                            <label className="form-label">Position Running For</label>
+                            <input 
+                                type="text" 
+                                name="position_running_for" 
+                                className="form-control mb-3" 
+                                placeholder="e.g., Jeff for Mayor, Jeff for Leadership" 
+                                value={formData.position_running_for}
+                                onChange={handleChange}
+                            />
+                            <small className="text-muted d-block mb-3">Enter the position you are running for</small>
+                            
+                            <label className="form-label">Tag Line</label>
+                            <input 
+                                type="text" 
+                                name="tag_line" 
+                                className="form-control mb-3" 
+                                placeholder="e.g., Family Faith Freedom, Vote for Leadership" 
+                                value={formData.tag_line}
+                                onChange={handleChange}
+                            />
+                            <small className="text-muted d-block mb-3">Enter your campaign tag line</small>
+                            
                             <label className="form-label">Headshot (Required)</label>
                             <input 
                                 type="file" 

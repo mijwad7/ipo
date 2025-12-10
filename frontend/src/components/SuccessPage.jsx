@@ -131,7 +131,7 @@ const SuccessPage = () => {
                 <p className="lead text-center mb-4">Your instant headquarters has been generated.</p>
 
                 <div className="my-4 text-center">
-                    <Link to={tempUrl} className="btn btn-primary btn-lg px-5 mb-3">
+                    <Link target="_blank" to={tempUrl} className="btn btn-primary btn-lg px-5 mb-3">
                         View My Site
                     </Link>
                 </div>
