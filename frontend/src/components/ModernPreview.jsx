@@ -69,7 +69,7 @@ const ModernPreview = () => {
                     }
                     .btn-secondary-modern:hover {
                         background-color: var(--secondary);
-                        color: white;
+                        color: #333;
                         transform: translateY(-2px);
                     }
                     .text-secondary-modern {
@@ -77,10 +77,10 @@ const ModernPreview = () => {
                     }
                     .bg-secondary-modern {
                         background-color: var(--secondary);
-                        color: white;
+                        color: #333;
                     }
                     .hero-modern {
-                        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                        background: linear-gradient(135deg, var(--primary) 0%, var(--primary) 100%);
                         padding: 120px 0 80px;
                         clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
                     }

@@ -75,7 +75,7 @@ const BoldPreview = () => {
                     }
                     .btn-secondary-bold:hover {
                         background-color: var(--secondary);
-                        color: white;
+                        color: #333;
                         transform: scale(1.05);
                     }
                     .text-secondary-bold {
@@ -83,25 +83,15 @@ const BoldPreview = () => {
                     }
                     .bg-secondary-bold {
                         background-color: var(--secondary);
-                        color: white;
+                        color: #333;
                     }
                     .hero-bold {
-                        background: #000;
+                        background: var(--primary);
                         color: white;
                         padding: 140px 0 100px;
                         position: relative;
                         overflow: hidden;
                         border-bottom: 6px solid var(--secondary);
-                    }
-                    .hero-bold::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: linear-gradient(45deg, var(--primary) 0%, var(--secondary) 50%, transparent 100%);
-                        opacity: 0.3;
                     }
                     .card-bold {
                         border: 4px solid var(--secondary);
@@ -154,50 +144,50 @@ const BoldPreview = () => {
             </div>
 
             {/* Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-black py-4">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-primary-bold py-4" style={{ borderBottom: '6px solid var(--secondary)' }}>
                 <div className="container">
                     <a className="navbar-brand fw-black text-uppercase" href="#" style={{ fontSize: '24px', letterSpacing: '2px' }}>
                         {previewData.last_name} <span className="fw-normal">FOR OFFICE</span>
                     </a>
                     <div className="ms-auto">
-                        <a href="#" className="btn btn-primary-bold px-4">DONATE</a>
+                        <a href="#" className="btn btn-light px-4 fw-bold" style={{ border: '3px solid var(--secondary)' }}>DONATE</a>
                     </div>
                 </div>
             </nav>
 
             {/* Hero Section */}
-            <header className="hero-bold text-white position-relative">
+            <header className="hero-bold text-white position-relative" style={{ background: 'var(--primary)', borderBottom: '8px solid var(--secondary)' }}>
                 <div className="container position-relative">
                     <div className="row align-items-center">
-                        <div className="col-lg-6 mb-5 mb-lg-0">
-                            <h5 className="text-uppercase mb-4 fw-bold" style={{ letterSpacing: '4px', fontSize: '16px' }}>
+                        <div className="col-lg-7 mb-5 mb-lg-0">
+                            <h5 className="text-uppercase mb-4 fw-bold" style={{ letterSpacing: '4px', fontSize: '16px', color: 'var(--secondary)' }}>
                                 VOTE FOR LEADERSHIP
                             </h5>
                             <h1 className="display-1 fw-black mb-4" style={{ fontWeight: 900, lineHeight: 1.1 }}>
                                 {previewData.first_name}<br />{previewData.last_name}
                             </h1>
-                            <div className="bg-primary-bold mb-4" style={{ width: '120px', height: '8px' }}></div>
+                            <div className="mb-4" style={{ width: '120px', height: '10px', background: 'var(--secondary)', border: '2px solid white' }}></div>
                             <p className="lead mb-5 fw-bold" style={{ lineHeight: 1.8, fontSize: '20px' }}>
                                 {previewData.bio_text}
                             </p>
                             <div className="d-flex gap-3 flex-wrap">
-                                <a href="#" className="btn btn-primary-bold btn-lg px-5">
+                                <a href="#" className="btn btn-light btn-lg px-5 fw-bold" style={{ border: '4px solid var(--secondary)' }}>
                                     DONATE NOW
                                 </a>
-                                <button className="btn btn-secondary-bold btn-lg px-4">
+                                <button className="btn btn-lg px-4 fw-bold" style={{ border: '4px solid var(--secondary)', backgroundColor: 'var(--secondary)', color: '#333' }}>
                                     GET INVOLVED
                                 </button>
                             </div>
                         </div>
-                        <div className="col-lg-5 offset-lg-1 text-center">
+                        <div className="col-lg-5 text-center">
                             <div 
-                                className="bg-white p-4 border border-4 border-primary-bold"
+                                className="bg-white p-4"
                                 style={{ 
-                                    aspectRatio: '1',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    boxShadow: '12px 12px 0 rgba(220, 53, 69, 0.3)'
+                                    border: '6px solid var(--secondary)',
+                                    boxShadow: '15px 15px 0 rgba(0, 0, 0, 0.4)'
                                 }}
                             >
                                 <div className="text-primary-bold">
@@ -211,54 +201,82 @@ const BoldPreview = () => {
             </header>
 
             {/* Pillars Section */}
-            <section className="py-5 bg-white">
+            <section className="py-5 bg-primary-bold text-white" style={{ borderTop: '8px solid var(--secondary)', borderBottom: '8px solid var(--secondary)' }}>
                 <div className="container py-5">
                     <div className="text-center mb-5">
-                        <h2 className="display-3 fw-black mb-3 text-uppercase" style={{ letterSpacing: '2px' }}>
+                        <h2 className="display-3 fw-black mb-3 text-uppercase text-white" style={{ letterSpacing: '2px' }}>
                             My Top Issues & Concerns
                         </h2>
-                        <div className="bold-accent"></div>
+                        <div style={{ height: '10px', width: '200px', margin: '20px auto', background: 'var(--secondary)', border: '2px solid white' }}></div>
                     </div>
 
-                    <div className="row g-4">
+                    <div className="row g-0">
                         {[
                             { title: previewData.pillar_1, desc: previewData.pillar_1_desc },
                             { title: previewData.pillar_2, desc: previewData.pillar_2_desc },
                             { title: previewData.pillar_3, desc: previewData.pillar_3_desc },
-                        ].map((pillar, idx) => (
-                            <div key={idx} className="col-md-4">
-                                <div className="card card-bold pillar-card-bold h-100">
-                                    <div 
-                                        className="bg-black text-white p-5 text-center"
-                                        style={{ minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                    >
-                                        <div>
-                                            <i className="bi bi-image" style={{ fontSize: '80px', opacity: 0.7 }}></i>
-                                            <p className="mt-3 mb-0 fw-bold text-uppercase" style={{ letterSpacing: '1px' }}>Image</p>
-                                        </div>
-                                    </div>
-                                    <div className="card-body p-4">
-                                        <h3 className="fw-black mb-3 text-uppercase" style={{ letterSpacing: '1px' }}>{pillar.title}</h3>
-                                        <p className="mb-4" style={{ lineHeight: 1.7, fontWeight: 500 }}>{pillar.desc}</p>
-                                        <button className="btn btn-primary-bold w-100">LEARN MORE</button>
+                        ].map((pillar, idx) => {
+                            const isEven = idx % 2 === 1;
+                            return (
+                                <div key={idx} className="col-12 mb-5">
+                                    <div className="row align-items-center g-0" style={{ backgroundColor: 'var(--primary)' }}>
+                                        {!isEven ? (
+                                            <>
+                                                <div className="col-md-5 p-0">
+                                                    <div 
+                                                        className="bg-white text-center d-flex align-items-center justify-content-center"
+                                                        style={{ minHeight: '300px', padding: '20px' }}
+                                                    >
+                                                        <div>
+                                                            <i className="bi bi-image text-primary-bold" style={{ fontSize: '80px', opacity: 0.7 }}></i>
+                                                            <p className="mt-3 mb-0 fw-bold text-uppercase text-primary-bold" style={{ letterSpacing: '1px' }}>Image</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-7 p-5 text-white">
+                                                    <h3 className="fw-black mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px' }}>{pillar.title}</h3>
+                                                    <p className="mb-4 lead" style={{ lineHeight: 1.8, fontSize: '1.1rem' }}>{pillar.desc}</p>
+                                                    <button className="btn btn-lg fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white' }}>READ MORE</button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="col-md-7 p-5 text-white">
+                                                    <h3 className="fw-black mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px' }}>{pillar.title}</h3>
+                                                    <p className="mb-4 lead" style={{ lineHeight: 1.8, fontSize: '1.1rem' }}>{pillar.desc}</p>
+                                                    <button className="btn btn-lg fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white' }}>READ MORE</button>
+                                                </div>
+                                                <div className="col-md-5 p-0">
+                                                    <div 
+                                                        className="bg-white text-center d-flex align-items-center justify-content-center"
+                                                        style={{ minHeight: '300px', padding: '20px' }}
+                                                    >
+                                                        <div>
+                                                            <i className="bi bi-image text-primary-bold" style={{ fontSize: '80px', opacity: 0.7 }}></i>
+                                                            <p className="mt-3 mb-0 fw-bold text-uppercase text-primary-bold" style={{ letterSpacing: '1px' }}>Image</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </section>
 
             {/* Contact Section */}
-            <section className="py-5 bg-black text-white" style={{ borderTop: `6px solid var(--secondary)` }}>
+            <section className="py-5 bg-secondary-bold" style={{ borderTop: `8px solid var(--primary)`, color: '#333' }}>
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-lg-8">
-                            <div className="card card-bold p-5 bg-white text-dark" style={{ borderColor: 'var(--secondary)' }}>
-                                <h2 className="text-center fw-black mb-4 text-uppercase" style={{ letterSpacing: '2px' }}>
+                            <div className="card card-bold p-5 bg-white text-dark" style={{ border: '6px solid var(--primary)', boxShadow: '15px 15px 0 rgba(0,0,0,0.3)' }}>
+                                <h2 className="text-center fw-black mb-4 text-uppercase" style={{ letterSpacing: '2px', color: 'var(--primary)' }}>
                                     Get in Touch
                                 </h2>
-                                <div className="bold-accent"></div>
+                                <div style={{ height: '8px', width: '150px', margin: '20px auto', background: 'var(--primary)' }}></div>
                                 <p className="text-center mb-4 fw-bold">
                                     Have a question? Want to volunteer? Send us a message.
                                 </p>
@@ -310,11 +328,12 @@ const BoldPreview = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-secondary-bold text-white py-5" style={{ borderTop: `6px solid var(--primary)` }}>
+            <footer className="bg-primary-bold py-5 text-white" style={{ borderTop: `8px solid var(--secondary)` }}>
                 <div className="container text-center">
-                    <h4 className="mb-3 fw-black text-uppercase" style={{ letterSpacing: '2px' }}>
+                    <h4 className="mb-3 fw-black text-uppercase text-white" style={{ letterSpacing: '2px' }}>
                         {previewData.first_name} {previewData.last_name}
                     </h4>
+                    <div style={{ height: '4px', width: '100px', margin: '15px auto', background: 'var(--secondary)' }}></div>
                     <p className="text-white-50 mb-4 fw-bold">
                         Paid for by the Committee to Elect {previewData.first_name} {previewData.last_name}
                     </p>

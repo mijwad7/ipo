@@ -67,14 +67,14 @@ const TraditionalPreview = () => {
                     }
                     .btn-secondary-traditional:hover {
                         background-color: var(--secondary);
-                        color: white;
+                        color: #333;
                     }
                     .text-secondary-traditional {
                         color: var(--secondary);
                     }
                     .bg-secondary-traditional {
                         background-color: var(--secondary);
-                        color: white;
+                        color: #333;
                     }
                     .hero-traditional {
                         background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
