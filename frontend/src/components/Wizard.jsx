@@ -376,14 +376,18 @@ const Wizard = () => {
                             </div>
                             {otpSent && (
                                 <>
+                                    <label className="form-label fw-bold">One Time Password (OTP) Check</label>
                                     <input 
                                         name="otp_code" 
                                         className="form-control mb-3" 
-                                        placeholder="Enter 4-digit Code" 
+                                        placeholder="Enter One Time Password (OTP)" 
                                         value={formData.otp_code}
                                         onChange={handleChange} 
                                     />
-                                    <button className="btn btn-primary" onClick={verifyOtp}>Verify</button>
+                                    <small className="text-muted d-block mb-3">
+                                        Please enter the One Time Password (OTP) code sent to your mobile phone.
+                                    </small>
+                                    <button className="btn btn-primary" onClick={verifyOtp}>Verify OTP</button>
                                 </>
                             )}
                         </div>
