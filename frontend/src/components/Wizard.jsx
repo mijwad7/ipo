@@ -635,8 +635,44 @@ const Wizard = () => {
                                 </small>
                             </div>
 
+                            {/* Color Customization - Above Screenshot */}
+                            <div className="mb-3" style={{ marginTop: '25px' }}>
+                                <label className="form-label mb-2">Color Customization</label>
+                                
+                                <div className="row mb-3">
+                                    <div className="col-md-6">
+                                        <label className="form-label">Primary Color</label>
+                                        <input 
+                                            type="color" 
+                                            className="form-control form-control-color mb-2" 
+                                            name="primary_color" 
+                                            value={formData.primary_color} 
+                                            onChange={handleChange} 
+                                            style={{ width: '60px', height: '38px' }}
+                                        />
+                                        <small className="text-muted">Used for main buttons, headers, and accents</small>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label className="form-label">Secondary Color</label>
+                                        <input 
+                                            type="color" 
+                                            className="form-control form-control-color mb-2" 
+                                            name="secondary_color" 
+                                            value={formData.secondary_color} 
+                                            onChange={handleChange} 
+                                            style={{ width: '60px', height: '38px' }}
+                                        />
+                                        <small className="text-muted">Used for borders, footers, and secondary elements</small>
+                                    </div>
+                                </div>
+                                <small className="text-muted d-block mb-2">
+                                    <i className="bi bi-info-circle me-1"></i>
+                                    Click "Preview" on any template card above to see how your selected colors look on that template.
+                                </small>
+                            </div>
+
                             {/* Template Screenshot Preview */}
-                            <div className="mb-4" style={{ marginTop: '25px' }}>
+                            <div className="mb-4">
                                 <label className="form-label mb-2">Template Preview</label>
                                 <div 
                                     className="position-relative border rounded" 
@@ -671,142 +707,379 @@ const Wizard = () => {
                                         </small>
                                     </div>
                                     
-                                    {/* Primary Color Indicator - positioned absolutely */}
-                                    <div 
-                                        className="position-absolute"
-                                        style={{
-                                            top: '10%',
-                                            left: '5%',
-                                            zIndex: 10
-                                        }}
-                                    >
-                                        <div className="d-flex align-items-center">
+                                    {/* Color Indicators - Template Specific */}
+                                    {formData.template_style === 'modern' && (
+                                        <>
+                                            {/* Modern: Primary 1 - Navbar background (top left) */}
                                             <div 
-                                                className="rounded-circle border border-2 border-white shadow"
+                                                className="position-absolute"
                                                 style={{
-                                                    width: '30px',
-                                                    height: '30px',
-                                                    backgroundColor: formData.primary_color,
-                                                    border: '3px solid white',
-                                                    boxShadow: '0 0 0 2px ' + formData.primary_color
+                                                    top: '7%',
+                                                    left: '5%',
+                                                    zIndex: 10
                                                 }}
-                                            ></div>
-                                            <div className="ms-2">
-                                                <div 
-                                                    className="fw-bold small"
-                                                    style={{ 
-                                                        color: 'black',
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                                        padding: '2px 6px',
-                                                        borderRadius: '4px'
-                                                    }}
-                                                >
-                                                    Primary
-                                                </div>
-                                                <div 
-                                                    className="position-absolute"
-                                                    style={{
-                                                        left: '-20px',
-                                                        top: '15px',
-                                                        width: '0',
-                                                        height: '0',
-                                                        borderLeft: '10px solid ' + formData.primary_color,
-                                                        borderTop: '5px solid transparent',
-                                                        borderBottom: '5px solid transparent'
-                                                    }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Secondary Color Indicator - positioned absolutely */}
-                                    <div 
-                                        className="position-absolute"
-                                        style={{
-                                            top: '15%',
-                                            right: '5%',
-                                            zIndex: 10
-                                        }}
-                                    >
-                                        <div className="d-flex align-items-center flex-row-reverse">
-                                            <div 
-                                                className="rounded-circle border border-2 border-white shadow"
-                                                style={{
-                                                    width: '30px',
-                                                    height: '30px',
-                                                    backgroundColor: formData.secondary_color,
-                                                    border: '3px solid white',
-                                                    boxShadow: '0 0 0 2px ' + formData.secondary_color
-                                                }}
-                                            ></div>
-                                            <div className="me-2 text-end">
-                                                <div 
-                                                    className="fw-bold small"
-                                                    style={{ 
-                                                        color: 'black',
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                                        padding: '2px 6px',
-                                                        borderRadius: '4px'
-                                                    }}
-                                                >
-                                                    Secondary
-                                                </div>
-                                                <div 
-                                                    className="position-absolute"
-                                                    style={{
-                                                        right: '-20px',
-                                                        top: '15px',
-                                                        width: '0',
-                                                        height: '0',
-                                                        borderRight: '10px solid ' + formData.secondary_color,
-                                                        borderTop: '5px solid transparent',
-                                                        borderBottom: '5px solid transparent'
-                                                    }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-4">
-                                <label className="form-label mb-3">Color Customization</label>
-                                
-                                <div className="row mb-4">
-                                    <div className="col-md-6">
-                                        <label className="form-label">Primary Color</label>
-                                        <div className="d-flex gap-2 align-items-end">
-                                            <input 
-                                                type="color" 
-                                                className="form-control form-control-color mb-2" 
-                                                name="primary_color" 
-                                                value={formData.primary_color} 
-                                                onChange={handleChange} 
-                                                style={{ flex: 1 }}
-                                            />
-                                            <Link
-                                                to={`/preview/${formData.template_style}?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
-                                                target="_blank"
-                                                className="btn btn-sm btn-outline-primary mb-2"
                                             >
-                                                Preview
-                                            </Link>
-                                        </div>
-                                        <small className="text-muted">Used for main buttons, headers, and accents</small>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <label className="form-label">Secondary Color</label>
-                                        <input 
-                                            type="color" 
-                                            className="form-control form-control-color mb-2" 
-                                            name="secondary_color" 
-                                            value={formData.secondary_color} 
-                                            onChange={handleChange} 
-                                        />
-                                        <small className="text-muted">Used for borders, footers, and secondary elements</small>
-                                    </div>
+                                                <div className="d-flex align-items-center">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'black',
+                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Primary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            left: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderLeft: '12px solid #fff',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Modern: Secondary 1 - DONATE button (top right) */}
+                                            <div 
+                                                className="position-absolute"
+                                                style={{
+                                                    top: '3%',
+                                                    right: '19.5%',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div className="d-flex align-items-center flex-row-reverse">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'black',
+                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Secondary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            right: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderRight: '12px solid #fff',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Modern: Primary 2 - Hero section (middle left) */}
+                                            <div 
+                                                className="position-absolute"
+                                                style={{
+                                                    top: '92%',
+                                                    left: '5%',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div className="d-flex align-items-center">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'black',
+                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Primary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            left: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderLeft: '12px solid #fff',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Modern: Secondary 2 - Pillars section background (lower section) */}
+                                            <div 
+                                                className="position-absolute"
+                                                style={{
+                                                    top: '40%',
+                                                    left: '5%',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div className="d-flex align-items-center">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'black',
+                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Secondary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            left: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderLeft: '12px solid #333',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                    
+                                    {formData.template_style === 'bold' && (
+                                        <>
+                                            {/* Bold: Primary 1 - Navbar background (top left) */}
+                                            <div 
+                                                className="position-absolute"
+                                                style={{
+                                                    top: '6%',
+                                                    left: '5%',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div className="d-flex align-items-center">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'white',
+                                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Primary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            left: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderLeft: '12px solid #fff',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Bold: Secondary 1 - DONATE button (top right) */}
+                                            <div 
+                                                className="position-absolute"
+                                                style={{
+                                                    top: '2.8%',
+                                                    right: '20.5%',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div className="d-flex align-items-center flex-row-reverse">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'black',
+                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Secondary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            right: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderRight: '12px solid #fff',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Bold: Primary 2 - Hero section background (middle section) */}
+                                            <div 
+                                                className="position-absolute"
+                                                style={{
+                                                    top: '95%',
+                                                    left: '5%',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div className="d-flex align-items-center">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'white',
+                                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Primary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            left: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderLeft: '12px solid #fff',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Bold: Secondary 2 - Borders and accents (middle right) */}
+                                            <div 
+                                                className="position-absolute"
+                                                style={{
+                                                    top: '75%',
+                                                    right: '8%',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div className="d-flex align-items-center flex-row-reverse">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'white',
+                                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Secondary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            right: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderRight: '12px solid #333',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                    
+                                    {formData.template_style === 'traditional' && (
+                                        <>
+                                            {/* Traditional: Primary - Navbar background (top left) */}
+                                            <div 
+                                                className="position-absolute"
+                                                style={{
+                                                    top: '4%',
+                                                    left: '25%',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div className="d-flex align-items-center">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'white',
+                                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Primary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            left: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderLeft: '12px solid #fff',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Traditional: Secondary - DONATE button (top right) */}
+                                            <div 
+                                                className="position-absolute"
+                                                style={{
+                                                    top: '3.8%',
+                                                    right: '20.5%',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                <div className="d-flex align-items-center flex-row-reverse">
+                                                    <div 
+                                                        className="fw-bold small"
+                                                        style={{ 
+                                                            color: 'black',
+                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
+                                                        Secondary
+                                                    </div>
+                                                    <div 
+                                                        className="position-absolute"
+                                                        style={{
+                                                            right: '-25px',
+                                                            top: '8px',
+                                                            width: '0',
+                                                            height: '0',
+                                                            borderRight: '12px solid #fff',
+                                                            borderTop: '6px solid transparent',
+                                                            borderBottom: '6px solid transparent'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
-                                
                             </div>
 
                             <label className="form-label">Customizable temporary website address</label>
