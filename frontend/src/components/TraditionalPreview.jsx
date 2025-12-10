@@ -141,39 +141,94 @@ const TraditionalPreview = () => {
             {/* Hero Section */}
             <header className="hero-traditional">
                 <div className="container">
-                    <div className="row align-items-center">
-                        <div className="col-lg-5 text-center mb-5 mb-lg-0">
-                            <div 
-                                className="bg-white p-4 shadow-sm border"
-                                style={{ 
-                                    aspectRatio: '1',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    border: '3px solid var(--primary) !important'
-                                }}
-                            >
-                                <div className="text-primary-traditional">
-                                    <i className="bi bi-person-circle" style={{ fontSize: '100px' }}></i>
-                                    <p className="mt-2 mb-0 small">Headshot Placeholder</p>
+                    <div className="row align-items-start">
+                        <div className="col-lg-5 mb-5 mb-lg-0">
+                            <div className="text-center mb-4">
+                                <div 
+                                    className="bg-white p-4 shadow-sm border mx-auto"
+                                    style={{ 
+                                        aspectRatio: '1',
+                                        maxWidth: '300px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        border: '3px solid var(--primary) !important'
+                                    }}
+                                >
+                                    <div className="text-primary-traditional">
+                                        <i className="bi bi-person-circle" style={{ fontSize: '100px' }}></i>
+                                        <p className="mt-2 mb-0 small">Headshot Placeholder</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="col-lg-7">
-                            <h1 className="display-4 fw-bold mb-3" style={{ color: '#212529' }}>
+                            <h1 className="display-4 fw-bold mb-3 text-center" style={{ color: '#212529' }}>
                                 {previewData.first_name} {previewData.last_name}
                             </h1>
-                            <div className="traditional-divider"></div>
-                            <p className="lead mb-4" style={{ lineHeight: 1.8, color: '#495057' }}>
+                            <div className="traditional-divider" style={{ margin: '20px auto' }}></div>
+                            <p className="lead mb-4 text-center" style={{ lineHeight: 1.8, color: '#495057' }}>
                                 {previewData.bio_text}
                             </p>
-                            <div className="d-flex gap-3 flex-wrap">
+                            <div className="d-flex gap-3 flex-wrap justify-content-center">
                                 <a href="#" className="btn btn-primary-traditional btn-lg px-4 rounded-0">
                                     DONATE NOW
                                 </a>
                                 <button className="btn btn-secondary-traditional btn-lg px-4 rounded-0">
                                     Get Involved
                                 </button>
+                            </div>
+                        </div>
+                        <div className="col-lg-7">
+                            <div className="card card-traditional p-4" style={{ borderColor: 'var(--primary)', backgroundColor: 'white' }}>
+                                <h3 className="fw-bold mb-3 text-center" style={{ color: '#212529' }}>Get in Touch</h3>
+                                <div className="traditional-divider" style={{ margin: '15px auto' }}></div>
+                                <p className="text-center text-muted mb-4 small">
+                                    Have a question? Want to volunteer? Send us a message.
+                                </p>
+                                <form>
+                                    <div className="row mb-3">
+                                        <div className="col-md-6 mb-3">
+                                            <input 
+                                                type="text" 
+                                                className="form-control form-control-lg rounded-0" 
+                                                placeholder="First Name" 
+                                                style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                                disabled
+                                            />
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <input 
+                                                type="text" 
+                                                className="form-control form-control-lg rounded-0" 
+                                                placeholder="Last Name" 
+                                                style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                                disabled
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <input 
+                                            type="email" 
+                                            className="form-control form-control-lg rounded-0" 
+                                            placeholder="Email Address" 
+                                            style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                            disabled
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <textarea 
+                                            className="form-control form-control-lg rounded-0" 
+                                            rows="4" 
+                                            placeholder="Your Message" 
+                                            style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                            disabled
+                                        ></textarea>
+                                    </div>
+                                    <div className="d-grid">
+                                        <button type="button" className="btn btn-primary-traditional btn-lg rounded-0" disabled>
+                                            SEND MESSAGE
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -216,66 +271,8 @@ const TraditionalPreview = () => {
                 </div>
             </section>
 
-            {/* Contact Section */}
-            <section className="py-5 bg-light" style={{ borderTop: `3px solid var(--secondary)` }}>
-                <div className="container">
-                    <div className="row justify-content-center">
-                        <div className="col-lg-8">
-                            <div className="card card-traditional p-5" style={{ borderColor: 'var(--secondary)' }}>
-                                <h2 className="text-center fw-bold mb-4" style={{ color: '#212529' }}>Get in Touch</h2>
-                                <div className="traditional-divider"></div>
-                                <p className="text-center text-muted mb-4">
-                                    Have a question? Want to volunteer? Send us a message.
-                                </p>
-                                <form>
-                                    <div className="row mb-3">
-                                        <div className="col-md-6 mb-3">
-                                            <input 
-                                                type="text" 
-                                                className="form-control form-control-lg rounded-0" 
-                                                placeholder="First Name" 
-                                                disabled
-                                            />
-                                        </div>
-                                        <div className="col-md-6 mb-3">
-                                            <input 
-                                                type="text" 
-                                                className="form-control form-control-lg rounded-0" 
-                                                placeholder="Last Name" 
-                                                disabled
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="mb-3">
-                                        <input 
-                                            type="email" 
-                                            className="form-control form-control-lg rounded-0" 
-                                            placeholder="Email Address" 
-                                            disabled
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <textarea 
-                                            className="form-control form-control-lg rounded-0" 
-                                            rows="4" 
-                                            placeholder="Your Message" 
-                                            disabled
-                                        ></textarea>
-                                    </div>
-                                    <div className="d-grid">
-                                        <button type="button" className="btn btn-primary-traditional btn-lg rounded-0" disabled>
-                                            SEND MESSAGE
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             {/* Footer */}
-            <footer className="bg-secondary-traditional text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
+            <footer className="bg-primary-traditional text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
                 <div className="container text-center">
                     <h5 className="mb-3">{previewData.first_name} {previewData.last_name}</h5>
                     <p className="text-white-50 mb-4">

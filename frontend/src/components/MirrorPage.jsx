@@ -438,35 +438,85 @@ const MirrorPage = () => {
 
                 <header className="hero-traditional">
                     <div className="container">
-                        <div className="row align-items-center">
-                            <div className="col-lg-5 text-center mb-5 mb-lg-0">
-                                {data.headshot && (
-                                    <div className="bg-white p-4 shadow-sm" style={{ border: '3px solid var(--primary)' }}>
-                                        <img
-                                            src={data.headshot}
-                                            alt={data.first_name}
-                                            className="img-fluid"
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="col-lg-7">
-                                <h1 className="display-4 fw-bold mb-3" style={{ color: '#212529' }}>
+                        <div className="row align-items-start">
+                            <div className="col-lg-5 mb-5 mb-lg-0">
+                                <div className="text-center mb-4">
+                                    {data.headshot && (
+                                        <div className="bg-white p-4 shadow-sm mx-auto" style={{ border: '3px solid var(--primary)', maxWidth: '300px' }}>
+                                            <img
+                                                src={data.headshot}
+                                                alt={data.first_name}
+                                                className="img-fluid"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                                <h1 className="display-4 fw-bold mb-3 text-center" style={{ color: '#212529' }}>
                                     {data.first_name} {data.last_name}
                                 </h1>
-                                <div className="traditional-divider"></div>
-                                <p className="lead mb-4" style={{ lineHeight: 1.8, color: '#495057' }}>
+                                <div className="traditional-divider" style={{ margin: '20px auto' }}></div>
+                                <p className="lead mb-4 text-center" style={{ lineHeight: 1.8, color: '#495057' }}>
                                     {data.bio_text}
                                 </p>
-                                <div className="d-flex gap-3 flex-wrap">
+                                <div className="d-flex gap-3 flex-wrap justify-content-center">
                                     {data.donation_url && (
                                         <a href={data.donation_url} className="btn btn-primary-traditional btn-lg px-4 rounded-0">
                                             DONATE NOW
                                         </a>
                                     )}
-                                    <button className="btn btn-secondary-traditional btn-lg px-4 rounded-0" onClick={() => document.getElementById('contact').scrollIntoView()}>
+                                    <button className="btn btn-secondary-traditional btn-lg px-4 rounded-0">
                                         Get Involved
                                     </button>
+                                </div>
+                            </div>
+                            <div className="col-lg-7">
+                                <div className="card card-traditional p-4" style={{ borderColor: 'var(--primary)', backgroundColor: 'white' }}>
+                                    <h3 className="fw-bold mb-3 text-center" style={{ color: '#212529' }}>Get in Touch</h3>
+                                    <div className="traditional-divider" style={{ margin: '15px auto' }}></div>
+                                    <p className="text-center text-muted mb-4 small">
+                                        Have a question? Want to volunteer? Send us a message.
+                                    </p>
+                                    <form>
+                                        <div className="row mb-3">
+                                            <div className="col-md-6 mb-3">
+                                                <input 
+                                                    type="text" 
+                                                    className="form-control form-control-lg rounded-0" 
+                                                    placeholder="First Name" 
+                                                    style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                                />
+                                            </div>
+                                            <div className="col-md-6 mb-3">
+                                                <input 
+                                                    type="text" 
+                                                    className="form-control form-control-lg rounded-0" 
+                                                    placeholder="Last Name" 
+                                                    style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="mb-3">
+                                            <input 
+                                                type="email" 
+                                                className="form-control form-control-lg rounded-0" 
+                                                placeholder="Email Address" 
+                                                style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <textarea 
+                                                className="form-control form-control-lg rounded-0" 
+                                                rows="4" 
+                                                placeholder="Your Message" 
+                                                style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                            ></textarea>
+                                        </div>
+                                        <div className="d-grid">
+                                            <button type="button" className="btn btn-primary-traditional btn-lg rounded-0">
+                                                SEND MESSAGE
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -507,41 +557,6 @@ const MirrorPage = () => {
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    </div>
-                </section>
-
-                <section id="contact" className="py-5 bg-light" style={{ borderTop: `3px solid var(--secondary)` }}>
-                    <div className="container">
-                        <div className="row justify-content-center">
-                            <div className="col-lg-8">
-                                <div className="card card-traditional p-5" style={{ borderColor: 'var(--secondary)' }}>
-                                    <h2 className="text-center fw-bold mb-4" style={{ color: '#212529' }}>Get in Touch</h2>
-                                    <div className="traditional-divider"></div>
-                                    <p className="text-center text-muted mb-4">
-                                        Have a question? Want to volunteer? Send us a message.
-                                    </p>
-                                    <form>
-                                        <div className="row mb-3">
-                                            <div className="col-md-6 mb-3">
-                                                <input type="text" className="form-control form-control-lg rounded-0" placeholder="First Name" />
-                                            </div>
-                                            <div className="col-md-6 mb-3">
-                                                <input type="text" className="form-control form-control-lg rounded-0" placeholder="Last Name" />
-                                            </div>
-                                        </div>
-                                        <div className="mb-3">
-                                            <input type="email" className="form-control form-control-lg rounded-0" placeholder="Email Address" />
-                                        </div>
-                                        <div className="mb-4">
-                                            <textarea className="form-control form-control-lg rounded-0" rows="4" placeholder="Your Message"></textarea>
-                                        </div>
-                                        <div className="d-grid">
-                                            <button type="button" className="btn btn-primary-traditional btn-lg rounded-0">SEND MESSAGE</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>
