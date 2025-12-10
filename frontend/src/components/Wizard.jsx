@@ -55,6 +55,7 @@ const Wizard = () => {
     const [electionDateError, setElectionDateError] = useState('');
     const [customSlugError, setCustomSlugError] = useState('');
     const [customPillarMode, setCustomPillarMode] = useState({ 1: false, 2: false, 3: false });
+    const [hoveredTemplate, setHoveredTemplate] = useState(null);
 
     const TOTAL_STEPS = 5;
 
@@ -566,519 +567,229 @@ const Wizard = () => {
                                 </div>
                             </div>
                             
-                            <label className="form-label">Template Style</label>
-                            <div className="mb-3">
-                                <div className="row g-3">
-                                    <div className="col-md-4">
+                            {/* Two-Column Layout: Left = Selection, Right = Preview */}
+                            <div className="row g-4">
+                                {/* Left Column: Template Selection (Desktop) / Template Selection + Color Pickers (Mobile) */}
+                                <div className="col-lg-5 col-md-12 order-lg-1 order-1">
+                                    <label className="form-label mb-3">Template Style</label>
+                                    
+                                    {/* Template Selection Cards - Stacked Vertically */}
+                                    <div className="mb-4">
                                         <div 
-                                            className={`card h-100 ${formData.template_style === 'modern' ? 'border-primary border-2' : 'border'}`}
-                                            style={{ cursor: 'pointer' }}
+                                            className={`card mb-3 ${formData.template_style === 'modern' ? 'border-primary border-2 shadow-sm' : 'border'} ${hoveredTemplate === 'modern' ? 'border-info' : ''}`}
+                                            style={{ 
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                            onMouseEnter={() => setHoveredTemplate('modern')}
+                                            onMouseLeave={() => setHoveredTemplate(null)}
                                             onClick={() => setFormData(prev => ({ ...prev, template_style: 'modern' }))}
                                         >
-                                            <div className="card-body text-center">
-                                                <h5 className="card-title">Modern</h5>
-                                                <p className="card-text small text-muted">Clean, contemporary design with smooth gradients</p>
-                                                <Link 
-                                                    to={`/preview/modern?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
-                                                    target="_blank"
-                                                    className="btn btn-sm btn-outline-primary"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    Preview
-                                                </Link>
+                                            <div className="card-body">
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h5 className="card-title mb-1">Modern</h5>
+                                                        <p className="card-text small text-muted mb-0">Clean, contemporary design</p>
+                                                    </div>
+                                                    {formData.template_style === 'modern' && (
+                                                        <i className="bi bi-check-circle-fill text-primary" style={{ fontSize: '1.5rem' }}></i>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-4">
+                                        
                                         <div 
-                                            className={`card h-100 ${formData.template_style === 'traditional' ? 'border-primary border-2' : 'border'}`}
-                                            style={{ cursor: 'pointer' }}
+                                            className={`card mb-3 ${formData.template_style === 'traditional' ? 'border-primary border-2 shadow-sm' : 'border'} ${hoveredTemplate === 'traditional' ? 'border-info' : ''}`}
+                                            style={{ 
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                            onMouseEnter={() => setHoveredTemplate('traditional')}
+                                            onMouseLeave={() => setHoveredTemplate(null)}
                                             onClick={() => setFormData(prev => ({ ...prev, template_style: 'traditional' }))}
                                         >
-                                            <div className="card-body text-center">
-                                                <h5 className="card-title">Traditional</h5>
-                                                <p className="card-text small text-muted">Classic, professional layout with serif typography</p>
-                                                <Link 
-                                                    to={`/preview/traditional?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
-                                                    target="_blank"
-                                                    className="btn btn-sm btn-outline-primary"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    Preview
-                                                </Link>
+                                            <div className="card-body">
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h5 className="card-title mb-1">Traditional</h5>
+                                                        <p className="card-text small text-muted mb-0">Classic, professional layout</p>
+                                                    </div>
+                                                    {formData.template_style === 'traditional' && (
+                                                        <i className="bi bi-check-circle-fill text-primary" style={{ fontSize: '1.5rem' }}></i>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-4">
+                                        
                                         <div 
-                                            className={`card h-100 ${formData.template_style === 'bold' ? 'border-primary border-2' : 'border'}`}
-                                            style={{ cursor: 'pointer' }}
+                                            className={`card mb-3 ${formData.template_style === 'bold' ? 'border-primary border-2 shadow-sm' : 'border'} ${hoveredTemplate === 'bold' ? 'border-info' : ''}`}
+                                            style={{ 
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                            onMouseEnter={() => setHoveredTemplate('bold')}
+                                            onMouseLeave={() => setHoveredTemplate(null)}
                                             onClick={() => setFormData(prev => ({ ...prev, template_style: 'bold' }))}
                                         >
-                                            <div className="card-body text-center">
-                                                <h5 className="card-title">Bold</h5>
-                                                <p className="card-text small text-muted">Striking, high-impact design with bold typography</p>
-                                                <Link 
-                                                    to={`/preview/bold?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
-                                                    target="_blank"
-                                                    className="btn btn-sm btn-outline-primary"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    Preview
-                                                </Link>
+                                            <div className="card-body">
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h5 className="card-title mb-1">Bold</h5>
+                                                        <p className="card-text small text-muted mb-0">Striking, high-impact design</p>
+                                                    </div>
+                                                    {formData.template_style === 'bold' && (
+                                                        <i className="bi bi-check-circle-fill text-primary" style={{ fontSize: '1.5rem' }}></i>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <small className="text-muted d-block mb-3">
+                                        <i className="bi bi-info-circle me-1"></i>
+                                        Hover over a template to preview, click to select.
+                                    </small>
+                                    
+                                    {/* Color Customization - Hidden on mobile (shown below screenshot) */}
+                                    <div className="mb-3 d-lg-block d-md-none d-none">
+                                        <label className="form-label mb-2">Color Customization</label>
+                                        
+                                        <div className="row g-3">
+                                            <div className="col-6">
+                                                <label className="form-label small">Primary Color</label>
+                                                <input 
+                                                    type="color" 
+                                                    className="form-control form-control-color mb-2" 
+                                                    name="primary_color" 
+                                                    value={formData.primary_color} 
+                                                    onChange={handleChange} 
+                                                    style={{ width: '100%', height: '50px', cursor: 'pointer' }}
+                                                />
+                                                <small className="text-muted small">Headers & buttons</small>
+                                            </div>
+                                            <div className="col-6">
+                                                <label className="form-label small">Secondary Color</label>
+                                                <input 
+                                                    type="color" 
+                                                    className="form-control form-control-color mb-2" 
+                                                    name="secondary_color" 
+                                                    value={formData.secondary_color} 
+                                                    onChange={handleChange} 
+                                                    style={{ width: '100%', height: '50px', cursor: 'pointer' }}
+                                                />
+                                                <small className="text-muted small">Borders & accents</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Full Preview Link - Hidden on mobile */}
+                                    <div className="mt-3 d-lg-block d-md-none d-none">
+                                        <Link 
+                                            to={`/preview/${formData.template_style}?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
+                                            target="_blank"
+                                            className="btn btn-outline-primary w-100"
+                                        >
+                                            <i className="bi bi-box-arrow-up-right me-2"></i>
+                                            View Full Preview
+                                        </Link>
+                                    </div>
                                 </div>
-                                <small className="text-muted d-block mt-2">
-                                    Click on a template card to select it, or click "Preview" to see a full preview in a new tab.
-                                </small>
-                            </div>
-
-                            {/* Color Customization - Above Screenshot */}
-                            <div className="mb-3" style={{ marginTop: '25px' }}>
-                                <label className="form-label mb-2">Color Customization</label>
                                 
-                                <div className="row mb-3">
-                                    <div className="col-md-6">
-                                        <label className="form-label">Primary Color</label>
-                                        <input 
-                                            type="color" 
-                                            className="form-control form-control-color mb-2" 
-                                            name="primary_color" 
-                                            value={formData.primary_color} 
-                                            onChange={handleChange} 
-                                            style={{ width: '60px', height: '38px' }}
+                                {/* Right Column: Template Preview Thumbnail */}
+                                <div className="col-lg-7 col-md-12 order-lg-2 order-2">
+                                    <label className="form-label mb-2">Live Preview</label>
+                                    <div 
+                                        className="position-relative border rounded shadow-sm" 
+                                        style={{ 
+                                            border: '2px solid #dee2e6', 
+                                            borderRadius: '8px', 
+                                            overflow: 'hidden', 
+                                            backgroundColor: '#f8f9fa',
+                                            minHeight: '400px',
+                                            maxHeight: '600px'
+                                        }}
+                                    >
+                                        <img 
+                                            src={`/template-${hoveredTemplate || formData.template_style}-preview.png`}
+                                            alt={`${hoveredTemplate || formData.template_style} template preview`}
+                                            className="img-fluid w-100"
+                                            style={{ 
+                                                display: 'block',
+                                                height: 'auto',
+                                                objectFit: 'contain'
+                                            }}
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                const placeholder = e.target.nextElementSibling;
+                                                if (placeholder) placeholder.style.display = 'flex';
+                                            }}
                                         />
-                                        <small className="text-muted">Used for main buttons, headers, and accents</small>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <label className="form-label">Secondary Color</label>
-                                        <input 
-                                            type="color" 
-                                            className="form-control form-control-color mb-2" 
-                                            name="secondary_color" 
-                                            value={formData.secondary_color} 
-                                            onChange={handleChange} 
-                                            style={{ width: '60px', height: '38px' }}
-                                        />
-                                        <small className="text-muted">Used for borders, footers, and secondary elements</small>
+                                        <div 
+                                            className="text-center p-4 text-muted d-none align-items-center justify-content-center" 
+                                            style={{ 
+                                                position: 'absolute', 
+                                                top: 0, 
+                                                left: 0, 
+                                                right: 0, 
+                                                bottom: 0,
+                                                minHeight: '400px',
+                                                flexDirection: 'column'
+                                            }}
+                                        >
+                                            <i className="bi bi-image fs-1 d-block mb-2"></i>
+                                            <small>Template preview screenshot will appear here</small>
+                                            <br />
+                                            <small className="text-danger">
+                                                Please add template-{hoveredTemplate || formData.template_style}-preview.png to the public folder
+                                            </small>
+                                        </div>
                                     </div>
                                 </div>
-                                <small className="text-muted d-block mb-2">
-                                    <i className="bi bi-info-circle me-1"></i>
-                                    Click "Preview" on any template card above to see how your selected colors look on that template.
-                                </small>
-                            </div>
-
-                            {/* Template Screenshot Preview */}
-                            <div className="mb-4">
-                                <label className="form-label mb-2">Template Preview</label>
-                                <div 
-                                    className="position-relative border rounded" 
-                                    style={{ 
-                                        border: '2px solid #dee2e6', 
-                                        borderRadius: '8px', 
-                                        overflow: 'hidden', 
-                                        backgroundColor: '#f8f9fa',
-                                        minHeight: '300px'
-                                    }}
-                                >
-                                    <img 
-                                        src={`/template-${formData.template_style}-preview.png`}
-                                        alt={`${formData.template_style} template preview`}
-                                        className="img-fluid w-100"
-                                        style={{ display: 'block' }}
-                                        onError={(e) => {
-                                            e.target.style.display = 'none';
-                                            const placeholder = e.target.nextElementSibling;
-                                            if (placeholder) placeholder.style.display = 'block';
-                                        }}
-                                    />
-                                    <div 
-                                        className="text-center p-4 text-muted" 
-                                        style={{ display: 'none', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-                                    >
-                                        <i className="bi bi-image fs-1 d-block mb-2"></i>
-                                        <small>Template preview screenshot will appear here</small>
-                                        <br />
-                                        <small className="text-danger">
-                                            Please add template-{formData.template_style}-preview.png to the public folder
-                                        </small>
+                                
+                                {/* Color Customization - Mobile Only (shown below screenshot) */}
+                                <div className="col-12 order-3 d-lg-none d-md-block d-block">
+                                    <div className="mb-3 mt-4">
+                                        <label className="form-label mb-2">Color Customization</label>
+                                        
+                                        <div className="row g-3">
+                                            <div className="col-6">
+                                                <label className="form-label small">Primary Color</label>
+                                                <input 
+                                                    type="color" 
+                                                    className="form-control form-control-color mb-2" 
+                                                    name="primary_color" 
+                                                    value={formData.primary_color} 
+                                                    onChange={handleChange} 
+                                                    style={{ width: '100%', height: '50px', cursor: 'pointer' }}
+                                                />
+                                                <small className="text-muted small">Headers & buttons</small>
+                                            </div>
+                                            <div className="col-6">
+                                                <label className="form-label small">Secondary Color</label>
+                                                <input 
+                                                    type="color" 
+                                                    className="form-control form-control-color mb-2" 
+                                                    name="secondary_color" 
+                                                    value={formData.secondary_color} 
+                                                    onChange={handleChange} 
+                                                    style={{ width: '100%', height: '50px', cursor: 'pointer' }}
+                                                />
+                                                <small className="text-muted small">Borders & accents</small>
+                                            </div>
+                                        </div>
                                     </div>
                                     
-                                    {/* Color Indicators - Template Specific */}
-                                    {formData.template_style === 'modern' && (
-                                        <>
-                                            {/* Modern: Primary 1 - Navbar background (top left) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '7%',
-                                                    left: '5%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'black',
-                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Primary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            left: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderLeft: '12px solid #fff',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Modern: Secondary 1 - DONATE button (top right) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '3%',
-                                                    right: '19.5%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center flex-row-reverse">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'black',
-                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Secondary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            right: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderRight: '12px solid #fff',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Modern: Primary 2 - Hero section (middle left) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '92%',
-                                                    left: '5%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'black',
-                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Primary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            left: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderLeft: '12px solid #fff',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Modern: Secondary 2 - Pillars section background (lower section) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '40%',
-                                                    left: '5%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'black',
-                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Secondary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            left: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderLeft: '12px solid #333',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
-                                    
-                                    {formData.template_style === 'bold' && (
-                                        <>
-                                            {/* Bold: Primary 1 - Navbar background (top left) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '6%',
-                                                    left: '5%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'white',
-                                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Primary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            left: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderLeft: '12px solid #fff',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Bold: Secondary 1 - DONATE button (top right) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '2.8%',
-                                                    right: '20.5%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center flex-row-reverse">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'black',
-                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Secondary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            right: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderRight: '12px solid #fff',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Bold: Primary 2 - Hero section background (middle section) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '95%',
-                                                    left: '5%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'white',
-                                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Primary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            left: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderLeft: '12px solid #fff',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Bold: Secondary 2 - Borders and accents (middle right) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '75%',
-                                                    right: '8%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center flex-row-reverse">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'white',
-                                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Secondary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            right: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderRight: '12px solid #333',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
-                                    
-                                    {formData.template_style === 'traditional' && (
-                                        <>
-                                            {/* Traditional: Primary - Navbar background (top left) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '4%',
-                                                    left: '25%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'white',
-                                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Primary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            left: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderLeft: '12px solid #fff',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Traditional: Secondary - DONATE button (top right) */}
-                                            <div 
-                                                className="position-absolute"
-                                                style={{
-                                                    top: '3.8%',
-                                                    right: '20.5%',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center flex-row-reverse">
-                                                    <div 
-                                                        className="fw-bold small"
-                                                        style={{ 
-                                                            color: 'black',
-                                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    >
-                                                        Secondary
-                                                    </div>
-                                                    <div 
-                                                        className="position-absolute"
-                                                        style={{
-                                                            right: '-25px',
-                                                            top: '8px',
-                                                            width: '0',
-                                                            height: '0',
-                                                            borderRight: '12px solid #fff',
-                                                            borderTop: '6px solid transparent',
-                                                            borderBottom: '6px solid transparent'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
+                                    {/* Full Preview Link - Mobile */}
+                                    <div className="mt-3">
+                                        <Link 
+                                            to={`/preview/${formData.template_style}?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
+                                            target="_blank"
+                                            className="btn btn-outline-primary w-100"
+                                        >
+                                            <i className="bi bi-box-arrow-up-right me-2"></i>
+                                            View Full Preview
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
 
