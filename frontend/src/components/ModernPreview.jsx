@@ -13,6 +13,10 @@ const ModernPreview = () => {
     const previewData = {
         first_name: 'John',
         last_name: 'Smith',
+        position_running_for: 'John for Mayor',
+        tag_line: 'Family Faith Freedom',
+        riding_zone_name: 'District 5',
+        election_date: '2025-10-15',
         bio_text: 'A dedicated public servant committed to bringing positive change to our community. With years of experience and a vision for the future, I am ready to lead.',
         pillar_1: 'Economic Growth',
         pillar_1_desc: 'Creating opportunities for businesses and families to thrive through smart economic policies and community investment.',
@@ -133,7 +137,7 @@ const ModernPreview = () => {
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary-modern py-3">
                 <div className="container">
                     <a className="navbar-brand fw-bold" href="#">
-                        {previewData.last_name} <span className="fw-light">for Office</span>
+                        {previewData.position_running_for || `${previewData.last_name} for Office`}
                     </a>
                     <div className="ms-auto">
                         <a href="#" className="btn btn-light rounded-pill px-4">DONATE</a>
@@ -147,11 +151,25 @@ const ModernPreview = () => {
                     <div className="row align-items-center">
                         <div className="col-lg-6 mb-5 mb-lg-0">
                             <h5 className="text-uppercase mb-3 opacity-75" style={{ letterSpacing: '2px', fontSize: '14px' }}>
-                                Vote for Leadership
+                                {previewData.tag_line || 'Vote for Leadership'}
                             </h5>
                             <h1 className="display-2 fw-bold mb-4">
                                 {previewData.first_name}<br />{previewData.last_name}
                             </h1>
+                            {(previewData.riding_zone_name || previewData.election_date) && (
+                                <div className="mb-3">
+                                    {previewData.riding_zone_name && (
+                                        <p className="mb-1 opacity-90" style={{ fontSize: '1.1rem' }}>
+                                            <strong>Riding:</strong> {previewData.riding_zone_name}
+                                        </p>
+                                    )}
+                                    {previewData.election_date && (
+                                        <p className="mb-0 opacity-90" style={{ fontSize: '1.1rem' }}>
+                                            <strong>Election Date:</strong> {new Date(previewData.election_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
                             <div className="bg-white mb-4" style={{ width: '80px', height: '4px', borderRadius: '2px' }}></div>
                             <p className="lead mb-5" style={{ lineHeight: 1.8, opacity: 0.95 }}>
                                 {previewData.bio_text}

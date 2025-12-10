@@ -210,7 +210,7 @@ const MirrorPage = () => {
                 <nav className="navbar navbar-expand-lg navbar-dark bg-primary-modern py-3 fixed-top shadow-sm">
                     <div className="container">
                         <a className="navbar-brand fw-bold" href="#">
-                            {data.last_name} <span className="fw-light">for Office</span>
+                            {data.position_running_for || `${data.last_name} for Office`}
                         </a>
                         <div className="ms-auto d-none d-md-block">
                             <a href={data.donation_url || "#"} className="btn btn-light rounded-pill px-4">DONATE</a>
@@ -223,11 +223,25 @@ const MirrorPage = () => {
                         <div className="row align-items-center">
                             <div className="col-lg-6 mb-5 mb-lg-0">
                                 <h5 className="text-uppercase mb-3 opacity-75" style={{ letterSpacing: '2px', fontSize: '14px' }}>
-                                    Vote for Leadership
+                                    {data.tag_line || 'Vote for Leadership'}
                                 </h5>
                                 <h1 className="display-2 fw-bold mb-4">
                                     {data.first_name}<br />{data.last_name}
                                 </h1>
+                                {(data.riding_zone_name || data.election_date) && (
+                                    <div className="mb-3">
+                                        {data.riding_zone_name && (
+                                            <p className="mb-1 opacity-90" style={{ fontSize: '1.1rem' }}>
+                                                <strong>Riding:</strong> {data.riding_zone_name}
+                                            </p>
+                                        )}
+                                        {data.election_date && (
+                                            <p className="mb-0 opacity-90" style={{ fontSize: '1.1rem' }}>
+                                                <strong>Election Date:</strong> {new Date(data.election_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                                 <div className="bg-white mb-4" style={{ width: '80px', height: '4px', borderRadius: '2px' }}></div>
                                 <p className="lead mb-5" style={{ lineHeight: 1.8, opacity: 0.95 }}>
                                     {data.bio_text}
@@ -428,7 +442,7 @@ const MirrorPage = () => {
                 <nav className="navbar navbar-expand-lg navbar-dark bg-primary-traditional py-3 fixed-top shadow-sm">
                     <div className="container">
                         <a className="navbar-brand fw-bold" href="#">
-                            {data.last_name} <span className="fw-normal">for Office</span>
+                            {data.position_running_for || `${data.last_name} for Office`}
                         </a>
                         <div className="ms-auto d-none d-md-block">
                             <a href={data.donation_url || "#"} className="btn btn-light rounded-0 px-4">DONATE</a>
@@ -454,6 +468,25 @@ const MirrorPage = () => {
                                 <h1 className="display-4 fw-bold mb-3 text-center" style={{ color: '#212529' }}>
                                     {data.first_name} {data.last_name}
                                 </h1>
+                                <div className="text-center mb-2">
+                                    <p className="mb-1 fw-bold" style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>
+                                        {data.tag_line || 'Vote for Leadership'}
+                                    </p>
+                                </div>
+                                {(data.riding_zone_name || data.election_date) && (
+                                    <div className="text-center mb-3">
+                                        {data.riding_zone_name && (
+                                            <p className="mb-1 small" style={{ color: '#495057' }}>
+                                                <strong>Riding:</strong> {data.riding_zone_name}
+                                            </p>
+                                        )}
+                                        {data.election_date && (
+                                            <p className="mb-0 small" style={{ color: '#495057' }}>
+                                                <strong>Election Date:</strong> {new Date(data.election_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                                 <div className="traditional-divider" style={{ margin: '20px auto' }}></div>
                                 <p className="lead mb-4 text-center" style={{ lineHeight: 1.8, color: '#495057' }}>
                                     {data.bio_text}
@@ -679,7 +712,7 @@ const MirrorPage = () => {
                 <nav className="navbar navbar-expand-lg navbar-dark bg-primary-bold py-4 fixed-top" style={{ borderBottom: '6px solid var(--secondary)' }}>
                     <div className="container">
                         <a className="navbar-brand fw-black text-uppercase" href="#" style={{ fontSize: '24px', letterSpacing: '2px' }}>
-                            {data.last_name} <span className="fw-normal">FOR OFFICE</span>
+                            {data.position_running_for ? data.position_running_for.toUpperCase() : `${data.last_name} FOR OFFICE`}
                         </a>
                         <div className="ms-auto d-none d-md-block">
                             <a href={data.donation_url || "#"} className="btn btn-light px-4 fw-bold" style={{ border: '3px solid var(--secondary)' }}>DONATE</a>
@@ -692,11 +725,25 @@ const MirrorPage = () => {
                         <div className="row align-items-center">
                             <div className="col-lg-7 mb-5 mb-lg-0">
                                 <h5 className="text-uppercase mb-4 fw-bold" style={{ letterSpacing: '4px', fontSize: '16px', color: 'var(--secondary)' }}>
-                                    VOTE FOR LEADERSHIP
+                                    {data.tag_line ? data.tag_line.toUpperCase() : 'VOTE FOR LEADERSHIP'}
                                 </h5>
                                 <h1 className="display-1 fw-black mb-4" style={{ fontWeight: 900, lineHeight: 1.1 }}>
                                     {data.first_name}<br />{data.last_name}
                                 </h1>
+                                {(data.riding_zone_name || data.election_date) && (
+                                    <div className="mb-3">
+                                        {data.riding_zone_name && (
+                                            <p className="mb-1 fw-bold" style={{ fontSize: '1.1rem' }}>
+                                                RIDING: {data.riding_zone_name.toUpperCase()}
+                                            </p>
+                                        )}
+                                        {data.election_date && (
+                                            <p className="mb-0 fw-bold" style={{ fontSize: '1.1rem' }}>
+                                                ELECTION DATE: {new Date(data.election_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase()}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                                 <div className="mb-4" style={{ width: '120px', height: '10px', background: 'var(--secondary)', border: '2px solid white' }}></div>
                                 <p className="lead mb-5 fw-bold" style={{ lineHeight: 1.8, fontSize: '20px' }}>
                                     {data.bio_text}

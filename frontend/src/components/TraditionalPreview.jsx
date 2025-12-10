@@ -13,6 +13,10 @@ const TraditionalPreview = () => {
     const previewData = {
         first_name: 'John',
         last_name: 'Smith',
+        position_running_for: 'John for Mayor',
+        tag_line: 'Family Faith Freedom',
+        riding_zone_name: 'District 5',
+        election_date: '2025-10-15',
         bio_text: 'A dedicated public servant committed to bringing positive change to our community. With years of experience and a vision for the future, I am ready to lead.',
         pillar_1: 'Economic Growth',
         pillar_1_desc: 'Creating opportunities for businesses and families to thrive through smart economic policies and community investment.',
@@ -130,7 +134,7 @@ const TraditionalPreview = () => {
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary-traditional py-3">
                 <div className="container">
                     <a className="navbar-brand fw-bold" href="#">
-                        {previewData.last_name} <span className="fw-normal">for Office</span>
+                        {previewData.position_running_for || `${previewData.last_name} for Office`}
                     </a>
                     <div className="ms-auto">
                         <a href="#" className="btn btn-light rounded-0 px-4">DONATE</a>
@@ -164,6 +168,25 @@ const TraditionalPreview = () => {
                             <h1 className="display-4 fw-bold mb-3 text-center" style={{ color: '#212529' }}>
                                 {previewData.first_name} {previewData.last_name}
                             </h1>
+                            <div className="text-center mb-2">
+                                <p className="mb-1 fw-bold" style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>
+                                    {previewData.tag_line || 'Vote for Leadership'}
+                                </p>
+                            </div>
+                            {(previewData.riding_zone_name || previewData.election_date) && (
+                                <div className="text-center mb-3">
+                                    {previewData.riding_zone_name && (
+                                        <p className="mb-1 small" style={{ color: '#495057' }}>
+                                            <strong>Riding:</strong> {previewData.riding_zone_name}
+                                        </p>
+                                    )}
+                                    {previewData.election_date && (
+                                        <p className="mb-0 small" style={{ color: '#495057' }}>
+                                            <strong>Election Date:</strong> {new Date(previewData.election_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
                             <div className="traditional-divider" style={{ margin: '20px auto' }}></div>
                             <p className="lead mb-4 text-center" style={{ lineHeight: 1.8, color: '#495057' }}>
                                 {previewData.bio_text}
