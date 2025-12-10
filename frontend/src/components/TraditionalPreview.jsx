@@ -81,10 +81,9 @@ const TraditionalPreview = () => {
                         color: #333;
                     }
                     .hero-traditional {
-                        background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+                        background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
                         padding: 100px 0 60px;
                         border-bottom: 4px solid var(--primary);
-                        border-top: 2px solid var(--secondary);
                     }
                     .card-traditional {
                         border: 2px solid var(--secondary);
@@ -131,13 +130,13 @@ const TraditionalPreview = () => {
             </div>
 
             {/* Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-primary-traditional py-3">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-primary-traditional py-3" style={{ borderBottom: '3px solid var(--secondary)' }}>
                 <div className="container">
                     <a className="navbar-brand fw-bold" href="#">
                         {previewData.position_running_for || `${previewData.last_name} for Office`}
                     </a>
                     <div className="ms-auto">
-                        <a href="#" className="btn btn-light rounded-0 px-4">DONATE</a>
+                        <a href="#" className="btn rounded-0 px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', fontWeight: '500' }}>DONATE</a>
                     </div>
                 </div>
             </nav>
@@ -201,9 +200,9 @@ const TraditionalPreview = () => {
                             </div>
                         </div>
                         <div className="col-lg-7">
-                            <div className="card card-traditional p-4" style={{ borderColor: 'var(--primary)', backgroundColor: 'white' }}>
-                                <h3 className="fw-bold mb-3 text-center" style={{ color: '#212529' }}>Get in Touch</h3>
-                                <div className="traditional-divider" style={{ margin: '15px auto' }}></div>
+                            <div className="card card-traditional p-4" style={{ border: '3px solid var(--primary)', backgroundColor: 'white' }}>
+                                <h3 className="fw-bold mb-3 text-center" style={{ color: 'var(--primary)' }}>Get in Touch</h3>
+                                <div style={{ width: '100px', height: '3px', margin: '15px auto', backgroundColor: 'var(--primary)' }}></div>
                                 <p className="text-center text-muted mb-4 small">
                                     Have a question? Want to volunteer? Send us a message.
                                 </p>
@@ -263,7 +262,7 @@ const TraditionalPreview = () => {
                 <div className="container py-5">
                     <div className="text-center mb-5">
                         <h2 className="display-5 fw-bold mb-3" style={{ color: '#212529' }}>My Top Issues & Concerns</h2>
-                        <div className="traditional-divider"></div>
+                        <div style={{ width: '100px', height: '3px', margin: '20px auto', backgroundColor: 'var(--primary)' }}></div>
                     </div>
 
                     <div className="row">

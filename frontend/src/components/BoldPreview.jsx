@@ -154,7 +154,7 @@ const BoldPreview = () => {
                         {previewData.position_running_for ? previewData.position_running_for.toUpperCase() : `${previewData.last_name} FOR OFFICE`}
                     </a>
                     <div className="ms-auto">
-                        <a href="#" className="btn btn-light px-4 fw-bold" style={{ border: '3px solid var(--secondary)' }}>DONATE</a>
+                        <a href="#" className="btn px-4 fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid var(--secondary)' }}>DONATE</a>
                     </div>
                 </div>
             </nav>

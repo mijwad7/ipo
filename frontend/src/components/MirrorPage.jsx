@@ -191,7 +191,6 @@ const MirrorPage = () => {
                         .hero-modern {
                             background: linear-gradient(135deg, var(--primary) 0%, var(--primary) 100%);
                             padding: 120px 0 80px;
-                            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
                         }
                         .card-modern {
                             border-radius: 16px;
@@ -207,13 +206,13 @@ const MirrorPage = () => {
                     `}
                 </style>
 
-                <nav className="navbar navbar-expand-lg navbar-dark bg-primary-modern py-3 fixed-top shadow-sm">
+                <nav className="navbar navbar-expand-lg navbar-dark bg-primary-modern py-3 fixed-top shadow-sm" style={{ borderBottom: '4px solid var(--secondary)' }}>
                     <div className="container">
                         <a className="navbar-brand fw-bold" href="#">
                             {data.position_running_for || `${data.last_name} for Office`}
                         </a>
                         <div className="ms-auto d-none d-md-block">
-                            <a href={data.donation_url || "#"} className="btn btn-light rounded-pill px-4">DONATE</a>
+                            <a href={data.donation_url || "#"} className="btn rounded-pill px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', fontWeight: '600' }}>DONATE</a>
                         </div>
                     </div>
                 </nav>
@@ -242,13 +241,13 @@ const MirrorPage = () => {
                                         )}
                                     </div>
                                 )}
-                                <div className="bg-white mb-4" style={{ width: '80px', height: '4px', borderRadius: '2px' }}></div>
+                                <div className="mb-4" style={{ width: '80px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--secondary)' }}></div>
                                 <p className="lead mb-5" style={{ lineHeight: 1.8, opacity: 0.95 }}>
                                     {data.bio_text}
                                 </p>
                                 <div className="d-flex gap-3 flex-wrap">
                                     {data.donation_url && (
-                                        <a href={data.donation_url} className="btn btn-light btn-lg px-5 fw-bold rounded-pill shadow">
+                                        <a href={data.donation_url} className="btn btn-lg px-5 fw-bold rounded-pill shadow" style={{ backgroundColor: 'var(--secondary)', color: '#333' }}>
                                             DONATE NOW
                                         </a>
                                     )}
@@ -263,7 +262,7 @@ const MirrorPage = () => {
                                         src={data.headshot}
                                         alt={data.first_name}
                                         className="img-fluid rounded-4 shadow-lg"
-                                        style={{ border: '8px solid rgba(255,255,255,0.2)' }}
+                                        style={{ border: '8px solid var(--secondary)' }}
                                     />
                                 )}
                             </div>
@@ -271,11 +270,11 @@ const MirrorPage = () => {
                     </div>
                 </header>
 
-                <section className="py-5 bg-light">
+                <section className="py-5" style={{ backgroundColor: 'var(--secondary)' }}>
                     <div className="container py-5">
                         <div className="text-center mb-5">
-                            <h2 className="display-5 fw-bold mb-3">My Top Issues & Concerns</h2>
-                            <div className="mx-auto mb-2" style={{ width: '80px', height: '4px', borderRadius: '2px', background: `linear-gradient(to right, var(--primary), var(--secondary))` }}></div>
+                            <h2 className="display-5 fw-bold mb-3" style={{ color: '#333' }}>My Top Issues & Concerns</h2>
+                            <div className="mx-auto mb-2" style={{ width: '80px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--primary)' }}></div>
                         </div>
                         <div className="row g-4">
                             {[
@@ -307,12 +306,13 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <section id="contact" className="py-5 bg-white">
+                <section id="contact" className="py-5 bg-white" style={{ borderTop: '4px solid var(--secondary)' }}>
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-lg-8">
-                                <div className="card card-modern border-0 p-5">
-                                    <h2 className="text-center fw-bold mb-4">Get in Touch</h2>
+                                <div className="card card-modern border-0 p-5" style={{ border: '3px solid var(--secondary)' }}>
+                                    <h2 className="text-center fw-bold mb-4" style={{ color: 'var(--primary)' }}>Get in Touch</h2>
+                                    <div className="mx-auto mb-3" style={{ width: '100px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--secondary)' }}></div>
                                     <p className="text-center text-muted mb-4">
                                         Have a question? Want to volunteer? Send us a message.
                                     </p>
@@ -341,7 +341,7 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <footer className="bg-primary-modern text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
+                <footer className="bg-primary-modern text-white py-5" style={{ borderTop: `4px solid var(--secondary)` }}>
                     <div className="container text-center">
                         <h5 className="mb-3">{data.first_name} {data.last_name}</h5>
                         <p className="text-white-50 mb-4">
@@ -412,10 +412,9 @@ const MirrorPage = () => {
                             color: #333;
                         }
                         .hero-traditional {
-                            background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+                            background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
                             padding: 100px 0 60px;
                             border-bottom: 4px solid var(--primary);
-                            border-top: 2px solid var(--secondary);
                         }
                         .card-traditional {
                             border: 2px solid var(--secondary);
@@ -439,13 +438,13 @@ const MirrorPage = () => {
                     `}
                 </style>
 
-                <nav className="navbar navbar-expand-lg navbar-dark bg-primary-traditional py-3 fixed-top shadow-sm">
+                <nav className="navbar navbar-expand-lg navbar-dark bg-primary-traditional py-3 fixed-top shadow-sm" style={{ borderBottom: '3px solid var(--secondary)' }}>
                     <div className="container">
                         <a className="navbar-brand fw-bold" href="#">
                             {data.position_running_for || `${data.last_name} for Office`}
                         </a>
                         <div className="ms-auto d-none d-md-block">
-                            <a href={data.donation_url || "#"} className="btn btn-light rounded-0 px-4">DONATE</a>
+                            <a href={data.donation_url || "#"} className="btn rounded-0 px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', fontWeight: '500' }}>DONATE</a>
                         </div>
                     </div>
                 </nav>
@@ -503,9 +502,9 @@ const MirrorPage = () => {
                                 </div>
                             </div>
                             <div className="col-lg-7">
-                                <div className="card card-traditional p-4" style={{ borderColor: 'var(--primary)', backgroundColor: 'white' }}>
-                                    <h3 className="fw-bold mb-3 text-center" style={{ color: '#212529' }}>Get in Touch</h3>
-                                    <div className="traditional-divider" style={{ margin: '15px auto' }}></div>
+                                <div className="card card-traditional p-4" style={{ border: '3px solid var(--primary)', backgroundColor: 'white' }}>
+                                    <h3 className="fw-bold mb-3 text-center" style={{ color: 'var(--primary)' }}>Get in Touch</h3>
+                                    <div style={{ width: '100px', height: '3px', margin: '15px auto', backgroundColor: 'var(--primary)' }}></div>
                                     <p className="text-center text-muted mb-4 small">
                                         Have a question? Want to volunteer? Send us a message.
                                     </p>
@@ -560,7 +559,7 @@ const MirrorPage = () => {
                     <div className="container py-5">
                         <div className="text-center mb-5">
                             <h2 className="display-5 fw-bold mb-3" style={{ color: '#212529' }}>My Top Issues & Concerns</h2>
-                            <div className="traditional-divider"></div>
+                            <div style={{ width: '100px', height: '3px', margin: '20px auto', backgroundColor: 'var(--primary)' }}></div>
                         </div>
                         <div className="row">
                             {[
@@ -594,7 +593,7 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <footer className="bg-primary-traditional text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
+                <footer className="bg-primary-traditional text-white py-5" style={{ borderTop: `4px solid var(--secondary)` }}>
                     <div className="container text-center">
                         <h5 className="mb-3">{data.first_name} {data.last_name}</h5>
                         <p className="text-white-50 mb-4">
@@ -715,7 +714,7 @@ const MirrorPage = () => {
                             {data.position_running_for ? data.position_running_for.toUpperCase() : `${data.last_name} FOR OFFICE`}
                         </a>
                         <div className="ms-auto d-none d-md-block">
-                            <a href={data.donation_url || "#"} className="btn btn-light px-4 fw-bold" style={{ border: '3px solid var(--secondary)' }}>DONATE</a>
+                            <a href={data.donation_url || "#"} className="btn px-4 fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid var(--secondary)' }}>DONATE</a>
                         </div>
                     </div>
                 </nav>

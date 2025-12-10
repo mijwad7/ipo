@@ -635,6 +635,140 @@ const Wizard = () => {
                                 </small>
                             </div>
 
+                            {/* Template Screenshot Preview */}
+                            <div className="mb-4" style={{ marginTop: '25px' }}>
+                                <label className="form-label mb-2">Template Preview</label>
+                                <div 
+                                    className="position-relative border rounded" 
+                                    style={{ 
+                                        border: '2px solid #dee2e6', 
+                                        borderRadius: '8px', 
+                                        overflow: 'hidden', 
+                                        backgroundColor: '#f8f9fa',
+                                        minHeight: '300px'
+                                    }}
+                                >
+                                    <img 
+                                        src={`/template-${formData.template_style}-preview.png`}
+                                        alt={`${formData.template_style} template preview`}
+                                        className="img-fluid w-100"
+                                        style={{ display: 'block' }}
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            const placeholder = e.target.nextElementSibling;
+                                            if (placeholder) placeholder.style.display = 'block';
+                                        }}
+                                    />
+                                    <div 
+                                        className="text-center p-4 text-muted" 
+                                        style={{ display: 'none', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+                                    >
+                                        <i className="bi bi-image fs-1 d-block mb-2"></i>
+                                        <small>Template preview screenshot will appear here</small>
+                                        <br />
+                                        <small className="text-danger">
+                                            Please add template-{formData.template_style}-preview.png to the public folder
+                                        </small>
+                                    </div>
+                                    
+                                    {/* Primary Color Indicator - positioned absolutely */}
+                                    <div 
+                                        className="position-absolute"
+                                        style={{
+                                            top: '10%',
+                                            left: '5%',
+                                            zIndex: 10
+                                        }}
+                                    >
+                                        <div className="d-flex align-items-center">
+                                            <div 
+                                                className="rounded-circle border border-2 border-white shadow"
+                                                style={{
+                                                    width: '30px',
+                                                    height: '30px',
+                                                    backgroundColor: formData.primary_color,
+                                                    border: '3px solid white',
+                                                    boxShadow: '0 0 0 2px ' + formData.primary_color
+                                                }}
+                                            ></div>
+                                            <div className="ms-2">
+                                                <div 
+                                                    className="fw-bold small"
+                                                    style={{ 
+                                                        color: 'black',
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                                        padding: '2px 6px',
+                                                        borderRadius: '4px'
+                                                    }}
+                                                >
+                                                    Primary
+                                                </div>
+                                                <div 
+                                                    className="position-absolute"
+                                                    style={{
+                                                        left: '-20px',
+                                                        top: '15px',
+                                                        width: '0',
+                                                        height: '0',
+                                                        borderLeft: '10px solid ' + formData.primary_color,
+                                                        borderTop: '5px solid transparent',
+                                                        borderBottom: '5px solid transparent'
+                                                    }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Secondary Color Indicator - positioned absolutely */}
+                                    <div 
+                                        className="position-absolute"
+                                        style={{
+                                            top: '15%',
+                                            right: '5%',
+                                            zIndex: 10
+                                        }}
+                                    >
+                                        <div className="d-flex align-items-center flex-row-reverse">
+                                            <div 
+                                                className="rounded-circle border border-2 border-white shadow"
+                                                style={{
+                                                    width: '30px',
+                                                    height: '30px',
+                                                    backgroundColor: formData.secondary_color,
+                                                    border: '3px solid white',
+                                                    boxShadow: '0 0 0 2px ' + formData.secondary_color
+                                                }}
+                                            ></div>
+                                            <div className="me-2 text-end">
+                                                <div 
+                                                    className="fw-bold small"
+                                                    style={{ 
+                                                        color: 'black',
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                                        padding: '2px 6px',
+                                                        borderRadius: '4px'
+                                                    }}
+                                                >
+                                                    Secondary
+                                                </div>
+                                                <div 
+                                                    className="position-absolute"
+                                                    style={{
+                                                        right: '-20px',
+                                                        top: '15px',
+                                                        width: '0',
+                                                        height: '0',
+                                                        borderRight: '10px solid ' + formData.secondary_color,
+                                                        borderTop: '5px solid transparent',
+                                                        borderBottom: '5px solid transparent'
+                                                    }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="mb-4">
                                 <label className="form-label mb-3">Color Customization</label>
                                 
@@ -673,124 +807,6 @@ const Wizard = () => {
                                     </div>
                                 </div>
                                 
-                                <p className="text-muted small mb-3">
-                                    See where your primary and secondary colors will appear on your campaign page:
-                                </p>
-                                
-                                {/* Screenshot with color indicators */}
-                                <div className="position-relative mb-3" style={{ border: '2px solid #dee2e6', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#f8f9fa' }}>
-                                    <img 
-                                        src="/template-color-guide.png" 
-                                        alt="Template Color Guide" 
-                                        className="img-fluid w-100"
-                                        style={{ display: 'block' }}
-                                        onError={(e) => {
-                                            // Fallback if image doesn't exist
-                                            e.target.style.display = 'none';
-                                            e.target.nextElementSibling.style.display = 'block';
-                                        }}
-                                    />
-                                    <div 
-                                        className="text-center p-4 text-muted" 
-                                        style={{ display: 'none' }}
-                                        id="color-guide-placeholder"
-                                    >
-                                        <i className="bi bi-image fs-1 d-block mb-2"></i>
-                                        <small>Template color guide screenshot will appear here</small>
-                                        <br />
-                                        <small className="text-danger">Please add template-color-guide.png to the public folder</small>
-                                    </div>
-                                    
-                                    {/* Primary Color Arrows - positioned absolutely */}
-                                    <div 
-                                        className="position-absolute"
-                                        style={{
-                                            top: '10%',
-                                            left: '5%',
-                                            zIndex: 10
-                                        }}
-                                    >
-                                        <div className="d-flex align-items-center">
-                                            <div 
-                                                className="rounded-circle border border-2 border-white shadow"
-                                                style={{
-                                                    width: '30px',
-                                                    height: '30px',
-                                                    backgroundColor: formData.primary_color,
-                                                    border: '3px solid white',
-                                                    boxShadow: '0 0 0 2px ' + formData.primary_color
-                                                }}
-                                            ></div>
-                                            <div className="ms-2">
-                                                <div 
-                                                    className="fw-bold small"
-                                                    style={{ 
-                                                        color: 'black',
-                                                    }}
-                                                >
-                                                    Primary
-                                                </div>
-                                                <div 
-                                                    className="position-absolute"
-                                                    style={{
-                                                        left: '-20px',
-                                                        top: '15px',
-                                                        width: '0',
-                                                        height: '0',
-                                                        borderLeft: '10px solid ' + formData.primary_color,
-                                                        borderTop: '5px solid transparent',
-                                                        borderBottom: '5px solid transparent'
-                                                    }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Secondary Color Arrows - positioned absolutely */}
-                                    <div 
-                                        className="position-absolute"
-                                        style={{
-                                            top: '15%',
-                                            right: '5%',
-                                            zIndex: 10
-                                        }}
-                                    >
-                                        <div className="d-flex align-items-center flex-row-reverse">
-                                            <div 
-                                                className="rounded-circle border border-2 border-white shadow"
-                                                style={{
-                                                    width: '30px',
-                                                    height: '30px',
-                                                    backgroundColor: formData.secondary_color,
-                                                    border: '3px solid white',
-                                                    boxShadow: '0 0 0 2px ' + formData.secondary_color
-                                                }}
-                                            ></div>
-                                            <div className="me-2 text-end">
-                                                <div 
-                                                    className="fw-bold small"
-                                                    style={{ 
-                                                        color: 'black',
-                                                    }}
-                                                >
-                                                    Secondary
-                                                </div>
-                                                <div 
-                                                    className="position-absolute"
-                                                    style={{
-                                                        right: '-20px',
-                                                        top: '15px',
-                                                        width: '0',
-                                                        height: '0',
-                                                        borderRight: '10px solid ' + formData.secondary_color,
-                                                        borderTop: '5px solid transparent',
-                                                        borderBottom: '5px solid transparent'
-                                                    }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <label className="form-label">Customizable temporary website address</label>

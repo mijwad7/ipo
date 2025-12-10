@@ -86,7 +86,6 @@ const ModernPreview = () => {
                     .hero-modern {
                         background: linear-gradient(135deg, var(--primary) 0%, var(--primary) 100%);
                         padding: 120px 0 80px;
-                        clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
                     }
                     .card-modern {
                         border-radius: 16px;
@@ -134,13 +133,13 @@ const ModernPreview = () => {
             </div>
 
             {/* Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-primary-modern py-3">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-primary-modern py-3" style={{ borderBottom: '4px solid var(--secondary)' }}>
                 <div className="container">
                     <a className="navbar-brand fw-bold" href="#">
                         {previewData.position_running_for || `${previewData.last_name} for Office`}
                     </a>
                     <div className="ms-auto">
-                        <a href="#" className="btn btn-light rounded-pill px-4">DONATE</a>
+                        <a href="#" className="btn rounded-pill px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', fontWeight: '600' }}>DONATE</a>
                     </div>
                 </div>
             </nav>
@@ -170,12 +169,12 @@ const ModernPreview = () => {
                                     )}
                                 </div>
                             )}
-                            <div className="bg-white mb-4" style={{ width: '80px', height: '4px', borderRadius: '2px' }}></div>
+                            <div className="mb-4" style={{ width: '80px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--secondary)' }}></div>
                             <p className="lead mb-5" style={{ lineHeight: 1.8, opacity: 0.95 }}>
                                 {previewData.bio_text}
                             </p>
                             <div className="d-flex gap-3 flex-wrap">
-                                <a href="#" className="btn btn-light btn-lg px-5 fw-bold rounded-pill shadow">
+                                <a href="#" className="btn btn-lg px-5 fw-bold rounded-pill shadow" style={{ backgroundColor: 'var(--secondary)', color: '#333' }}>
                                     DONATE NOW
                                 </a>
                                 <button className="btn btn-secondary-modern btn-lg px-4 rounded-pill">
@@ -191,7 +190,7 @@ const ModernPreview = () => {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    border: '8px solid rgba(255,255,255,0.2)'
+                                    border: '8px solid var(--secondary)'
                                 }}
                             >
                                 <div className="text-primary-modern">
@@ -205,11 +204,11 @@ const ModernPreview = () => {
             </header>
 
             {/* Pillars Section */}
-            <section className="py-5 bg-light">
+            <section className="py-5" style={{ backgroundColor: 'var(--secondary)' }}>
                 <div className="container py-5">
                     <div className="text-center mb-5">
-                        <h2 className="display-5 fw-bold mb-3">My Top Issues & Concerns</h2>
-                        <div className="mx-auto mb-2" style={{ width: '80px', height: '4px', borderRadius: '2px', background: `linear-gradient(to right, var(--primary), var(--secondary))` }}></div>
+                        <h2 className="display-5 fw-bold mb-3" style={{ color: '#333' }}>My Top Issues & Concerns</h2>
+                        <div className="mx-auto mb-2" style={{ width: '80px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--primary)' }}></div>
                     </div>
 
                     <div className="row g-4">
@@ -239,12 +238,13 @@ const ModernPreview = () => {
             </section>
 
             {/* Contact Section */}
-            <section className="py-5 bg-white">
+            <section className="py-5 bg-white" style={{ borderTop: '4px solid var(--secondary)' }}>
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-lg-8">
-                            <div className="card card-modern border-0 p-5">
-                                <h2 className="text-center fw-bold mb-4">Get in Touch</h2>
+                            <div className="card card-modern border-0 p-5" style={{ border: '3px solid var(--secondary)' }}>
+                                <h2 className="text-center fw-bold mb-4" style={{ color: 'var(--primary)' }}>Get in Touch</h2>
+                                <div className="mx-auto mb-3" style={{ width: '100px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--secondary)' }}></div>
                                 <p className="text-center text-muted mb-4">
                                     Have a question? Want to volunteer? Send us a message.
                                 </p>
@@ -296,7 +296,7 @@ const ModernPreview = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-primary-modern text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
+            <footer className="bg-primary-modern text-white py-5" style={{ borderTop: `4px solid var(--secondary)` }}>
                 <div className="container text-center">
                     <h5 className="mb-3">{previewData.first_name} {previewData.last_name}</h5>
                     <p className="text-white-50 mb-4">
