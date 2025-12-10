@@ -527,6 +527,20 @@ const Wizard = () => {
                         <div className="card p-4">
                             <h4 className="mb-4">Step 5: Customization</h4>
                             
+                            {/* Disclosure Notice */}
+                            <div className="alert alert-danger d-flex align-items-center mb-4" role="alert" style={{
+                                borderLeft: '4px solid #dc3545',
+                                backgroundColor: '#fff5f5',
+                                borderColor: '#dc3545',
+                                borderRadius: '4px'
+                            }}>
+                                <i className="bi bi-exclamation-triangle-fill me-2" style={{ fontSize: '1.2rem', color: '#dc3545' }}></i>
+                                <div>
+                                    <strong className="d-block mb-1">Important Notice:</strong>
+                                    <span>This is temporary Customization only. Hundreds of templates and full customization available after account creation</span>
+                                </div>
+                            </div>
+                            
                             <label className="form-label">Template Style</label>
                             <div className="mb-3">
                                 <div className="row g-3">
