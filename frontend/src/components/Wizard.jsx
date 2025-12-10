@@ -57,11 +57,11 @@ const Wizard = () => {
     const TOTAL_STEPS = 5;
 
     const stepConfig = [
-        { number: 1, name: 'Identity', time: '30sec' },
-        { number: 2, name: 'Election Details', time: '30sec' },
-        { number: 3, name: 'Bio Setup', time: '30sec' },
-        { number: 4, name: 'Platform', time: '30sec' },
-        { number: 5, name: 'Customization', time: '30sec' },
+        { number: 1, name: 'Identity', time: '30 sec' },
+        { number: 2, name: 'Election Details', time: '30 sec' },
+        { number: 3, name: 'Bio Setup', time: '30 sec' },
+        { number: 4, name: 'Platform', time: '30 sec' },
+        { number: 5, name: 'Customization', time: '30 sec' },
     ];
 
     // Fetch pillar descriptions on mount
@@ -326,7 +326,7 @@ const Wizard = () => {
                                 className={`text-center ${idx + 1 <= step ? 'text-primary fw-bold' : 'text-muted'}`}
                                 style={{ flex: 1 }}
                             >
-                                <small>{config.number}of{TOTAL_STEPS}</small><br />
+                                <small>{config.number} of {TOTAL_STEPS}</small><br />
                                 <small style={{ fontSize: '0.7rem' }}>{config.name}</small>
                             </div>
                         ))}
