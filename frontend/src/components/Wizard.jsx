@@ -540,7 +540,7 @@ const Wizard = () => {
                                                 <h5 className="card-title">Modern</h5>
                                                 <p className="card-text small text-muted">Clean, contemporary design with smooth gradients</p>
                                                 <Link 
-                                                    to="/preview/modern" 
+                                                    to={`/preview/modern?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
                                                     target="_blank"
                                                     className="btn btn-sm btn-outline-primary"
                                                     onClick={(e) => e.stopPropagation()}
@@ -560,7 +560,7 @@ const Wizard = () => {
                                                 <h5 className="card-title">Traditional</h5>
                                                 <p className="card-text small text-muted">Classic, professional layout with serif typography</p>
                                                 <Link 
-                                                    to="/preview/traditional" 
+                                                    to={`/preview/traditional?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
                                                     target="_blank"
                                                     className="btn btn-sm btn-outline-primary"
                                                     onClick={(e) => e.stopPropagation()}
@@ -580,7 +580,7 @@ const Wizard = () => {
                                                 <h5 className="card-title">Bold</h5>
                                                 <p className="card-text small text-muted">Striking, high-impact design with bold typography</p>
                                                 <Link 
-                                                    to="/preview/bold" 
+                                                    to={`/preview/bold?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
                                                     target="_blank"
                                                     className="btn btn-sm btn-outline-primary"
                                                     onClick={(e) => e.stopPropagation()}
@@ -602,13 +602,23 @@ const Wizard = () => {
                                 <div className="row mb-4">
                                     <div className="col-md-6">
                                         <label className="form-label">Primary Color</label>
-                                        <input 
-                                            type="color" 
-                                            className="form-control form-control-color mb-2" 
-                                            name="primary_color" 
-                                            value={formData.primary_color} 
-                                            onChange={handleChange} 
-                                        />
+                                        <div className="d-flex gap-2 align-items-end">
+                                            <input 
+                                                type="color" 
+                                                className="form-control form-control-color mb-2" 
+                                                name="primary_color" 
+                                                value={formData.primary_color} 
+                                                onChange={handleChange} 
+                                                style={{ flex: 1 }}
+                                            />
+                                            <Link
+                                                to={`/preview/${formData.template_style}?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
+                                                target="_blank"
+                                                className="btn btn-sm btn-outline-primary mb-2"
+                                            >
+                                                Preview
+                                            </Link>
+                                        </div>
                                         <small className="text-muted">Used for main buttons, headers, and accents</small>
                                     </div>
                                     <div className="col-md-6">

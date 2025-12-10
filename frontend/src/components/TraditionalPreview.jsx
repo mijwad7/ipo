@@ -1,8 +1,13 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const TraditionalPreview = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    // Get colors from URL parameters, fallback to defaults
+    const primaryColor = searchParams.get('primary') || '#6c757d';
+    const secondaryColor = searchParams.get('secondary') || '#495057';
 
     // Placeholder data for preview
     const previewData = {
@@ -18,8 +23,8 @@ const TraditionalPreview = () => {
     };
 
     const styles = {
-        '--primary': '#6c757d',
-        '--secondary': '#495057',
+        '--primary': primaryColor,
+        '--secondary': secondaryColor,
     };
 
     return (

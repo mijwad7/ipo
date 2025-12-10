@@ -1,8 +1,13 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const BoldPreview = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    // Get colors from URL parameters, fallback to defaults
+    const primaryColor = searchParams.get('primary') || '#dc3545';
+    const secondaryColor = searchParams.get('secondary') || '#000000';
 
     // Placeholder data for preview
     const previewData = {
@@ -18,8 +23,8 @@ const BoldPreview = () => {
     };
 
     const styles = {
-        '--primary': '#dc3545',
-        '--secondary': '#000000',
+        '--primary': primaryColor,
+        '--secondary': secondaryColor,
     };
 
     return (
