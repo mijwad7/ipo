@@ -1,7 +1,7 @@
 import React from 'react';
 import WizardNavigationButtons from './WizardNavigationButtons';
 
-const Step2Election = ({ formData, handleChange, electionDateError, setStep, onNext }) => {
+const Step2Election = ({ formData, handleChange, electionDateError, setStep, onNext, alert, setAlert }) => {
     const inputStyle = {
         borderRadius: '10px',
         border: '2px solid #e2e8f0',
@@ -38,6 +38,18 @@ const Step2Election = ({ formData, handleChange, electionDateError, setStep, onN
             />
             {electionDateError && (
                 <div className="text-danger small mb-3">{electionDateError}</div>
+            )}
+            {alert.show && (
+                <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
+                    <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
+                    {alert.message}
+                    <button 
+                        type="button" 
+                        className="btn-close" 
+                        onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
+                        aria-label="Close"
+                    ></button>
+                </div>
             )}
             <WizardNavigationButtons 
                 onBack={() => setStep(1)} 

@@ -12,7 +12,16 @@ const SuccessPage = () => {
 
     const showAlert = (message, type = 'danger') => {
         setAlert({ show: true, message, type });
-        setTimeout(() => setAlert({ show: false, message: '', type: 'danger' }), 5000);
+        setTimeout(() => {
+            setAlert({ show: false, message: '', type: 'danger' });
+        }, 5000);
+        // Scroll to alert after a brief delay to ensure it's rendered
+        setTimeout(() => {
+            const alertElement = document.querySelector('.alert.show');
+            if (alertElement) {
+                alertElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }, 100);
     };
 
     if (!submission) return <div className="container mt-5">No submission data found.</div>;
@@ -74,18 +83,6 @@ const SuccessPage = () => {
             padding: '2rem 0'
         }}>
             <div className="container" style={{ maxWidth: '800px' }}>
-                {alert.show && (
-                    <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
-                        <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
-                        {alert.message}
-                        <button 
-                            type="button" 
-                            className="btn-close" 
-                            onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
-                            aria-label="Close"
-                        ></button>
-                    </div>
-                )}
                 <div className="card p-5 shadow-lg border-0" style={{ borderRadius: '16px', background: '#ffffff' }}>
                 {/* Success Header with Speed Messaging */}
                 <div className="text-center mb-4">
@@ -255,6 +252,18 @@ const SuccessPage = () => {
                                 {copied ? '✓ Copied!' : 'Copy Link'}
                             </button>
                         </div>
+                        {alert.show && (
+                            <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mt-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
+                                <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
+                                {alert.message}
+                                <button 
+                                    type="button" 
+                                    className="btn-close" 
+                                    onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -321,6 +330,19 @@ const SuccessPage = () => {
                             ></textarea>
                             <small className="text-muted">The [link] placeholder will be automatically replaced with your campaign URL when sending</small>
                         </div>
+
+                        {alert.show && (
+                            <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
+                                <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
+                                {alert.message}
+                                <button 
+                                    type="button" 
+                                    className="btn-close" 
+                                    onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                        )}
 
                         <div className="d-flex gap-2 flex-wrap">
                             <button 

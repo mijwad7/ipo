@@ -66,7 +66,16 @@ const Wizard = () => {
 
     const showAlert = (message, type = 'danger') => {
         setAlert({ show: true, message, type });
-        setTimeout(() => setAlert({ show: false, message: '', type: 'danger' }), 5000);
+        setTimeout(() => {
+            setAlert({ show: false, message: '', type: 'danger' });
+        }, 5000);
+        // Scroll to alert after a brief delay to ensure it's rendered
+        setTimeout(() => {
+            const alertElement = document.querySelector('.alert.show');
+            if (alertElement) {
+                alertElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }, 100);
     };
 
     const TOTAL_STEPS = 5;
@@ -268,18 +277,6 @@ const Wizard = () => {
             padding: '2rem 0'
         }}>
             <div className="container" style={{ maxWidth: '700px' }}>
-                {alert.show && (
-                    <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
-                        <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
-                        {alert.message}
-                        <button 
-                            type="button" 
-                            className="btn-close" 
-                            onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
-                            aria-label="Close"
-                        ></button>
-                    </div>
-                )}
                 <div className="text-center mb-4">
                     <h2 className="mb-2" style={{ 
                         color: '#ffffff', 
@@ -320,6 +317,8 @@ const Wizard = () => {
                                 showAlert={showAlert}
                                 setFormData={setFormData}
                                 setStep={setStep}
+                                alert={alert}
+                                setAlert={setAlert}
                             />
                         )}
 
@@ -330,6 +329,8 @@ const Wizard = () => {
                                 electionDateError={electionDateError}
                                 setStep={setStep}
                                 onNext={handleNext}
+                                alert={alert}
+                                setAlert={setAlert}
                             />
                         )}
 
@@ -340,6 +341,8 @@ const Wizard = () => {
                                 handleImageUpload={handleImageUpload}
                                 setStep={setStep}
                                 onNext={handleNext}
+                                alert={alert}
+                                setAlert={setAlert}
                             />
                         )}
 
@@ -353,6 +356,8 @@ const Wizard = () => {
                                 setFormData={setFormData}
                                 setStep={setStep}
                                 onNext={handleNext}
+                                alert={alert}
+                                setAlert={setAlert}
                             />
                         )}
 
@@ -366,6 +371,8 @@ const Wizard = () => {
                                 setFormData={setFormData}
                                 setStep={setStep}
                                 onSubmit={handleSubmit}
+                                alert={alert}
+                                setAlert={setAlert}
                             />
                         )}
                     </>

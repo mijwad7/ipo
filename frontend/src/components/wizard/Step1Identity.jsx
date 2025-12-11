@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert, setFormData, setStep }) => {
+const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert, setFormData, setStep, alert, setAlert }) => {
     const sendOtp = async () => {
         try {
             await axios.post('/api/otp/send/', { phone: formData.phone });
@@ -116,6 +116,18 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                     <small className="text-muted d-block mb-3">
                         Please enter the One Time Password (OTP) code sent to your mobile phone.
                     </small>
+                    {alert.show && (
+                        <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
+                            <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
+                            {alert.message}
+                            <button 
+                                type="button" 
+                                className="btn-close" 
+                                onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                    )}
                     <button 
                         className="btn" 
                         onClick={verifyOtp}
@@ -126,6 +138,18 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                         Verify OTP
                     </button>
                 </>
+            )}
+            {alert.show && !otpSent && (
+                <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mt-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
+                    <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
+                    {alert.message}
+                    <button 
+                        type="button" 
+                        className="btn-close" 
+                        onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
+                        aria-label="Close"
+                    ></button>
+                </div>
             )}
         </div>
     );
