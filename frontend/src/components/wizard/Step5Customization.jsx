@@ -163,7 +163,7 @@ const Step5Customization = ({
                         }}
                     >
                         <img 
-                            src={`/template-${hoveredTemplate || formData.template_style}-preview.png`}
+                            src={`/static/template-${hoveredTemplate || formData.template_style}-preview.png`}
                             alt={`${hoveredTemplate || formData.template_style} template preview`}
                             className="img-fluid w-100"
                             style={{ 
