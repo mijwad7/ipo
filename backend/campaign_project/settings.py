@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
-SECRET_KEY = "django-insecure-%=!byno)9jovj+k5gd(k+t3@3_aqbw!^48j!vcoagd8)3&cmh1"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret")
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -61,15 +61,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "campaign_project.wsgi.application"
 
+TEMPLATES[0]["DIRS"] = [BASE_DIR / "frontend_dist"]
 
 # Database
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("PGDATABASE", ""),
+        "USER": os.environ.get("PGUSER", ""),
+        "PASSWORD": os.environ.get("PGPASSWORD", ""),
+        "HOST": os.environ.get("PGHOST", ""),
+        "PORT": os.environ.get("PGPORT", "5432"),
     }
 }
-
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -97,6 +109,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = True
