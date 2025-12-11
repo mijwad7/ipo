@@ -7,6 +7,7 @@ const Wizard = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState({ show: false, message: '', type: 'danger' });
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -56,6 +57,11 @@ const Wizard = () => {
     const [customSlugError, setCustomSlugError] = useState('');
     const [customPillarMode, setCustomPillarMode] = useState({ 1: false, 2: false, 3: false });
     const [hoveredTemplate, setHoveredTemplate] = useState(null);
+
+    const showAlert = (message, type = 'danger') => {
+        setAlert({ show: true, message, type });
+        setTimeout(() => setAlert({ show: false, message: '', type: 'danger' }), 5000);
+    };
 
     const TOTAL_STEPS = 5;
 
@@ -151,7 +157,7 @@ const Wizard = () => {
                 setFormData(prev => ({ ...prev, [fieldName]: finalFile }));
             } catch (error) {
                 console.log(error);
-                alert('Image compression failed');
+                showAlert('Image compression failed. Please try again with a different image.', 'danger');
             }
         }
     };
@@ -195,9 +201,9 @@ const Wizard = () => {
         try {
             await axios.post('/api/otp/send/', { phone: formData.phone });
             setOtpSent(true);
-            alert('OTP Sent (Check Console for Stub)');
+            showAlert('OTP Sent', 'success');
         } catch (error) {
-            alert('Failed to send OTP');
+            showAlert('Failed to send OTP. Please try again.', 'danger');
         }
     };
 
@@ -207,21 +213,22 @@ const Wizard = () => {
             if (res.data.verified) {
                 setFormData(prev => ({ ...prev, otp_verified: true }));
                 setStep(2);
+                showAlert('Phone number verified successfully!', 'success');
             }
         } catch (error) {
-            alert('Invalid Code');
+            showAlert('Invalid OTP code. Please try again.', 'danger');
         }
     };
 
     const handleNext = () => {
         // Basic validation before moving to next step
         if (step === 1 && !formData.otp_verified) {
-            alert('Please verify your phone number first');
+            showAlert('Please verify your phone number first', 'warning');
             return;
         }
         if (step === 2) {
             if (!formData.riding_zone_name || !formData.election_date) {
-                alert('Please fill in all election details');
+                showAlert('Please fill in all election details', 'warning');
                 return;
             }
             // Validate election date is in the future
@@ -231,24 +238,24 @@ const Wizard = () => {
                 today.setHours(0, 0, 0, 0);
                 if (selectedDate <= today) {
                     setElectionDateError('Election date must be in the future');
-                    alert('Election date must be in the future');
+                    showAlert('Election date must be in the future', 'warning');
                     return;
                 }
             }
         }
         if (step === 3 && (!formData.headshot || !formData.bio_text)) {
-            alert('Please upload a headshot and provide a bio');
+            showAlert('Please upload a headshot and provide a bio', 'warning');
             return;
         }
         if (step === 4 && (!formData.pillar_1 || !formData.pillar_2 || !formData.pillar_3)) {
-            alert('Please select all 3 pillars');
+            showAlert('Please select all 3 pillars', 'warning');
             return;
         }
         if (step === 5) {
             // Validate custom_slug format before submission
             if (formData.custom_slug && !/^[a-z0-9]+$/.test(formData.custom_slug)) {
                 setCustomSlugError('Only letters and numbers allowed (no spaces, hyphens, or special characters)');
-                alert('Please fix the custom URL format. Only letters and numbers are allowed.');
+                showAlert('Please fix the custom URL format. Only letters and numbers are allowed.', 'warning');
                 return;
             }
         }
@@ -278,7 +285,12 @@ const Wizard = () => {
             navigate('/success', { state: { submission: res.data } });
         } catch (error) {
             setLoading(false);
-            alert('Submission Failed: ' + JSON.stringify(error.response?.data || error.message));
+            const errorMessage = error.response?.data 
+                ? (typeof error.response.data === 'string' 
+                    ? error.response.data 
+                    : JSON.stringify(error.response.data))
+                : error.message;
+            showAlert(`Submission Failed: ${errorMessage}`, 'danger');
         }
     };
 
@@ -292,28 +304,72 @@ const Wizard = () => {
     const progressPercentage = (step / TOTAL_STEPS) * 100;
 
     return (
-        <div className="container mt-5" style={{ maxWidth: '700px' }}>
-            <h2 className="mb-4 text-center">Build Your Campaign HQ</h2>
+        <div style={{ 
+            minHeight: '100vh', 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            padding: '2rem 0'
+        }}>
+            <div className="container" style={{ maxWidth: '700px' }}>
+                {alert.show && (
+                    <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
+                        <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
+                        {alert.message}
+                        <button 
+                            type="button" 
+                            className="btn-close" 
+                            onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                )}
+                <div className="text-center mb-4">
+                    <h2 className="mb-2" style={{ 
+                        color: '#ffffff', 
+                        fontWeight: '700',
+                        textShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                        fontSize: '2.5rem'
+                    }}>
+                        Build Your Campaign HQ
+                    </h2>
+                    <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.1rem' }}>
+                        Create your professional campaign site in minutes
+                    </p>
+                </div>
             
             {/* Enhanced Progress Bar */}
-            <div className="card mb-4 border-0 shadow-sm">
-                <div className="card-body p-3">
-                    <div className="d-flex justify-content-between align-items-center mb-2">
+            <div className="card mb-4 border-0 shadow-lg" style={{ borderRadius: '16px', overflow: 'hidden' }}>
+                <div className="card-body p-4" style={{ background: '#ffffff' }}>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
                         <div>
-                            <h5 className="mb-0">
+                            <h5 className="mb-1" style={{ color: '#2d3748', fontWeight: '600' }}>
                                 Step {step} of {TOTAL_STEPS} - {currentStepConfig.name}
                             </h5>
-                            <small className="text-muted">~{currentStepConfig.time}</small>
+                            <small style={{ color: '#718096' }}>~{currentStepConfig.time}</small>
                         </div>
                         <div className="text-end">
-                            <small className="text-muted">Build your campaign in under 3 minutes - 1 minute per page</small>
+                            <small style={{ color: '#718096' }}>Build your campaign in under 3 minutes</small>
                         </div>
                     </div>
-                    <div className="progress" style={{ height: '25px' }}>
+                    <div className="progress mb-3" style={{ 
+                        height: '30px', 
+                        borderRadius: '15px',
+                        backgroundColor: '#e2e8f0',
+                        overflow: 'hidden'
+                    }}>
                         <div 
-                            className="progress-bar bg-primary" 
+                            className="progress-bar" 
                             role="progressbar" 
-                            style={{ width: `${progressPercentage}%` }}
+                            style={{ 
+                                width: `${progressPercentage}%`,
+                                background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                                transition: 'width 0.5s ease',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: '600',
+                                color: '#ffffff',
+                                fontSize: '0.9rem'
+                            }}
                             aria-valuenow={progressPercentage} 
                             aria-valuemin="0" 
                             aria-valuemax="100"
@@ -326,38 +382,83 @@ const Wizard = () => {
                         {stepConfig.map((config, idx) => (
                             <div 
                                 key={config.number} 
-                                className={`text-center ${idx + 1 <= step ? 'text-primary fw-bold' : 'text-muted'}`}
+                                className="text-center"
                                 style={{ flex: 1 }}
                             >
-                                <small>{config.number} of {TOTAL_STEPS}</small><br />
-                                <small style={{ fontSize: '0.7rem' }}>{config.name}</small>
+                                <div style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    borderRadius: '50%',
+                                    background: idx + 1 <= step 
+                                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                                        : '#e2e8f0',
+                                    color: idx + 1 <= step ? '#ffffff' : '#a0aec0',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontWeight: '600',
+                                    fontSize: '0.85rem',
+                                    marginBottom: '0.5rem',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    {idx + 1 <= step ? '✓' : config.number}
+                                </div>
+                                <div style={{ 
+                                    fontSize: '0.75rem',
+                                    color: idx + 1 <= step ? '#667eea' : '#a0aec0',
+                                    fontWeight: idx + 1 <= step ? '600' : '400'
+                                }}>
+                                    {config.name}
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
 
-            {loading && <div className="text-center"><h3>Building your HQ...</h3></div>}
+            {loading && (
+                <div className="card border-0 shadow-lg text-center p-5" style={{ borderRadius: '16px', background: '#ffffff' }}>
+                    <div className="spinner-border text-primary mb-3" role="status" style={{ width: '3rem', height: '3rem' }}>
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                    <h3 style={{ color: '#2d3748', fontWeight: '600' }}>Building your HQ...</h3>
+                </div>
+            )}
 
             {!loading && (
                 <>
                     {/* Step 1: Identity */}
                     {step === 1 && (
-                        <div className="card p-4">
-                            <h4 className="mb-4">Step 1: Identity</h4>
+                        <div className="card p-4 border-0 shadow-lg" style={{ borderRadius: '16px', background: '#ffffff' }}>
+                            <h4 className="mb-4" style={{ color: '#2d3748', fontWeight: '600' }}>
+                                <i className="bi bi-person-badge me-2" style={{ color: '#667eea' }}></i>
+                                Step 1: Identity
+                            </h4>
                             <input 
                                 name="first_name" 
                                 className="form-control mb-3" 
                                 placeholder="First Name" 
                                 value={formData.first_name}
-                                onChange={handleChange} 
+                                onChange={handleChange}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                             />
                             <input 
                                 name="last_name" 
                                 className="form-control mb-3" 
                                 placeholder="Last Name" 
                                 value={formData.last_name}
-                                onChange={handleChange} 
+                                onChange={handleChange}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                             />
                             <input 
                                 name="email" 
@@ -365,7 +466,13 @@ const Wizard = () => {
                                 placeholder="Email" 
                                 type="email" 
                                 value={formData.email}
-                                onChange={handleChange} 
+                                onChange={handleChange}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                             />
                             <div className="d-flex gap-2 mb-3">
                                 <input 
@@ -373,9 +480,37 @@ const Wizard = () => {
                                     className="form-control" 
                                     placeholder="Mobile Phone" 
                                     value={formData.phone}
-                                    onChange={handleChange} 
+                                    onChange={handleChange}
+                                    style={{ 
+                                        borderRadius: '10px',
+                                        border: '2px solid #e2e8f0',
+                                        padding: '0.75rem 1rem',
+                                        fontSize: '1rem'
+                                    }}
                                 />
-                                <button className="btn btn-secondary" onClick={sendOtp}>Send OTP</button>
+                                <button 
+                                    className="btn" 
+                                    onClick={sendOtp}
+                                    style={{
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        border: 'none',
+                                        color: '#ffffff',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 1.5rem',
+                                        transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    Send OTP
+                                </button>
                             </div>
                             {otpSent && (
                                 <>
@@ -385,12 +520,40 @@ const Wizard = () => {
                                         className="form-control mb-3" 
                                         placeholder="Enter One Time Password (OTP)" 
                                         value={formData.otp_code}
-                                        onChange={handleChange} 
+                                        onChange={handleChange}
+                                        style={{ 
+                                            borderRadius: '10px',
+                                            border: '2px solid #e2e8f0',
+                                            padding: '0.75rem 1rem',
+                                            fontSize: '1rem'
+                                        }}
                                     />
                                     <small className="text-muted d-block mb-3">
                                         Please enter the One Time Password (OTP) code sent to your mobile phone.
                                     </small>
-                                    <button className="btn btn-primary" onClick={verifyOtp}>Verify OTP</button>
+                                    <button 
+                                        className="btn" 
+                                        onClick={verifyOtp}
+                                        style={{
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                            border: 'none',
+                                            color: '#ffffff',
+                                            fontWeight: '600',
+                                            borderRadius: '10px',
+                                            padding: '0.75rem 2rem',
+                                            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.transform = 'translateY(-2px)';
+                                            e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.transform = 'translateY(0)';
+                                            e.target.style.boxShadow = 'none';
+                                        }}
+                                    >
+                                        Verify OTP
+                                    </button>
                                 </>
                             )}
                         </div>
@@ -398,18 +561,27 @@ const Wizard = () => {
 
                     {/* Step 2: Election Details */}
                     {step === 2 && (
-                        <div className="card p-4">
-                            <h4 className="mb-4">Step 2: Election Details</h4>
-                            <label className="form-label">Riding / Zone Name</label>
+                        <div className="card p-4 border-0 shadow-lg" style={{ borderRadius: '16px', background: '#ffffff' }}>
+                            <h4 className="mb-4" style={{ color: '#2d3748', fontWeight: '600' }}>
+                                <i className="bi bi-calendar-check me-2" style={{ color: '#667eea' }}></i>
+                                Step 2: Election Details
+                            </h4>
+                            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Riding / Zone Name</label>
                             <input 
                                 name="riding_zone_name" 
                                 className="form-control mb-3" 
                                 placeholder="e.g., District 5, Ward 3" 
                                 value={formData.riding_zone_name}
-                                onChange={handleChange} 
+                                onChange={handleChange}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                                 required
                             />
-                            <label className="form-label">Election Date</label>
+                            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Election Date</label>
                             <input 
                                 name="election_date" 
                                 type="date" 
@@ -417,24 +589,70 @@ const Wizard = () => {
                                 value={formData.election_date}
                                 onChange={handleChange}
                                 min={new Date().toISOString().split('T')[0]}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                                 required
                             />
                             {electionDateError && (
                                 <div className="text-danger small mb-3">{electionDateError}</div>
                             )}
-                            <div className="d-flex gap-2">
-                                <button className="btn btn-secondary" onClick={() => setStep(1)}>Back</button>
-                                <button className="btn btn-primary" onClick={handleNext}>Next</button>
+                            <div className="d-flex gap-2 mt-4">
+                                <button 
+                                    className="btn" 
+                                    onClick={() => setStep(1)}
+                                    style={{
+                                        background: '#e2e8f0',
+                                        border: 'none',
+                                        color: '#4a5568',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 2rem',
+                                        flex: 1
+                                    }}
+                                >
+                                    Back
+                                </button>
+                                <button 
+                                    className="btn" 
+                                    onClick={handleNext}
+                                    style={{
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        border: 'none',
+                                        color: '#ffffff',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 2rem',
+                                        flex: 1,
+                                        transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    Next
+                                </button>
                             </div>
                         </div>
                     )}
 
                     {/* Step 3: Bio Setup */}
                     {step === 3 && (
-                        <div className="card p-4">
-                            <h4 className="mb-4">Step 3: Bio Setup</h4>
+                        <div className="card p-4 border-0 shadow-lg" style={{ borderRadius: '16px', background: '#ffffff' }}>
+                            <h4 className="mb-4" style={{ color: '#2d3748', fontWeight: '600' }}>
+                                <i className="bi bi-file-person me-2" style={{ color: '#667eea' }}></i>
+                                Step 3: Bio Setup
+                            </h4>
                             
-                            <label className="form-label">Position Running For</label>
+                            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Position Running For</label>
                             <input 
                                 type="text" 
                                 name="position_running_for" 
@@ -442,10 +660,16 @@ const Wizard = () => {
                                 placeholder="e.g., Jeff for Mayor, Jeff for Leadership" 
                                 value={formData.position_running_for}
                                 onChange={handleChange}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                             />
                             <small className="text-muted d-block mb-3">Enter the position you are running for</small>
                             
-                            <label className="form-label">Tag Line</label>
+                            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Tag Line</label>
                             <input 
                                 type="text" 
                                 name="tag_line" 
@@ -453,21 +677,33 @@ const Wizard = () => {
                                 placeholder="e.g., Family Faith Freedom, Vote for Leadership" 
                                 value={formData.tag_line}
                                 onChange={handleChange}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                             />
                             <small className="text-muted d-block mb-3">Enter your campaign tag line</small>
                             
-                            <label className="form-label">Headshot (Required)</label>
+                            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Headshot (Required)</label>
                             <input 
                                 type="file" 
                                 className="form-control mb-3" 
                                 accept="image/*" 
-                                onChange={(e) => handleImageUpload(e, 'headshot')} 
+                                onChange={(e) => handleImageUpload(e, 'headshot')}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                                 required
                             />
                             {formData.headshot && (
                                 <div className="text-success small mb-3">✓ Image selected: {formData.headshot.name}</div>
                             )}
-                            <label className="form-label">Bio</label>
+                            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Bio</label>
                             <textarea 
                                 name="bio_text" 
                                 className="form-control mb-3" 
@@ -475,37 +711,93 @@ const Wizard = () => {
                                 rows="5"
                                 value={formData.bio_text}
                                 onChange={handleChange}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                                 required
                             ></textarea>
-                            <div className="d-flex gap-2">
-                                <button className="btn btn-secondary" onClick={() => setStep(2)}>Back</button>
-                                <button className="btn btn-primary" onClick={handleNext}>Next</button>
+                            <div className="d-flex gap-2 mt-4">
+                                <button 
+                                    className="btn" 
+                                    onClick={() => setStep(2)}
+                                    style={{
+                                        background: '#e2e8f0',
+                                        border: 'none',
+                                        color: '#4a5568',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 2rem',
+                                        flex: 1
+                                    }}
+                                >
+                                    Back
+                                </button>
+                                <button 
+                                    className="btn" 
+                                    onClick={handleNext}
+                                    style={{
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        border: 'none',
+                                        color: '#ffffff',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 2rem',
+                                        flex: 1,
+                                        transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    Next
+                                </button>
                             </div>
                         </div>
                     )}
 
                     {/* Step 4: Platform */}
                     {step === 4 && (
-                        <div className="card p-4">
-                            <h4 className="mb-4">Step 4: Platform</h4>
-                            <p>Select your top 3 priorities</p>
+                        <div className="card p-4 border-0 shadow-lg" style={{ borderRadius: '16px', background: '#ffffff' }}>
+                            <h4 className="mb-4" style={{ color: '#2d3748', fontWeight: '600' }}>
+                                <i className="bi bi-bullseye me-2" style={{ color: '#667eea' }}></i>
+                                Step 4: Platform
+                            </h4>
+                            <p style={{ color: '#718096' }}>Select your top 3 priorities</p>
                             {[1, 2, 3].map(i => (
-                                <div key={i} className="mb-4 border p-3 rounded">
-                                    <h5 className="mb-3">Pillar {i}</h5>
+                                <div key={i} className="mb-4 p-4 rounded" style={{ 
+                                    border: '2px solid #e2e8f0',
+                                    borderRadius: '12px',
+                                    background: '#f7fafc'
+                                }}>
+                                    <h5 className="mb-3" style={{ color: '#2d3748', fontWeight: '600' }}>Pillar {i}</h5>
 
-                                    <label className="form-label">Topic</label>
+                                    <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Topic</label>
                                     <select 
-                                        className="form-control mb-2" 
+                                        className="form-control mb-3" 
                                         name={`pillar_${i}`} 
                                         onChange={(e) => handlePillarChange(e, i)} 
                                         value={customPillarMode[i] ? 'Custom' : (formData[`pillar_${i}`] || '')}
+                                        style={{ 
+                                            borderRadius: '10px',
+                                            border: '2px solid #e2e8f0',
+                                            padding: '0.75rem 1rem',
+                                            fontSize: '1rem'
+                                        }}
                                     >
                                         <option value="">Select...</option>
                                         {PILLAR_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                                     </select>
                                     {customPillarMode[i] && (
                                         <input 
-                                            className="form-control mb-2" 
+                                            className="form-control mb-3" 
                                             placeholder="Type custom pillar title" 
                                             name={`pillar_${i}_custom`} 
                                             value={formData[`pillar_${i}`] || ''}
@@ -515,55 +807,114 @@ const Wizard = () => {
                                                     ...prev,
                                                     [`pillar_${i}`]: e.target.value
                                                 }));
-                                            }} 
+                                            }}
+                                            style={{ 
+                                                borderRadius: '10px',
+                                                border: '2px solid #e2e8f0',
+                                                padding: '0.75rem 1rem',
+                                                fontSize: '1rem'
+                                            }}
                                         />
                                     )}
 
-                                    <label className="form-label">Description</label>
+                                    <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Description</label>
                                     <textarea
-                                        className="form-control mb-2"
+                                        className="form-control mb-3"
                                         name={`pillar_${i}_desc`}
                                         placeholder={`Explain your stance on ${formData[`pillar_${i}`] || 'this topic'}...`}
                                         rows="4"
                                         onChange={handleChange}
                                         value={formData[`pillar_${i}_desc`]}
+                                        style={{ 
+                                            borderRadius: '10px',
+                                            border: '2px solid #e2e8f0',
+                                            padding: '0.75rem 1rem',
+                                            fontSize: '1rem'
+                                        }}
                                     ></textarea>
 
-                                    <label className="form-label">Action Shot (Optional)</label>
+                                    <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Action Shot (Optional)</label>
                                     <input
                                         type="file"
                                         className="form-control"
                                         accept="image/*"
                                         onChange={(e) => handleImageUpload(e, `action_shot_${i}`)}
+                                        style={{ 
+                                            borderRadius: '10px',
+                                            border: '2px solid #e2e8f0',
+                                            padding: '0.75rem 1rem',
+                                            fontSize: '1rem'
+                                        }}
                                     />
                                     {formData[`action_shot_${i}`] && (
                                         <div className="text-success small mt-1">✓ Image selected</div>
                                     )}
                                 </div>
                             ))}
-                            <div className="d-flex gap-2">
-                                <button className="btn btn-secondary" onClick={() => setStep(3)}>Back</button>
-                                <button className="btn btn-primary" onClick={handleNext}>Next</button>
+                            <div className="d-flex gap-2 mt-4">
+                                <button 
+                                    className="btn" 
+                                    onClick={() => setStep(3)}
+                                    style={{
+                                        background: '#e2e8f0',
+                                        border: 'none',
+                                        color: '#4a5568',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 2rem',
+                                        flex: 1
+                                    }}
+                                >
+                                    Back
+                                </button>
+                                <button 
+                                    className="btn" 
+                                    onClick={handleNext}
+                                    style={{
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        border: 'none',
+                                        color: '#ffffff',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 2rem',
+                                        flex: 1,
+                                        transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    Next
+                                </button>
                             </div>
                         </div>
                     )}
 
                     {/* Step 5: Customization */}
                     {step === 5 && (
-                        <div className="card p-4">
-                            <h4 className="mb-4">Step 5: Customization</h4>
+                        <div className="card p-4 border-0 shadow-lg" style={{ borderRadius: '16px', background: '#ffffff' }}>
+                            <h4 className="mb-4" style={{ color: '#2d3748', fontWeight: '600' }}>
+                                <i className="bi bi-palette me-2" style={{ color: '#667eea' }}></i>
+                                Step 5: Customization
+                            </h4>
                             
                             {/* Disclosure Notice */}
-                            <div className="alert alert-danger d-flex align-items-center mb-4" role="alert" style={{
-                                borderLeft: '4px solid #dc3545',
-                                backgroundColor: '#fff5f5',
-                                borderColor: '#dc3545',
-                                borderRadius: '4px'
+                            <div className="alert d-flex align-items-center mb-4" role="alert" style={{
+                                borderLeft: '4px solid #f59e0b',
+                                backgroundColor: '#fffbeb',
+                                borderColor: '#f59e0b',
+                                borderRadius: '12px',
+                                border: '2px solid #fde68a'
                             }}>
-                                <i className="bi bi-exclamation-triangle-fill me-2" style={{ fontSize: '1.2rem', color: '#dc3545' }}></i>
+                                <i className="bi bi-exclamation-triangle-fill me-2" style={{ fontSize: '1.2rem', color: '#f59e0b' }}></i>
                                 <div>
-                                    <strong className="d-block mb-1">Important Notice:</strong>
-                                    <span>This is temporary Customization only. Hundreds of templates and full customization available after account creation</span>
+                                    <strong className="d-block mb-1" style={{ color: '#92400e' }}>Important Notice:</strong>
+                                    <span style={{ color: '#78350f' }}>This is temporary Customization only. Hundreds of templates and full customization available after account creation</span>
                                 </div>
                             </div>
                             
@@ -576,10 +927,15 @@ const Wizard = () => {
                                     {/* Template Selection Cards - Stacked Vertically */}
                                     <div className="mb-4">
                                         <div 
-                                            className={`card mb-3 ${formData.template_style === 'modern' ? 'border-primary border-2 shadow-sm' : 'border'} ${hoveredTemplate === 'modern' ? 'border-info' : ''}`}
+                                            className="card mb-3 border-0"
                                             style={{ 
                                                 cursor: 'pointer',
-                                                transition: 'all 0.2s ease'
+                                                transition: 'all 0.3s ease',
+                                                borderRadius: '12px',
+                                                border: formData.template_style === 'modern' ? '3px solid #667eea' : '2px solid #e2e8f0',
+                                                background: formData.template_style === 'modern' ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : '#ffffff',
+                                                boxShadow: formData.template_style === 'modern' ? '0 4px 12px rgba(102, 126, 234, 0.2)' : '0 2px 4px rgba(0,0,0,0.1)',
+                                                transform: hoveredTemplate === 'modern' ? 'translateY(-2px)' : 'translateY(0)'
                                             }}
                                             onMouseEnter={() => setHoveredTemplate('modern')}
                                             onMouseLeave={() => setHoveredTemplate(null)}
@@ -588,21 +944,26 @@ const Wizard = () => {
                                             <div className="card-body">
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div>
-                                                        <h5 className="card-title mb-1">Modern</h5>
-                                                        <p className="card-text small text-muted mb-0">Clean, contemporary design</p>
+                                                        <h5 className="card-title mb-1" style={{ color: '#2d3748', fontWeight: '600' }}>Modern</h5>
+                                                        <p className="card-text small mb-0" style={{ color: '#718096' }}>Clean, contemporary design</p>
                                                     </div>
                                                     {formData.template_style === 'modern' && (
-                                                        <i className="bi bi-check-circle-fill text-primary" style={{ fontSize: '1.5rem' }}></i>
+                                                        <i className="bi bi-check-circle-fill" style={{ fontSize: '1.5rem', color: '#667eea' }}></i>
                                                     )}
                                                 </div>
                                             </div>
                                         </div>
                                         
                                         <div 
-                                            className={`card mb-3 ${formData.template_style === 'traditional' ? 'border-primary border-2 shadow-sm' : 'border'} ${hoveredTemplate === 'traditional' ? 'border-info' : ''}`}
+                                            className="card mb-3 border-0"
                                             style={{ 
                                                 cursor: 'pointer',
-                                                transition: 'all 0.2s ease'
+                                                transition: 'all 0.3s ease',
+                                                borderRadius: '12px',
+                                                border: formData.template_style === 'traditional' ? '3px solid #667eea' : '2px solid #e2e8f0',
+                                                background: formData.template_style === 'traditional' ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : '#ffffff',
+                                                boxShadow: formData.template_style === 'traditional' ? '0 4px 12px rgba(102, 126, 234, 0.2)' : '0 2px 4px rgba(0,0,0,0.1)',
+                                                transform: hoveredTemplate === 'traditional' ? 'translateY(-2px)' : 'translateY(0)'
                                             }}
                                             onMouseEnter={() => setHoveredTemplate('traditional')}
                                             onMouseLeave={() => setHoveredTemplate(null)}
@@ -611,21 +972,26 @@ const Wizard = () => {
                                             <div className="card-body">
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div>
-                                                        <h5 className="card-title mb-1">Traditional</h5>
-                                                        <p className="card-text small text-muted mb-0">Classic, professional layout</p>
+                                                        <h5 className="card-title mb-1" style={{ color: '#2d3748', fontWeight: '600' }}>Traditional</h5>
+                                                        <p className="card-text small mb-0" style={{ color: '#718096' }}>Classic, professional layout</p>
                                                     </div>
                                                     {formData.template_style === 'traditional' && (
-                                                        <i className="bi bi-check-circle-fill text-primary" style={{ fontSize: '1.5rem' }}></i>
+                                                        <i className="bi bi-check-circle-fill" style={{ fontSize: '1.5rem', color: '#667eea' }}></i>
                                                     )}
                                                 </div>
                                             </div>
                                         </div>
                                         
                                         <div 
-                                            className={`card mb-3 ${formData.template_style === 'bold' ? 'border-primary border-2 shadow-sm' : 'border'} ${hoveredTemplate === 'bold' ? 'border-info' : ''}`}
+                                            className="card mb-3 border-0"
                                             style={{ 
                                                 cursor: 'pointer',
-                                                transition: 'all 0.2s ease'
+                                                transition: 'all 0.3s ease',
+                                                borderRadius: '12px',
+                                                border: formData.template_style === 'bold' ? '3px solid #667eea' : '2px solid #e2e8f0',
+                                                background: formData.template_style === 'bold' ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : '#ffffff',
+                                                boxShadow: formData.template_style === 'bold' ? '0 4px 12px rgba(102, 126, 234, 0.2)' : '0 2px 4px rgba(0,0,0,0.1)',
+                                                transform: hoveredTemplate === 'bold' ? 'translateY(-2px)' : 'translateY(0)'
                                             }}
                                             onMouseEnter={() => setHoveredTemplate('bold')}
                                             onMouseLeave={() => setHoveredTemplate(null)}
@@ -634,11 +1000,11 @@ const Wizard = () => {
                                             <div className="card-body">
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div>
-                                                        <h5 className="card-title mb-1">Bold</h5>
-                                                        <p className="card-text small text-muted mb-0">Striking, high-impact design</p>
+                                                        <h5 className="card-title mb-1" style={{ color: '#2d3748', fontWeight: '600' }}>Bold</h5>
+                                                        <p className="card-text small mb-0" style={{ color: '#718096' }}>Striking, high-impact design</p>
                                                     </div>
                                                     {formData.template_style === 'bold' && (
-                                                        <i className="bi bi-check-circle-fill text-primary" style={{ fontSize: '1.5rem' }}></i>
+                                                        <i className="bi bi-check-circle-fill" style={{ fontSize: '1.5rem', color: '#667eea' }}></i>
                                                     )}
                                                 </div>
                                             </div>
@@ -793,7 +1159,7 @@ const Wizard = () => {
                                 </div>
                             </div>
 
-                            <label className="form-label">Customizable temporary website address</label>
+                            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Customizable temporary website address</label>
                             <input 
                                 type="text" 
                                 className={`form-control mb-2 ${customSlugError ? 'is-invalid' : ''}`}
@@ -801,6 +1167,12 @@ const Wizard = () => {
                                 placeholder="e.g., jeffformayor, jeffwill, firstlast, johndoe" 
                                 value={formData.custom_slug}
                                 onChange={handleChange}
+                                style={{ 
+                                    borderRadius: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    padding: '0.75rem 1rem',
+                                    fontSize: '1rem'
+                                }}
                             />
                             {customSlugError && (
                                 <div className="text-danger small mb-2">{customSlugError}</div>
@@ -818,8 +1190,9 @@ const Wizard = () => {
                                         id="passwordProtection"
                                         checked={formData.is_password_protected}
                                         onChange={handleChange}
+                                        style={{ cursor: 'pointer' }}
                                     />
-                                    <label className="form-check-label" htmlFor="passwordProtection">
+                                    <label className="form-check-label" htmlFor="passwordProtection" style={{ cursor: 'pointer', color: '#4a5568' }}>
                                         Password protected
                                     </label>
                                 </div>
@@ -830,7 +1203,7 @@ const Wizard = () => {
 
                             {formData.is_password_protected && (
                                 <div className="mb-3">
-                                    <label className="form-label">Password</label>
+                                    <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Password</label>
                                     <input 
                                         type="text" 
                                         className="form-control" 
@@ -838,18 +1211,64 @@ const Wizard = () => {
                                         value={formData.password}
                                         onChange={handleChange}
                                         placeholder="run"
+                                        style={{ 
+                                            borderRadius: '10px',
+                                            border: '2px solid #e2e8f0',
+                                            padding: '0.75rem 1rem',
+                                            fontSize: '1rem'
+                                        }}
                                     />
                                 </div>
                             )}
 
-                            <div className="d-flex gap-2">
-                                <button className="btn btn-secondary" onClick={() => setStep(4)}>Back</button>
-                                <button className="btn btn-success btn-lg" onClick={handleSubmit}>Launch My HQ</button>
+                            <div className="d-flex gap-2 mt-4">
+                                <button 
+                                    className="btn" 
+                                    onClick={() => setStep(4)}
+                                    style={{
+                                        background: '#e2e8f0',
+                                        border: 'none',
+                                        color: '#4a5568',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 2rem',
+                                        flex: 1
+                                    }}
+                                >
+                                    Back
+                                </button>
+                                <button 
+                                    className="btn btn-lg" 
+                                    onClick={handleSubmit}
+                                    style={{
+                                        background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
+                                        border: 'none',
+                                        color: '#ffffff',
+                                        fontWeight: '700',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 2rem',
+                                        flex: 2,
+                                        fontSize: '1.1rem',
+                                        transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 6px 20px rgba(72, 187, 120, 0.4)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    <i className="bi bi-rocket-takeoff me-2"></i>
+                                    Launch My HQ
+                                </button>
                             </div>
                         </div>
                     )}
                 </>
             )}
+            </div>
         </div>
     );
 };

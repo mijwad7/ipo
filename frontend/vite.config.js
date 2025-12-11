@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -12,10 +11,15 @@ export default defineConfig({
         secure: false,
       },
       '/media': {
-        target: 'http://localhost:8000', // Serve media from backend
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
-      }
-    }
-  }
+      },
+    },
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      '0919b3c9a935.ngrok-free.app', // exact ngrok host
+    ],
+  },
 })
