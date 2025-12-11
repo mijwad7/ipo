@@ -150,17 +150,42 @@ const BoldPreview = () => {
             {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary-bold py-4" style={{ borderBottom: '6px solid var(--secondary)' }}>
                 <div className="container">
-                    <a className="navbar-brand fw-black text-uppercase" href="#" style={{ fontSize: '24px', letterSpacing: '2px' }}>
+                    <a className="navbar-brand fw-black text-uppercase" href="#about" style={{ fontSize: '24px', letterSpacing: '2px' }}>
                         {previewData.position_running_for ? previewData.position_running_for.toUpperCase() : `${previewData.last_name} FOR OFFICE`}
                     </a>
-                    <div className="ms-auto">
-                        <a href="#" className="btn px-4 fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid var(--secondary)' }}>DONATE</a>
+                    <button 
+                        className="navbar-toggler" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" 
+                        aria-expanded="false" 
+                        aria-label="Toggle navigation"
+                        style={{ borderColor: 'rgba(255,255,255,0.5)' }}
+                    >
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarNav">
+                        <ul className="navbar-nav ms-auto">
+                            <li className="nav-item">
+                                <a className="nav-link text-white text-uppercase fw-bold" href="#about" style={{ letterSpacing: '1px' }}>About</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link text-white text-uppercase fw-bold" href="#platform" style={{ letterSpacing: '1px' }}>Platform</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link text-white text-uppercase fw-bold" href="#contact" style={{ letterSpacing: '1px' }}>Contact</a>
+                            </li>
+                            <li className="nav-item ms-2">
+                                <a href="#" className="btn px-4 fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid var(--secondary)' }}>DONATE</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
 
             {/* Hero Section */}
-            <header className="hero-bold text-white position-relative" style={{ background: 'var(--primary)', borderBottom: '8px solid var(--secondary)' }}>
+            <header id="about" className="hero-bold text-white position-relative" style={{ background: 'var(--primary)', borderBottom: '8px solid var(--secondary)' }}>
                 <div className="container position-relative">
                     <div className="row align-items-center">
                         <div className="col-lg-7 mb-5 mb-lg-0">
@@ -219,7 +244,7 @@ const BoldPreview = () => {
             </header>
 
             {/* Pillars Section */}
-            <section className="py-5 bg-primary-bold text-white" style={{ borderTop: '8px solid var(--secondary)', borderBottom: '8px solid var(--secondary)' }}>
+            <section id="platform" className="py-5 bg-primary-bold text-white" style={{ borderTop: '8px solid var(--secondary)', borderBottom: '8px solid var(--secondary)' }}>
                 <div className="container py-5">
                     <div className="text-center mb-5">
                         <h2 className="display-3 fw-black mb-3 text-uppercase text-white" style={{ letterSpacing: '2px' }}>
@@ -286,7 +311,7 @@ const BoldPreview = () => {
             </section>
 
             {/* Contact Section */}
-            <section className="py-5 bg-secondary-bold" style={{ borderTop: `8px solid var(--primary)`, color: '#333' }}>
+            <section id="contact" className="py-5 bg-secondary-bold" style={{ borderTop: `8px solid var(--primary)`, color: '#333' }}>
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-lg-8">

@@ -132,17 +132,42 @@ const TraditionalPreview = () => {
             {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary-traditional py-3" style={{ borderBottom: '3px solid var(--secondary)' }}>
                 <div className="container">
-                    <a className="navbar-brand fw-bold" href="#">
+                    <a className="navbar-brand fw-bold" href="#about">
                         {previewData.position_running_for || `${previewData.last_name} for Office`}
                     </a>
-                    <div className="ms-auto">
-                        <a href="#" className="btn rounded-0 px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', fontWeight: '500' }}>DONATE</a>
+                    <button 
+                        className="navbar-toggler" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" 
+                        aria-expanded="false" 
+                        aria-label="Toggle navigation"
+                        style={{ borderColor: 'rgba(255,255,255,0.5)' }}
+                    >
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarNav">
+                        <ul className="navbar-nav ms-auto">
+                            <li className="nav-item">
+                                <a className="nav-link text-white" href="#about">About</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link text-white" href="#platform">Platform</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link text-white" href="#contact">Contact</a>
+                            </li>
+                            <li className="nav-item ms-2">
+                                <a href="#" className="btn rounded-0 px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', fontWeight: '500' }}>DONATE</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
 
             {/* Hero Section */}
-            <header className="hero-traditional">
+            <header id="about" className="hero-traditional">
                 <div className="container">
                     <div className="row align-items-start">
                         <div className="col-lg-5 mb-5 mb-lg-0">
@@ -199,7 +224,7 @@ const TraditionalPreview = () => {
                                 </button>
                             </div>
                         </div>
-                        <div className="col-lg-7">
+                        <div className="col-lg-7" id="contact">
                             <div className="card card-traditional p-4" style={{ border: '3px solid var(--primary)', backgroundColor: 'white' }}>
                                 <h3 className="fw-bold mb-3 text-center" style={{ color: 'var(--primary)' }}>Get in Touch</h3>
                                 <div style={{ width: '100px', height: '3px', margin: '15px auto', backgroundColor: 'var(--primary)' }}></div>
@@ -258,7 +283,7 @@ const TraditionalPreview = () => {
             </header>
 
             {/* Pillars Section */}
-            <section className="py-5 bg-white">
+            <section id="platform" className="py-5 bg-white">
                 <div className="container py-5">
                     <div className="text-center mb-5">
                         <h2 className="display-5 fw-bold mb-3" style={{ color: '#212529' }}>My Top Issues & Concerns</h2>
