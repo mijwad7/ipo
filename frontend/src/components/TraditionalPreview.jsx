@@ -319,8 +319,25 @@ const TraditionalPreview = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-primary-traditional text-white py-5" style={{ borderTop: `4px solid var(--primary)` }}>
-                <div className="container text-center">
+            <footer className="bg-primary-traditional text-white py-5 position-relative" style={{ 
+                borderTop: `4px solid var(--primary)`,
+                backgroundImage: 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+            }}>
+                {/* Primary color overlay - would show if background_picture exists */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'var(--primary)',
+                    opacity: 1,
+                    zIndex: 0
+                }}></div>
+                <div className="container text-center position-relative" style={{ zIndex: 1 }}>
                     <h5 className="mb-3">{previewData.first_name} {previewData.last_name}</h5>
                     <p className="text-white-50 mb-4">
                         Paid for by the Committee to Elect {previewData.first_name} {previewData.last_name}

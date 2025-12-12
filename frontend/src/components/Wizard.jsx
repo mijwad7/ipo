@@ -24,6 +24,7 @@ const Wizard = () => {
                 // Reset image fields to null since File objects can't be restored
                 // Users will need to re-upload images, but all text data is preserved
                 formData.headshot = null;
+                formData.background_picture = null;
                 formData.action_shot_1 = null;
                 formData.action_shot_2 = null;
                 formData.action_shot_3 = null;
@@ -62,6 +63,7 @@ const Wizard = () => {
 
         // Bio
         headshot: null,
+        background_picture: null,
         bio_text: '',
         position_running_for: '',
         tag_line: '',
@@ -141,6 +143,11 @@ const Wizard = () => {
                         name: formData.headshot.name, 
                         size: formData.headshot.size, 
                         type: formData.headshot.type 
+                    } : null,
+                    background_picture: formData.background_picture ? { 
+                        name: formData.background_picture.name, 
+                        size: formData.background_picture.size, 
+                        type: formData.background_picture.type 
                     } : null,
                     action_shot_1: formData.action_shot_1 ? { 
                         name: formData.action_shot_1.name, 
@@ -364,7 +371,7 @@ const Wizard = () => {
         setLoading(true);
         const data = new FormData();
         Object.keys(formData).forEach(key => {
-            if (['headshot', 'action_shot_1', 'action_shot_2', 'action_shot_3'].includes(key)) {
+            if (['headshot', 'background_picture', 'action_shot_1', 'action_shot_2', 'action_shot_3'].includes(key)) {
                 if (formData[key]) {
                     data.append(key, formData[key], formData[key].name);
                 }

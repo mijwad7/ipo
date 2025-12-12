@@ -242,8 +242,24 @@ const MirrorPage = () => {
                     </div>
                 </nav>
 
-                <header id="about" className="hero-modern text-white">
-                    <div className="container">
+                <header id="about" className="hero-modern text-white position-relative" style={{
+                    backgroundImage: data.background_picture ? `url(${data.background_picture})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }}>
+                    {/* Primary color overlay */}
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: data.background_picture ? 'var(--primary)' : 'transparent',
+                        opacity: data.background_picture ? 0.75 : 1,
+                        zIndex: 0
+                    }}></div>
+                    <div className="container position-relative" style={{ zIndex: 1 }}>
                         <div className="row align-items-center">
                             <div className="col-lg-6 mb-5 mb-lg-0">
                                 <h5 className="text-uppercase mb-3 opacity-75" style={{ letterSpacing: '2px', fontSize: '14px' }}>
@@ -287,7 +303,6 @@ const MirrorPage = () => {
                                         src={data.headshot}
                                         alt={data.first_name}
                                         className="img-fluid rounded-4 shadow-lg"
-                                        style={{ border: '8px solid var(--secondary)' }}
                                     />
                                 )}
                             </div>
@@ -643,8 +658,25 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <footer className="bg-primary-traditional text-white py-5" style={{ borderTop: `4px solid var(--secondary)` }}>
-                    <div className="container text-center">
+                <footer className="bg-primary-traditional text-white py-5 position-relative" style={{ 
+                    borderTop: `4px solid var(--secondary)`,
+                    backgroundImage: data.background_picture ? `url(${data.background_picture})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }}>
+                    {/* Primary color overlay */}
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: data.background_picture ? 'var(--primary)' : 'transparent',
+                        opacity: data.background_picture ? 0.8 : 1,
+                        zIndex: 0
+                    }}></div>
+                    <div className="container text-center position-relative" style={{ zIndex: 1 }}>
                         <h5 className="mb-3">{data.first_name} {data.last_name}</h5>
                         <p className="text-white-50 mb-4">
                             Paid for by the Committee to Elect {data.first_name} {data.last_name}
@@ -848,8 +880,26 @@ const MirrorPage = () => {
                     </div>
                 </header>
 
-                <section id="platform" className="py-5 bg-primary-bold text-white" style={{ borderTop: '8px solid var(--secondary)', borderBottom: '8px solid var(--secondary)' }}>
-                    <div className="container py-5">
+                <section id="platform" className="py-5 bg-primary-bold text-white position-relative" style={{ 
+                    borderTop: '8px solid var(--secondary)', 
+                    borderBottom: '8px solid var(--secondary)',
+                    backgroundImage: data.background_picture ? `url(${data.background_picture})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }}>
+                    {/* Primary color overlay */}
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: data.background_picture ? 'var(--primary)' : 'transparent',
+                        opacity: data.background_picture ? 0.8 : 1,
+                        zIndex: 0
+                    }}></div>
+                    <div className="container py-5 position-relative" style={{ zIndex: 1 }}>
                         <div className="text-center mb-5">
                             <h2 className="display-3 fw-black mb-3 text-uppercase text-white" style={{ letterSpacing: '2px' }}>
                                 My Top Issues & Concerns

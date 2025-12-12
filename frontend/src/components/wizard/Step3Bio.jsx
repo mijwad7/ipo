@@ -52,6 +52,20 @@ const Step3Bio = ({ formData, handleChange, handleImageUpload, setStep, onNext, 
             {formData.headshot && (
                 <div className="text-success small mb-3">✓ Image selected: {formData.headshot.name}</div>
             )}
+            
+            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Background Picture (Optional)</label>
+            <input 
+                type="file" 
+                className="form-control mb-3" 
+                accept="image/*" 
+                onChange={(e) => handleImageUpload(e, 'background_picture')}
+                style={inputStyle}
+            />
+            {formData.background_picture && (
+                <div className="text-success small mb-3">✓ Image selected: {formData.background_picture.name}</div>
+            )}
+            <small className="text-muted d-block mb-3">This will be used as a background with a color overlay in your chosen theme</small>
+            
             <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Bio</label>
             <textarea 
                 name="bio_text" 

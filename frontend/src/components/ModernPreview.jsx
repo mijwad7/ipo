@@ -170,8 +170,24 @@ const ModernPreview = () => {
             </nav>
 
             {/* Hero Section */}
-            <header id="about" className="hero-modern text-white">
-                <div className="container">
+            <header id="about" className="hero-modern text-white position-relative" style={{
+                backgroundImage: 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+            }}>
+                {/* Primary color overlay - would show if background_picture exists */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'var(--primary)',
+                    opacity: 1,
+                    zIndex: 0
+                }}></div>
+                <div className="container position-relative" style={{ zIndex: 1 }}>
                     <div className="row align-items-center">
                         <div className="col-lg-6 mb-5 mb-lg-0">
                             <h5 className="text-uppercase mb-3 opacity-75" style={{ letterSpacing: '2px', fontSize: '14px' }}>
@@ -214,8 +230,7 @@ const ModernPreview = () => {
                                     aspectRatio: '1',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    justifyContent: 'center',
-                                    border: '8px solid var(--secondary)'
+                                    justifyContent: 'center'
                                 }}
                             >
                                 <div className="text-primary-modern">

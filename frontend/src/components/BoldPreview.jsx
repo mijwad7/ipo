@@ -245,8 +245,26 @@ const BoldPreview = () => {
             </header>
 
             {/* Pillars Section */}
-            <section id="platform" className="py-5 bg-primary-bold text-white" style={{ borderTop: '8px solid var(--secondary)', borderBottom: '8px solid var(--secondary)' }}>
-                <div className="container py-5">
+            <section id="platform" className="py-5 bg-primary-bold text-white position-relative" style={{ 
+                borderTop: '8px solid var(--secondary)', 
+                borderBottom: '8px solid var(--secondary)',
+                backgroundImage: 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+            }}>
+                {/* Primary color overlay - would show if background_picture exists */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'var(--primary)',
+                    opacity: 1,
+                    zIndex: 0
+                }}></div>
+                <div className="container py-5 position-relative" style={{ zIndex: 1 }}>
                     <div className="text-center mb-5">
                         <h2 className="display-3 fw-black mb-3 text-uppercase text-white" style={{ letterSpacing: '2px' }}>
                             My Top Issues & Concerns

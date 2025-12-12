@@ -45,6 +45,7 @@ class CampaignSubmission(models.Model):
     event_calendar_url = models.CharField(max_length=200, blank=True, null=True) # Changed to char for flexibility
     
     headshot = models.ImageField(upload_to='headshots/')
+    background_picture = models.ImageField(upload_to='backgrounds/', blank=True, null=True)
     # Action shots - keeping simple for MVP
     action_shot_1 = models.ImageField(upload_to='action_shots/', blank=True, null=True)
     action_shot_2 = models.ImageField(upload_to='action_shots/', blank=True, null=True)
