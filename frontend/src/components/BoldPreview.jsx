@@ -235,7 +235,7 @@ const BoldPreview = () => {
                                 }}
                             >
                                 <div className="text-primary-bold">
-                                    <i className="bi bi-person-circle" style={{ fontSize: '140px' }}></i>
+                                    <i className="bi bi-person-circle" style={{ fontSize: '140px', color: 'white' }}></i>
                                     <p className="mt-3 mb-0 fw-bold">HEADSHOT PLACEHOLDER</p>
                                 </div>
                             </div>
@@ -272,8 +272,8 @@ const BoldPreview = () => {
                                                         style={{ minHeight: '300px', padding: '20px', background: 'transparent', border: '4px solid white' }}
                                                     >
                                                         <div>
-                                                            <i className="bi bi-image text-primary-bold" style={{ fontSize: '80px', opacity: 0.7 }}></i>
-                                                            <p className="mt-3 mb-0 fw-bold text-uppercase text-primary-bold" style={{ letterSpacing: '1px' }}>Image</p>
+                                                            <i className="bi bi-image" style={{ fontSize: '80px', opacity: 0.7, color: 'white' }}></i>
+                                                            <p className="mt-3 mb-0 fw-bold text-uppercase" style={{ letterSpacing: '1px', color: 'white' }}>Image</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -296,8 +296,8 @@ const BoldPreview = () => {
                                                         style={{ minHeight: '300px', padding: '20px', background: 'transparent', border: '4px solid white' }}
                                                     >
                                                         <div>
-                                                            <i className="bi bi-image text-primary-bold" style={{ fontSize: '80px', opacity: 0.7 }}></i>
-                                                            <p className="mt-3 mb-0 fw-bold text-uppercase text-primary-bold" style={{ letterSpacing: '1px' }}>Image</p>
+                                                            <i className="bi bi-image" style={{ fontSize: '80px', opacity: 0.7, color: 'white' }}></i>
+                                                            <p className="mt-3 mb-0 fw-bold text-uppercase" style={{ letterSpacing: '1px', color: 'white' }}>Image</p>
                                                         </div>
                                                     </div>
                                                 </div>

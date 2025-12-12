@@ -877,8 +877,8 @@ const MirrorPage = () => {
                                                                 <img src={pillar.img} alt={pillar.title} className="img-fluid" style={{ maxHeight: '300px', objectFit: 'contain', width: '100%' }} />
                                                             ) : (
                                                                 <div>
-                                                                    <i className="bi bi-image text-primary-bold" style={{ fontSize: '80px', opacity: 0.7 }}></i>
-                                                                    <p className="mt-3 mb-0 fw-bold text-uppercase text-primary-bold" style={{ letterSpacing: '1px' }}>Image</p>
+                                                                    <i className="bi bi-image" style={{ fontSize: '80px', opacity: 0.7, color: 'white' }}></i>
+                                                                    <p className="mt-3 mb-0 fw-bold text-uppercase" style={{ letterSpacing: '1px', color: 'white' }}>Image</p>
                                                                 </div>
                                                             )}
                                                         </div>
@@ -905,8 +905,8 @@ const MirrorPage = () => {
                                                                 <img src={pillar.img} alt={pillar.title} className="img-fluid" style={{ maxHeight: '300px', objectFit: 'contain', width: '100%' }} />
                                                             ) : (
                                                                 <div>
-                                                                    <i className="bi bi-image text-primary-bold" style={{ fontSize: '80px', opacity: 0.7 }}></i>
-                                                                    <p className="mt-3 mb-0 fw-bold text-uppercase text-primary-bold" style={{ letterSpacing: '1px' }}>Image</p>
+                                                                    <i className="bi bi-image" style={{ fontSize: '80px', opacity: 0.7, color: 'white' }}></i>
+                                                                    <p className="mt-3 mb-0 fw-bold text-uppercase" style={{ letterSpacing: '1px', color: 'white' }}>Image</p>
                                                                 </div>
                                                             )}
                                                         </div>

@@ -9,12 +9,46 @@ import Step3Bio from './wizard/Step3Bio';
 import Step4Platform from './wizard/Step4Platform';
 import Step5Customization from './wizard/Step5Customization';
 
+const STORAGE_KEY = 'campaign_wizard_data';
+
 const Wizard = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState({ show: false, message: '', type: 'danger' });
-    const [formData, setFormData] = useState({
+    
+    // Load saved data from localStorage on mount
+    const loadSavedData = () => {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                const formData = parsed.formData || getInitialFormData();
+                // Reset image fields to null since File objects can't be restored
+                // Users will need to re-upload images, but all text data is preserved
+                formData.headshot = null;
+                formData.action_shot_1 = null;
+                formData.action_shot_2 = null;
+                formData.action_shot_3 = null;
+                return {
+                    step: parsed.step || 1,
+                    formData,
+                    otpSent: parsed.otpSent || false,
+                    customSlugManuallyEdited: parsed.customSlugManuallyEdited || false,
+                    customPillarMode: parsed.customPillarMode || { 1: false, 2: false, 3: false },
+                };
+            }
+        } catch (error) {
+            console.error('Error loading saved data:', error);
+            localStorage.removeItem(STORAGE_KEY);
+        }
+        return {
+            step: 1,
+            formData: getInitialFormData(),
+            otpSent: false,
+            customSlugManuallyEdited: false,
+            customPillarMode: { 1: false, 2: false, 3: false },
+        };
+    };
+
+    const getInitialFormData = () => ({
         first_name: '',
         last_name: '',
         email: '',
@@ -56,12 +90,19 @@ const Wizard = () => {
         event_date: '',
     });
 
-    const [otpSent, setOtpSent] = useState(false);
+    const savedData = loadSavedData();
+    const [step, setStep] = useState(savedData.step);
+    const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState({ show: false, message: '', type: 'danger' });
+    const [formData, setFormData] = useState(savedData.formData);
+    const [progressRestored, setProgressRestored] = useState({ show: false, message: '' });
+
+    const [otpSent, setOtpSent] = useState(savedData.otpSent);
     const [pillarDescriptions, setPillarDescriptions] = useState({});
-    const [customSlugManuallyEdited, setCustomSlugManuallyEdited] = useState(false);
+    const [customSlugManuallyEdited, setCustomSlugManuallyEdited] = useState(savedData.customSlugManuallyEdited);
     const [electionDateError, setElectionDateError] = useState('');
     const [customSlugError, setCustomSlugError] = useState('');
-    const [customPillarMode, setCustomPillarMode] = useState({ 1: false, 2: false, 3: false });
+    const [customPillarMode, setCustomPillarMode] = useState(savedData.customPillarMode);
     const [hoveredTemplate, setHoveredTemplate] = useState(null);
 
     const showAlert = (message, type = 'danger') => {
@@ -87,6 +128,76 @@ const Wizard = () => {
         { number: 4, name: 'Platform', time: '30 sec' },
         { number: 5, name: 'Customization', time: '30 sec' },
     ];
+
+    // Save data to localStorage whenever formData, step, or other state changes
+    useEffect(() => {
+        try {
+            const dataToSave = {
+                step,
+                formData: {
+                    ...formData,
+                    // Don't save File objects, but save metadata
+                    headshot: formData.headshot ? { 
+                        name: formData.headshot.name, 
+                        size: formData.headshot.size, 
+                        type: formData.headshot.type 
+                    } : null,
+                    action_shot_1: formData.action_shot_1 ? { 
+                        name: formData.action_shot_1.name, 
+                        size: formData.action_shot_1.size, 
+                        type: formData.action_shot_1.type 
+                    } : null,
+                    action_shot_2: formData.action_shot_2 ? { 
+                        name: formData.action_shot_2.name, 
+                        size: formData.action_shot_2.size, 
+                        type: formData.action_shot_2.type 
+                    } : null,
+                    action_shot_3: formData.action_shot_3 ? { 
+                        name: formData.action_shot_3.name, 
+                        size: formData.action_shot_3.size, 
+                        type: formData.action_shot_3.type 
+                    } : null,
+                },
+                otpSent,
+                customSlugManuallyEdited,
+                customPillarMode,
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        } catch (error) {
+            console.error('Error saving data to localStorage:', error);
+        }
+    }, [formData, step, otpSent, customSlugManuallyEdited, customPillarMode]);
+
+    // Show notification if data was restored on mount
+    useEffect(() => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed.step > 1 || parsed.formData.first_name || parsed.formData.last_name) {
+                    const hasImages = parsed.formData.headshot || parsed.formData.action_shot_1 || 
+                                     parsed.formData.action_shot_2 || parsed.formData.action_shot_3;
+                    if (hasImages) {
+                        setProgressRestored({ 
+                            show: true, 
+                            message: 'Your previous progress has been restored! Please re-upload any images.' 
+                        });
+                    } else {
+                        setProgressRestored({ 
+                            show: true, 
+                            message: 'Your previous progress has been restored!' 
+                        });
+                    }
+                    // Auto-hide after 8 seconds
+                    setTimeout(() => {
+                        setProgressRestored({ show: false, message: '' });
+                    }, 8000);
+                }
+            } catch (error) {
+                // Ignore errors
+            }
+        }
+    }, []);
 
     // Fetch pillar descriptions on mount
     useEffect(() => {
@@ -275,6 +386,8 @@ const Wizard = () => {
                 },
             });
             setLoading(false);
+            // Clear saved data on successful submission
+            localStorage.removeItem(STORAGE_KEY);
             navigate('/success', { state: { submission: res.data } });
         } catch (error) {
             setLoading(false);
@@ -313,6 +426,20 @@ const Wizard = () => {
                     stepConfig={stepConfig} 
                     totalSteps={TOTAL_STEPS} 
                 />
+
+                {/* Progress Restored Notification - Top of Form */}
+                {progressRestored.show && (
+                    <div className="alert alert-success alert-dismissible fade show shadow-sm mb-3" role="alert" style={{ borderRadius: '12px', border: 'none' }}>
+                        <i className="bi bi-check-circle-fill me-2"></i>
+                        {progressRestored.message}
+                        <button 
+                            type="button" 
+                            className="btn-close" 
+                            onClick={() => setProgressRestored({ show: false, message: '' })}
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                )}
 
                 {loading && (
                     <div className="card border-0 shadow-lg text-center p-5" style={{ borderRadius: '16px', background: '#ffffff' }}>
