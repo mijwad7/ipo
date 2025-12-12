@@ -50,7 +50,7 @@ class CampaignSubmission(models.Model):
     action_shot_2 = models.ImageField(upload_to='action_shots/', blank=True, null=True)
     action_shot_3 = models.ImageField(upload_to='action_shots/', blank=True, null=True)
     
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=200)
     
     # Election details
     riding_zone_name = models.CharField(max_length=200, blank=True, null=True)
@@ -68,24 +68,24 @@ class CampaignSubmission(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            # Use custom_slug if provided, otherwise generate from first_name + last_name (no hyphens)
-            if self.custom_slug and self.custom_slug.strip():
-                # Clean the custom_slug: lowercase, allow alphanumeric and hyphens, remove spaces and other special chars
-                # Remove spaces and special characters except hyphens and alphanumeric
-                base_slug = re.sub(r'[^a-zA-Z0-9-]', '', self.custom_slug.lower())
-                # Remove leading/trailing hyphens and multiple consecutive hyphens
-                base_slug = re.sub(r'-+', '-', base_slug).strip('-')
-            else:
-                # Generate from first_name + last_name (no hyphens, just concatenate)
-                base_slug = f"{self.first_name}{self.last_name}".lower()
-                # Remove any spaces or special characters (no hyphens allowed in auto-generated)
-                base_slug = re.sub(r'[^a-zA-Z0-9]', '', base_slug)
+            # Always generate from first_name + last_name (ignore custom_slug for auto-generation)
+            # Simple: first_name + last_name, lowercase, remove non-alphanumeric
+            first = (self.first_name or '').strip()
+            last = (self.last_name or '').strip()
+            combined = f"{first}{last}".lower()
+            base_slug = re.sub(r'[^a-zA-Z0-9]', '', combined)
             
-            # Ensure slug is not empty
+            # If custom_slug was manually provided and is valid, use it instead
+            if self.custom_slug and self.custom_slug.strip():
+                custom_cleaned = re.sub(r'[^a-zA-Z0-9]', '', self.custom_slug.lower())
+                if custom_cleaned and len(custom_cleaned) >= 3:  # Only use if it's at least 3 chars
+                    base_slug = custom_cleaned
+            
+            # Ensure we have a valid slug
             if not base_slug:
                 base_slug = "campaign"
             
-            # Ensure uniqueness by appending counter if needed
+            # If slug exists, add a number
             slug = base_slug
             counter = 1
             while CampaignSubmission.objects.filter(slug=slug).exclude(pk=self.pk if self.pk else None).exists():

@@ -224,13 +224,14 @@ const BoldPreview = () => {
                         </div>
                         <div className="col-lg-5 text-center">
                             <div 
-                                className="bg-white p-4"
+                                className="p-4"
                                 style={{ 
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     border: '6px solid var(--secondary)',
-                                    boxShadow: '15px 15px 0 rgba(0, 0, 0, 0.4)'
+                                    boxShadow: '15px 15px 0 rgba(0, 0, 0, 0.4)',
+                                    background: 'transparent'
                                 }}
                             >
                                 <div className="text-primary-bold">
@@ -267,8 +268,8 @@ const BoldPreview = () => {
                                             <>
                                                 <div className="col-md-5 p-0">
                                                     <div 
-                                                        className="bg-white text-center d-flex align-items-center justify-content-center"
-                                                        style={{ minHeight: '300px', padding: '20px' }}
+                                                        className="text-center d-flex align-items-center justify-content-center"
+                                                        style={{ minHeight: '300px', padding: '20px', background: 'transparent', border: '4px solid white' }}
                                                     >
                                                         <div>
                                                             <i className="bi bi-image text-primary-bold" style={{ fontSize: '80px', opacity: 0.7 }}></i>
@@ -291,8 +292,8 @@ const BoldPreview = () => {
                                                 </div>
                                                 <div className="col-md-5 p-0">
                                                     <div 
-                                                        className="bg-white text-center d-flex align-items-center justify-content-center"
-                                                        style={{ minHeight: '300px', padding: '20px' }}
+                                                        className="text-center d-flex align-items-center justify-content-center"
+                                                        style={{ minHeight: '300px', padding: '20px', background: 'transparent', border: '4px solid white' }}
                                                     >
                                                         <div>
                                                             <i className="bi bi-image text-primary-bold" style={{ fontSize: '80px', opacity: 0.7 }}></i>

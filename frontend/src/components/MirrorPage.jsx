@@ -835,7 +835,7 @@ const MirrorPage = () => {
                             </div>
                             <div className="col-lg-5 text-center">
                                 {data.headshot && (
-                                    <div className="bg-white p-4" style={{ border: '6px solid var(--secondary)', boxShadow: '15px 15px 0 rgba(0, 0, 0, 0.4)' }}>
+                                    <div className="p-4" style={{ border: '6px solid var(--secondary)', boxShadow: '15px 15px 0 rgba(0, 0, 0, 0.4)', background: 'transparent' }}>
                                         <img
                                             src={data.headshot}
                                             alt={data.first_name}
@@ -870,8 +870,8 @@ const MirrorPage = () => {
                                                 <>
                                                     <div className="col-md-5 p-0">
                                                         <div 
-                                                            className="bg-white text-center d-flex align-items-center justify-content-center"
-                                                            style={{ minHeight: '300px', padding: '20px' }}
+                                                            className="text-center d-flex align-items-center justify-content-center"
+                                                            style={{ minHeight: '300px', padding: '20px', background: 'transparent', border: '4px solid white' }}
                                                         >
                                                             {pillar.img ? (
                                                                 <img src={pillar.img} alt={pillar.title} className="img-fluid" style={{ maxHeight: '300px', objectFit: 'contain', width: '100%' }} />
@@ -898,8 +898,8 @@ const MirrorPage = () => {
                                                     </div>
                                                     <div className="col-md-5 p-0">
                                                         <div 
-                                                            className="bg-white text-center d-flex align-items-center justify-content-center"
-                                                            style={{ minHeight: '300px', padding: '20px' }}
+                                                            className="text-center d-flex align-items-center justify-content-center"
+                                                            style={{ minHeight: '300px', padding: '20px', background: 'transparent', border: '4px solid white' }}
                                                         >
                                                             {pillar.img ? (
                                                                 <img src={pillar.img} alt={pillar.title} className="img-fluid" style={{ maxHeight: '300px', objectFit: 'contain', width: '100%' }} />

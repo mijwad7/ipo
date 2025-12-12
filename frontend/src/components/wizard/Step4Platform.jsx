@@ -88,7 +88,7 @@ const Step4Platform = ({
                         style={inputStyle}
                     />
                     {formData[`action_shot_${i}`] && (
-                        <div className="text-success small mt-1">✓ Image selected</div>
+                        <div className="text-success small mt-1">✓ Image selected: {formData[`action_shot_${i}`].name}</div>
                     )}
                 </div>
             ))}

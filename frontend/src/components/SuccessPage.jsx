@@ -211,7 +211,7 @@ const SuccessPage = () => {
                         }}
                     >
                         <i className="bi bi-box-arrow-up-right me-2"></i>
-                        View My Site
+                        View My Temporary Site
                     </Link>
                 </div>
 
@@ -430,6 +430,9 @@ const SuccessPage = () => {
                 }}>
                     <strong style={{ color: '#2d3748' }}>Next Steps:</strong>
                     <span style={{ color: '#4a5568' }}> Check your SMS for login credentials to your permanent dashboard (arriving in ~5 mins).</span>
+                    <div className="mt-2">
+                        <em style={{ color: '#718096', fontSize: '0.95rem' }}>Check your SMS or Email, and also check your spam/junk folder.</em>
+                    </div>
                 </div>
                 </div>
             </div>

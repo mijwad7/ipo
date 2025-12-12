@@ -98,11 +98,14 @@ const Wizard = () => {
     // Auto-generate custom_slug from first_name + last_name when they change
     useEffect(() => {
         if (formData.first_name && formData.last_name && !customSlugManuallyEdited) {
-            const generatedSlug = `${formData.first_name}${formData.last_name}`.toLowerCase().replace(/[^a-z0-9]/g, '');
+            // Always regenerate from current first_name + last_name
+            const first = (formData.first_name || '').trim();
+            const last = (formData.last_name || '').trim();
+            const generatedSlug = `${first}${last}`.toLowerCase().replace(/[^a-z0-9]/g, '');
+            
             setFormData(prev => {
-                const currentSlug = prev.custom_slug || '';
-                const expectedSlug = `${prev.first_name}${prev.last_name}`.toLowerCase().replace(/[^a-z0-9]/g, '');
-                if (!currentSlug || currentSlug === expectedSlug) {
+                // Only update if the generated slug is different from current
+                if (prev.custom_slug !== generatedSlug) {
                     return { ...prev, custom_slug: generatedSlug };
                 }
                 return prev;
@@ -154,6 +157,14 @@ const Wizard = () => {
     const handleImageUpload = async (e, fieldName) => {
         const file = e.target.files[0];
         if (file) {
+            // Validate filename length (max 100 characters)
+            if (file.name.length > 100) {
+                showAlert(`Image filename is too long (${file.name.length} characters). Please rename the file to 100 characters or less.`, 'danger');
+                // Clear the file input
+                e.target.value = '';
+                return;
+            }
+            
             const options = {
                 maxSizeMB: 0.5,
                 maxWidthOrHeight: 800,
@@ -246,6 +257,12 @@ const Wizard = () => {
                 if (formData[key]) {
                     data.append(key, formData[key], formData[key].name);
                 }
+            } else if (key === 'custom_slug') {
+                // Only send custom_slug if it was manually edited, otherwise let backend generate from names
+                if (customSlugManuallyEdited && formData.custom_slug && formData.custom_slug.trim()) {
+                    data.append(key, formData[key]);
+                }
+                // If not manually edited, don't send it - backend will generate from first_name + last_name
             } else {
                 data.append(key, formData[key]);
             }
