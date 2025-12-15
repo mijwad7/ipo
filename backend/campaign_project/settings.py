@@ -79,6 +79,9 @@ if IS_RAILWAY_PROD:
         )
     }
 
+    MEDIA_ROOT = "/app/media"
+    MEDIA_URL = "/media/"
+
 else:
     # Local Development Settings (SQLite)
     DATABASES = {
@@ -87,6 +90,9 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
+    MEDIA_ROOT = BASE_DIR / "media"
+    MEDIA_URL = "/media/"
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

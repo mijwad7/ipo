@@ -9,3 +9,7 @@ urlpatterns = [
     path('api/', include('onboarding.urls')),
     re_path(r"^(?!api/|admin/|static/|media/|assets/).*", TemplateView.as_view(template_name="index.html")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+if settings.IS_RAILWAY_PROD:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
