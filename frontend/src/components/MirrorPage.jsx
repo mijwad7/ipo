@@ -82,7 +82,7 @@ const MirrorPage = () => {
         return (
             <div className="d-flex align-items-center justify-content-center vh-100 bg-dark text-white">
                 <div className="text-center" style={{ maxWidth: '400px' }}>
-                    <h1 className="display-5 fw-bold mb-4">Password Protected</h1>
+                    <h1 className="display-5 mb-4" style={{ fontWeight: 600 }}>Password Protected</h1>
                     <p className="lead text-white-50 mb-4">
                         This campaign page is password protected. Please enter the password to continue.
                     </p>
@@ -115,7 +115,7 @@ const MirrorPage = () => {
     if (error) return (
         <div className="d-flex align-items-center justify-content-center vh-100 bg-dark text-white">
             <div className="text-center">
-                <h1 className="display-4 fw-bold mb-3">Campaign Not Found</h1>
+                <h1 className="display-4 mb-3" style={{ fontWeight: 600 }}>Campaign Not Found</h1>
                 <p className="lead text-white-50">The campaign you are looking for does not exist or has expired.</p>
             </div>
         </div>
@@ -144,13 +144,24 @@ const MirrorPage = () => {
                 <style>
                     {`
                         .modern-template-wrapper {
-                            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                            font-family: 'Open Sans', sans-serif;
                             color: #333;
                             overflow-x: hidden;
                         }
                         .bg-primary-modern {
                             background-color: var(--primary);
                             color: white;
+                        }
+                        .navbar-brand.text-white {
+                            color: white !important;
+                        }
+                        .hero-modern {
+                            color: white !important;
+                        }
+                        .hero-modern h1,
+                        .hero-modern h5,
+                        .hero-modern p {
+                            color: white !important;
                         }
                         .text-primary-modern {
                             color: var(--primary);
@@ -208,7 +219,7 @@ const MirrorPage = () => {
 
                 <nav className="navbar navbar-expand-lg navbar-dark bg-primary-modern py-3 fixed-top shadow-sm" style={{ borderBottom: '4px solid var(--secondary)' }}>
                     <div className="container">
-                        <a className="navbar-brand fw-bold" href="#about">
+                        <a className="navbar-brand text-white" href="#about" style={{ fontWeight: 600, color: 'white !important' }}>
                             {data.position_running_for || `${data.last_name} for Office`}
                         </a>
                         <button 
@@ -246,7 +257,8 @@ const MirrorPage = () => {
                     backgroundImage: data.background_picture ? `url(${data.background_picture})` : 'none',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
+                    backgroundRepeat: 'no-repeat',
+                    color: 'white'
                 }}>
                     {/* Primary color overlay */}
                     <div style={{
@@ -255,35 +267,35 @@ const MirrorPage = () => {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        backgroundColor: data.background_picture ? 'var(--primary)' : 'transparent',
-                        opacity: data.background_picture ? 0.75 : 1,
+                        backgroundColor: data.background_picture ? 'var(--primary)' : 'var(--primary)',
+                        opacity: data.background_picture ? 0.85 : 1,
                         zIndex: 0
                     }}></div>
-                    <div className="container position-relative" style={{ zIndex: 1 }}>
+                    <div className="container position-relative" style={{ zIndex: 1, color: 'white' }}>
                         <div className="row align-items-center">
-                            <div className="col-lg-6 mb-5 mb-lg-0">
-                                <h5 className="text-uppercase mb-3 opacity-75" style={{ letterSpacing: '2px', fontSize: '14px' }}>
+                            <div className="col-lg-6 mb-5 mb-lg-0" style={{ color: 'white' }}>
+                                <h5 className="text-uppercase mb-3" style={{ letterSpacing: '2px', fontSize: '14px', color: 'white', opacity: 0.9 }}>
                                     {data.tag_line || 'Vote for Leadership'}
                                 </h5>
-                                <h1 className="display-2 fw-bold mb-4">
+                                <h1 className="display-2 mb-4" style={{ fontWeight: 600, color: 'white' }}>
                                     {data.first_name}<br />{data.last_name}
                                 </h1>
                                 {(data.riding_zone_name || data.election_date) && (
-                                    <div className="mb-3">
+                                    <div className="mb-3" style={{ color: 'white' }}>
                                         {data.riding_zone_name && (
-                                            <p className="mb-1 opacity-90" style={{ fontSize: '1.1rem' }}>
-                                                <strong>Riding:</strong> {data.riding_zone_name}
+                                            <p className="mb-1" style={{ fontSize: '1.1rem', color: 'white', opacity: 0.95 }}>
+                                                <strong style={{ color: 'white' }}>Riding:</strong> {data.riding_zone_name}
                                             </p>
                                         )}
                                         {data.election_date && (
-                                            <p className="mb-0 opacity-90" style={{ fontSize: '1.1rem' }}>
-                                                <strong>Election Date:</strong> {new Date(data.election_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                            <p className="mb-0" style={{ fontSize: '1.1rem', color: 'white', opacity: 0.95 }}>
+                                                <strong style={{ color: 'white' }}>Election Date:</strong> {new Date(data.election_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                             </p>
                                         )}
                                     </div>
                                 )}
                                 <div className="mb-4" style={{ width: '80px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--secondary)' }}></div>
-                                <p className="lead mb-5" style={{ lineHeight: 1.8, opacity: 0.95 }}>
+                                <p className="lead mb-5" style={{ lineHeight: 1.8, color: 'white', opacity: 0.95 }}>
                                     {data.bio_text}
                                 </p>
                                 <div className="d-flex gap-3 flex-wrap">
@@ -313,7 +325,7 @@ const MirrorPage = () => {
                 <section id="platform" className="py-5" style={{ backgroundColor: 'var(--secondary)' }}>
                     <div className="container py-5">
                         <div className="text-center mb-5">
-                            <h2 className="display-5 fw-bold mb-3" style={{ color: '#333' }}>My Top Issues & Concerns</h2>
+                            <h2 className="display-5 mb-3" style={{ color: '#333', fontWeight: 600 }}>My Top Issues & Concerns</h2>
                             <div className="mx-auto mb-2" style={{ width: '80px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--primary)' }}></div>
                         </div>
                         <div className="row g-4">
@@ -335,7 +347,7 @@ const MirrorPage = () => {
                                             )}
                                         </div>
                                         <div className="card-body p-4">
-                                            <h4 className="fw-bold mb-3">{pillar.title}</h4>
+                                            <h4 className="mb-3" style={{ fontWeight: 600 }}>{pillar.title}</h4>
                                             <p className="text-muted mb-3">{pillar.desc || "We are committed to addressing this critical issue."}</p>
                                             <button className="btn btn-primary-modern w-100">Learn More</button>
                                         </div>
@@ -351,7 +363,7 @@ const MirrorPage = () => {
                         <div className="row justify-content-center">
                             <div className="col-lg-8">
                                 <div className="card card-modern border-0 p-5" style={{ border: '3px solid var(--secondary)' }}>
-                                    <h2 className="text-center fw-bold mb-4" style={{ color: 'var(--primary)' }}>Get in Touch</h2>
+                                    <h2 className="text-center mb-4" style={{ color: 'var(--primary)', fontWeight: 600 }}>Get in Touch</h2>
                                     <div className="mx-auto mb-3" style={{ width: '100px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--secondary)' }}></div>
                                     <p className="text-center text-muted mb-4">
                                         Have a question? Want to volunteer? Send us a message.
@@ -411,7 +423,7 @@ const MirrorPage = () => {
                 <style>
                     {`
                         .traditional-template-wrapper {
-                            font-family: 'Georgia', 'Times New Roman', serif;
+                            font-family: 'Open Sans', sans-serif;
                             color: #333;
                             overflow-x: hidden;
                         }
@@ -480,7 +492,7 @@ const MirrorPage = () => {
 
                 <nav className="navbar navbar-expand-lg navbar-dark bg-primary-traditional py-3 fixed-top shadow-sm" style={{ borderBottom: '3px solid var(--secondary)' }}>
                     <div className="container">
-                        <a className="navbar-brand fw-bold" href="#about">
+                        <a className="navbar-brand" href="#about" style={{ fontWeight: 600 }}>
                             {data.position_running_for || `${data.last_name} for Office`}
                         </a>
                         <button 
@@ -529,13 +541,13 @@ const MirrorPage = () => {
                                         </div>
                                     )}
                                 </div>
-                                <h1 className="display-4 fw-bold mb-3 text-center" style={{ color: '#212529' }}>
+                                <h1 className="display-4 mb-3 text-center" style={{ color: '#212529', fontWeight: 600 }}>
                                     {data.first_name} {data.last_name}
                                 </h1>
                                 <div className="text-center mb-2">
-                                    <p className="mb-1 fw-bold" style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>
-                                        {data.tag_line || 'Vote for Leadership'}
-                                    </p>
+                                <p className="mb-1" style={{ color: 'var(--primary)', fontSize: '1.1rem', fontWeight: 600 }}>
+                                    {data.tag_line || 'Vote for Leadership'}
+                                </p>
                                 </div>
                                 {(data.riding_zone_name || data.election_date) && (
                                     <div className="text-center mb-3">
@@ -568,7 +580,7 @@ const MirrorPage = () => {
                             </div>
                             <div className="col-lg-7" id="contact">
                                 <div className="card card-traditional p-4" style={{ border: '3px solid var(--primary)', backgroundColor: 'white' }}>
-                                    <h3 className="fw-bold mb-3 text-center" style={{ color: 'var(--primary)' }}>Get in Touch</h3>
+                                    <h3 className="mb-3 text-center" style={{ color: 'var(--primary)', fontWeight: 600 }}>Get in Touch</h3>
                                     <div style={{ width: '100px', height: '3px', margin: '15px auto', backgroundColor: 'var(--primary)' }}></div>
                                     <p className="text-center text-muted mb-4 small">
                                         Have a question? Want to volunteer? Send us a message.
@@ -580,7 +592,7 @@ const MirrorPage = () => {
                                                     type="text" 
                                                     className="form-control form-control-lg rounded-0" 
                                                     placeholder="First Name" 
-                                                    style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                                    style={{ fontFamily: 'Open Sans, sans-serif' }}
                                                 />
                                             </div>
                                             <div className="col-md-6 mb-3">
@@ -588,7 +600,7 @@ const MirrorPage = () => {
                                                     type="text" 
                                                     className="form-control form-control-lg rounded-0" 
                                                     placeholder="Last Name" 
-                                                    style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                                    style={{ fontFamily: 'Open Sans, sans-serif' }}
                                                 />
                                             </div>
                                         </div>
@@ -646,7 +658,7 @@ const MirrorPage = () => {
                                         </div>
                                         <div className="card-body p-4">
                                             <div className="pillar-section-traditional">
-                                                <h4 className="fw-bold mb-3" style={{ color: '#212529' }}>{pillar.title}</h4>
+                                                <h4 className="mb-3" style={{ color: '#212529', fontWeight: 600 }}>{pillar.title}</h4>
                                                 <p className="text-muted mb-3" style={{ lineHeight: 1.7 }}>{pillar.desc || "We are committed to addressing this critical issue."}</p>
                                             </div>
                                             <button className="btn btn-primary-traditional w-100 rounded-0">Learn More</button>
@@ -705,10 +717,9 @@ const MirrorPage = () => {
                 <style>
                     {`
                         .bold-template-wrapper {
-                            font-family: 'Arial Black', 'Arial', sans-serif;
+                            font-family: 'Open Sans', sans-serif;
                             color: #000;
                             overflow-x: hidden;
-                            font-weight: 700;
                         }
                         .bg-primary-bold {
                             background-color: var(--primary);
@@ -722,7 +733,7 @@ const MirrorPage = () => {
                             border-color: var(--primary);
                             color: white;
                             padding: 15px 40px;
-                            font-weight: 900;
+                            font-weight: 600;
                             text-transform: uppercase;
                             letter-spacing: 2px;
                             border-radius: 0;
@@ -739,7 +750,7 @@ const MirrorPage = () => {
                             color: var(--secondary);
                             background: transparent;
                             padding: 15px 40px;
-                            font-weight: 900;
+                            font-weight: 600;
                             text-transform: uppercase;
                             letter-spacing: 2px;
                             border-radius: 0;
@@ -792,7 +803,7 @@ const MirrorPage = () => {
 
                 <nav className="navbar navbar-expand-lg navbar-dark bg-primary-bold py-4 fixed-top" style={{ borderBottom: '6px solid var(--secondary)' }}>
                     <div className="container">
-                        <a className="navbar-brand fw-black text-uppercase" href="#about" style={{ fontSize: '24px', letterSpacing: '2px' }}>
+                        <a className="navbar-brand text-uppercase" href="#about" style={{ fontSize: '24px', letterSpacing: '2px', fontWeight: 700 }}>
                             {data.position_running_for ? data.position_running_for.toUpperCase() : `${data.last_name} FOR OFFICE`}
                         </a>
                         <button 
@@ -810,16 +821,16 @@ const MirrorPage = () => {
                         <div className="collapse navbar-collapse" id="navbarNavBold">
                             <ul className="navbar-nav ms-auto">
                                 <li className="nav-item">
-                                    <a className="nav-link text-white text-uppercase fw-bold" href="#about" style={{ letterSpacing: '1px' }}>About</a>
+                                    <a className="nav-link text-white text-uppercase" href="#about" style={{ letterSpacing: '1px', fontWeight: 600 }}>About</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link text-white text-uppercase fw-bold" href="#platform" style={{ letterSpacing: '1px' }}>Platform</a>
+                                    <a className="nav-link text-white text-uppercase" href="#platform" style={{ letterSpacing: '1px', fontWeight: 600 }}>Platform</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link text-white text-uppercase fw-bold" href="#contact" style={{ letterSpacing: '1px' }}>Contact</a>
+                                    <a className="nav-link text-white text-uppercase" href="#contact" style={{ letterSpacing: '1px', fontWeight: 600 }}>Contact</a>
                                 </li>
                                 <li className="nav-item ms-2">
-                                    <a href={data.donation_url || "#"} className="btn px-4 fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid var(--secondary)' }}>DONATE</a>
+                                    <a href={data.donation_url || "#"} className="btn px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid var(--secondary)', fontWeight: 600 }}>DONATE</a>
                                 </li>
                             </ul>
                         </div>
@@ -830,37 +841,37 @@ const MirrorPage = () => {
                     <div className="container position-relative">
                         <div className="row align-items-center">
                             <div className="col-lg-7 mb-5 mb-lg-0">
-                                <h5 className="text-uppercase mb-4 fw-bold" style={{ letterSpacing: '4px', fontSize: '16px', color: 'var(--secondary)' }}>
+                                <h5 className="text-uppercase mb-4" style={{ letterSpacing: '4px', fontSize: '16px', color: 'var(--secondary)', fontWeight: 600 }}>
                                     {data.tag_line ? data.tag_line.toUpperCase() : 'VOTE FOR LEADERSHIP'}
                                 </h5>
-                                <h1 className="display-1 fw-black mb-4" style={{ fontWeight: 900, lineHeight: 1.1 }}>
+                                <h1 className="display-1 mb-4" style={{ fontWeight: 700, lineHeight: 1.1 }}>
                                     {data.first_name}<br />{data.last_name}
                                 </h1>
                                 {(data.riding_zone_name || data.election_date) && (
                                     <div className="mb-3">
                                         {data.riding_zone_name && (
-                                            <p className="mb-1 fw-bold" style={{ fontSize: '1.1rem' }}>
+                                            <p className="mb-1" style={{ fontSize: '1.1rem', fontWeight: 600 }}>
                                                 RIDING: {data.riding_zone_name.toUpperCase()}
                                             </p>
                                         )}
                                         {data.election_date && (
-                                            <p className="mb-0 fw-bold" style={{ fontSize: '1.1rem' }}>
+                                            <p className="mb-0" style={{ fontSize: '1.1rem', fontWeight: 600 }}>
                                                 ELECTION DATE: {new Date(data.election_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase()}
                                             </p>
                                         )}
                                     </div>
                                 )}
                                 <div className="mb-4" style={{ width: '120px', height: '10px', background: 'var(--secondary)', border: '2px solid white' }}></div>
-                                <p className="lead mb-5 fw-bold" style={{ lineHeight: 1.8, fontSize: '20px' }}>
+                                <p className="lead mb-5" style={{ lineHeight: 1.8, fontSize: '20px', fontWeight: 400 }}>
                                     {data.bio_text}
                                 </p>
                                 <div className="d-flex gap-3 flex-wrap">
                                     {data.donation_url && (
-                                        <a href={data.donation_url} className="btn btn-light btn-lg px-5 fw-bold" style={{ border: '4px solid var(--secondary)' }}>
+                                        <a href={data.donation_url} className="btn btn-light btn-lg px-5" style={{ border: '4px solid var(--secondary)', fontWeight: 600 }}>
                                             DONATE NOW
                                         </a>
                                     )}
-                                    <button className="btn btn-lg px-4 fw-bold" style={{ border: '4px solid var(--secondary)', backgroundColor: 'var(--secondary)', color: '#333' }}>
+                                    <button className="btn btn-lg px-4" style={{ border: '4px solid var(--secondary)', backgroundColor: 'var(--secondary)', color: '#333', fontWeight: 600 }}>
                                         GET INVOLVED
                                     </button>
                                 </div>
@@ -901,7 +912,7 @@ const MirrorPage = () => {
                     }}></div>
                     <div className="container py-5 position-relative" style={{ zIndex: 1 }}>
                         <div className="text-center mb-5">
-                            <h2 className="display-3 fw-black mb-3 text-uppercase text-white" style={{ letterSpacing: '2px' }}>
+                            <h2 className="display-3 mb-3 text-uppercase text-white" style={{ letterSpacing: '2px', fontWeight: 700 }}>
                                 My Top Issues & Concerns
                             </h2>
                             <div style={{ height: '10px', width: '200px', margin: '20px auto', background: 'var(--secondary)', border: '2px solid white' }}></div>
@@ -934,17 +945,17 @@ const MirrorPage = () => {
                                                         </div>
                                                     </div>
                                                     <div className="col-md-7 p-5 text-white">
-                                                        <h3 className="fw-black mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px' }}>{pillar.title}</h3>
+                                                        <h3 className="mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px', fontWeight: 700 }}>{pillar.title}</h3>
                                                         <p className="mb-4 lead" style={{ lineHeight: 1.8, fontSize: '1.1rem' }}>{pillar.desc || "We are committed to addressing this critical issue."}</p>
-                                                        <button className="btn btn-lg fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white' }}>READ MORE</button>
+                                                        <button className="btn btn-lg" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white', fontWeight: 600 }}>READ MORE</button>
                                                     </div>
                                                 </>
                                             ) : (
                                                 <>
                                                     <div className="col-md-7 p-5 text-white">
-                                                        <h3 className="fw-black mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px' }}>{pillar.title}</h3>
+                                                        <h3 className="mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px', fontWeight: 700 }}>{pillar.title}</h3>
                                                         <p className="mb-4 lead" style={{ lineHeight: 1.8, fontSize: '1.1rem' }}>{pillar.desc || "We are committed to addressing this critical issue."}</p>
-                                                        <button className="btn btn-lg fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white' }}>READ MORE</button>
+                                                        <button className="btn btn-lg" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white', fontWeight: 600 }}>READ MORE</button>
                                                     </div>
                                                     <div className="col-md-5 p-0">
                                                         <div 
@@ -976,27 +987,27 @@ const MirrorPage = () => {
                         <div className="row justify-content-center">
                             <div className="col-lg-8">
                                 <div className="card card-bold p-5 bg-white text-dark" style={{ border: '6px solid var(--primary)', boxShadow: '15px 15px 0 rgba(0,0,0,0.3)' }}>
-                                    <h2 className="text-center fw-black mb-4 text-uppercase" style={{ letterSpacing: '2px', color: 'var(--primary)' }}>
+                                    <h2 className="text-center mb-4 text-uppercase" style={{ letterSpacing: '2px', color: 'var(--primary)', fontWeight: 700 }}>
                                         Get in Touch
                                     </h2>
                                     <div style={{ height: '8px', width: '150px', margin: '20px auto', background: 'var(--primary)' }}></div>
-                                    <p className="text-center mb-4 fw-bold">
+                                    <p className="text-center mb-4" style={{ fontWeight: 400 }}>
                                         Have a question? Want to volunteer? Send us a message.
                                     </p>
                                     <form>
                                         <div className="row mb-3">
                                             <div className="col-md-6 mb-3">
-                                                <input type="text" className="form-control form-control-lg border-3 border-dark rounded-0 fw-bold" placeholder="FIRST NAME" />
+                                                <input type="text" className="form-control form-control-lg border-3 border-dark rounded-0" placeholder="FIRST NAME" style={{ fontWeight: 400 }} />
                                             </div>
                                             <div className="col-md-6 mb-3">
-                                                <input type="text" className="form-control form-control-lg border-3 border-dark rounded-0 fw-bold" placeholder="LAST NAME" />
+                                                <input type="text" className="form-control form-control-lg border-3 border-dark rounded-0" placeholder="LAST NAME" style={{ fontWeight: 400 }} />
                                             </div>
                                         </div>
                                         <div className="mb-3">
-                                            <input type="email" className="form-control form-control-lg border-3 border-dark rounded-0 fw-bold" placeholder="EMAIL ADDRESS" />
+                                            <input type="email" className="form-control form-control-lg border-3 border-dark rounded-0" placeholder="EMAIL ADDRESS" style={{ fontWeight: 400 }} />
                                         </div>
                                         <div className="mb-4">
-                                            <textarea className="form-control form-control-lg border-3 border-dark rounded-0 fw-bold" rows="4" placeholder="YOUR MESSAGE"></textarea>
+                                            <textarea className="form-control form-control-lg border-3 border-dark rounded-0" rows="4" placeholder="YOUR MESSAGE" style={{ fontWeight: 400 }}></textarea>
                                         </div>
                                         <div className="d-grid">
                                             <button type="button" className="btn btn-primary-bold btn-lg">SEND MESSAGE</button>
@@ -1010,10 +1021,10 @@ const MirrorPage = () => {
 
                 <footer className="bg-primary-bold text-white py-5" style={{ borderTop: `6px solid var(--primary)` }}>
                     <div className="container text-center">
-                        <h4 className="mb-3 fw-black text-uppercase" style={{ letterSpacing: '2px' }}>
+                        <h4 className="mb-3 text-uppercase" style={{ letterSpacing: '2px', fontWeight: 700 }}>
                             {data.first_name} {data.last_name}
                         </h4>
-                        <p className="text-white-50 mb-4 fw-bold">
+                        <p className="text-white-50 mb-4" style={{ fontWeight: 400 }}>
                             Paid for by the Committee to Elect {data.first_name} {data.last_name}
                         </p>
                         <div className="d-flex justify-content-center gap-3 mb-4">
@@ -1021,7 +1032,7 @@ const MirrorPage = () => {
                             <a href="#" className="text-white"><i className="bi bi-twitter fs-4"></i></a>
                             <a href="#" className="text-white"><i className="bi bi-instagram fs-4"></i></a>
                         </div>
-                        <p className="small text-white-50 mb-0 fw-bold">&copy; 2025 All Rights Reserved.</p>
+                        <p className="small text-white-50 mb-0" style={{ fontWeight: 400 }}>&copy; 2025 All Rights Reserved.</p>
                     </div>
                 </footer>
             </div>

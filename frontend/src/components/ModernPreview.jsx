@@ -36,7 +36,7 @@ const ModernPreview = () => {
             <style>
                 {`
                     .modern-preview-wrapper {
-                        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                        font-family: 'Open Sans', sans-serif;
                         color: #333;
                         overflow-x: hidden;
                     }
@@ -121,7 +121,7 @@ const ModernPreview = () => {
             <div className="preview-header sticky-top">
                 <div className="container">
                     <div className="d-flex justify-content-between align-items-center">
-                        <h4 className="mb-0 text-primary-modern fw-bold">Modern Template Preview</h4>
+                        <h4 className="mb-0 text-primary-modern" style={{ fontWeight: 600 }}>Modern Template Preview</h4>
                         <button 
                             className="btn btn-outline-primary"
                             onClick={() => navigate(-1)}
@@ -135,7 +135,7 @@ const ModernPreview = () => {
             {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary-modern py-3" style={{ borderBottom: '4px solid var(--secondary)' }}>
                 <div className="container">
-                    <a className="navbar-brand fw-bold" href="#about">
+                    <a className="navbar-brand" href="#about" style={{ fontWeight: 600 }}>
                         {previewData.position_running_for || `${previewData.last_name} for Office`}
                     </a>
                     <button 
@@ -193,7 +193,7 @@ const ModernPreview = () => {
                             <h5 className="text-uppercase mb-3 opacity-75" style={{ letterSpacing: '2px', fontSize: '14px' }}>
                                 {previewData.tag_line || 'Vote for Leadership'}
                             </h5>
-                            <h1 className="display-2 fw-bold mb-4">
+                            <h1 className="display-2 mb-4" style={{ fontWeight: 600 }}>
                                 {previewData.first_name}<br />{previewData.last_name}
                             </h1>
                             {(previewData.riding_zone_name || previewData.election_date) && (
@@ -215,7 +215,7 @@ const ModernPreview = () => {
                                 {previewData.bio_text}
                             </p>
                             <div className="d-flex gap-3 flex-wrap">
-                                <a href="#" className="btn btn-lg px-5 fw-bold rounded-pill shadow" style={{ backgroundColor: 'var(--secondary)', color: '#333' }}>
+                                <a href="#" className="btn btn-lg px-5 rounded-pill shadow" style={{ backgroundColor: 'var(--secondary)', color: '#333', fontWeight: 600 }}>
                                     DONATE NOW
                                 </a>
                                 <button className="btn btn-secondary-modern btn-lg px-4 rounded-pill">
@@ -247,7 +247,7 @@ const ModernPreview = () => {
             <section id="platform" className="py-5" style={{ backgroundColor: 'var(--secondary)' }}>
                 <div className="container py-5">
                     <div className="text-center mb-5">
-                        <h2 className="display-5 fw-bold mb-3" style={{ color: '#333' }}>My Top Issues & Concerns</h2>
+                        <h2 className="display-5 mb-3" style={{ color: '#333', fontWeight: 600 }}>My Top Issues & Concerns</h2>
                         <div className="mx-auto mb-2" style={{ width: '80px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--primary)' }}></div>
                     </div>
 
@@ -266,7 +266,7 @@ const ModernPreview = () => {
                                         <i className="bi bi-image" style={{ fontSize: '60px', opacity: 0.5 }}></i>
                                     </div>
                                     <div className="card-body p-4">
-                                        <h4 className="fw-bold mb-3">{pillar.title}</h4>
+                                        <h4 className="mb-3" style={{ fontWeight: 600 }}>{pillar.title}</h4>
                                         <p className="text-muted mb-3">{pillar.desc}</p>
                                         <button className="btn btn-primary-modern w-100">Learn More</button>
                                     </div>
@@ -283,7 +283,7 @@ const ModernPreview = () => {
                     <div className="row justify-content-center">
                         <div className="col-lg-8">
                             <div className="card card-modern border-0 p-5" style={{ border: '3px solid var(--secondary)' }}>
-                                <h2 className="text-center fw-bold mb-4" style={{ color: 'var(--primary)' }}>Get in Touch</h2>
+                                <h2 className="text-center mb-4" style={{ color: 'var(--primary)', fontWeight: 600 }}>Get in Touch</h2>
                                 <div className="mx-auto mb-3" style={{ width: '100px', height: '4px', borderRadius: '2px', backgroundColor: 'var(--secondary)' }}></div>
                                 <p className="text-center text-muted mb-4">
                                     Have a question? Want to volunteer? Send us a message.

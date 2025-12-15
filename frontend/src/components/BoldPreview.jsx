@@ -36,10 +36,9 @@ const BoldPreview = () => {
             <style>
                 {`
                     .bold-preview-wrapper {
-                        font-family: 'Arial Black', 'Arial', sans-serif;
+                        font-family: 'Open Sans', sans-serif;
                         color: #000;
                         overflow-x: hidden;
-                        font-weight: 700;
                     }
                     .bg-primary-bold {
                         background-color: var(--primary);
@@ -53,7 +52,7 @@ const BoldPreview = () => {
                         border-color: var(--primary);
                         color: white;
                         padding: 15px 40px;
-                        font-weight: 900;
+                        font-weight: 600;
                         text-transform: uppercase;
                         letter-spacing: 2px;
                         border-radius: 0;
@@ -70,7 +69,7 @@ const BoldPreview = () => {
                         color: var(--secondary);
                         background: transparent;
                         padding: 15px 40px;
-                        font-weight: 900;
+                        font-weight: 600;
                         text-transform: uppercase;
                         letter-spacing: 2px;
                         border-radius: 0;
@@ -136,9 +135,10 @@ const BoldPreview = () => {
             <div className="preview-header sticky-top">
                 <div className="container">
                     <div className="d-flex justify-content-between align-items-center">
-                        <h4 className="mb-0 text-primary-bold fw-bold">Bold Template Preview</h4>
+                        <h4 className="mb-0 text-primary-bold" style={{ fontWeight: 600 }}>Bold Template Preview</h4>
                         <button 
-                            className="btn btn-outline-danger fw-bold"
+                            className="btn btn-outline-danger"
+                            style={{ fontWeight: 600 }}
                             onClick={() => navigate(-1)}
                         >
                             ← Back to Wizard
@@ -150,7 +150,7 @@ const BoldPreview = () => {
             {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary-bold py-4" style={{ borderBottom: '6px solid var(--secondary)' }}>
                 <div className="container">
-                    <a className="navbar-brand fw-black text-uppercase" href="#about" style={{ fontSize: '24px', letterSpacing: '2px' }}>
+                    <a className="navbar-brand text-uppercase" href="#about" style={{ fontSize: '24px', letterSpacing: '2px', fontWeight: 700 }}>
                         {previewData.position_running_for ? previewData.position_running_for.toUpperCase() : `${previewData.last_name} FOR OFFICE`}
                     </a>
                     <button 
@@ -168,16 +168,16 @@ const BoldPreview = () => {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ms-auto">
                             <li className="nav-item">
-                                <a className="nav-link text-white text-uppercase fw-bold" href="#about" style={{ letterSpacing: '1px' }}>About</a>
+                                <a className="nav-link text-white text-uppercase" href="#about" style={{ letterSpacing: '1px', fontWeight: 600 }}>About</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link text-white text-uppercase fw-bold" href="#platform" style={{ letterSpacing: '1px' }}>Platform</a>
+                                <a className="nav-link text-white text-uppercase" href="#platform" style={{ letterSpacing: '1px', fontWeight: 600 }}>Platform</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link text-white text-uppercase fw-bold" href="#contact" style={{ letterSpacing: '1px' }}>Contact</a>
+                                <a className="nav-link text-white text-uppercase" href="#contact" style={{ letterSpacing: '1px', fontWeight: 600 }}>Contact</a>
                             </li>
                             <li className="nav-item ms-2">
-                                <a href="#" className="btn px-4 fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid var(--secondary)' }}>DONATE</a>
+                                <a href="#" className="btn px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid var(--secondary)', fontWeight: 600 }}>DONATE</a>
                             </li>
                         </ul>
                     </div>
@@ -189,35 +189,35 @@ const BoldPreview = () => {
                 <div className="container position-relative">
                     <div className="row align-items-center">
                         <div className="col-lg-7 mb-5 mb-lg-0">
-                            <h5 className="text-uppercase mb-4 fw-bold" style={{ letterSpacing: '4px', fontSize: '16px', color: 'var(--secondary)' }}>
+                            <h5 className="text-uppercase mb-4" style={{ letterSpacing: '4px', fontSize: '16px', color: 'var(--secondary)', fontWeight: 600 }}>
                                 {previewData.tag_line ? previewData.tag_line.toUpperCase() : 'VOTE FOR LEADERSHIP'}
                             </h5>
-                            <h1 className="display-1 fw-black mb-4" style={{ fontWeight: 900, lineHeight: 1.1 }}>
+                            <h1 className="display-1 mb-4" style={{ fontWeight: 700, lineHeight: 1.1 }}>
                                 {previewData.first_name}<br />{previewData.last_name}
                             </h1>
                             {(previewData.riding_zone_name || previewData.election_date) && (
                                 <div className="mb-3">
                                     {previewData.riding_zone_name && (
-                                        <p className="mb-1 fw-bold" style={{ fontSize: '1.1rem' }}>
+                                        <p className="mb-1" style={{ fontSize: '1.1rem', fontWeight: 600 }}>
                                             RIDING: {previewData.riding_zone_name.toUpperCase()}
                                         </p>
                                     )}
                                     {previewData.election_date && (
-                                        <p className="mb-0 fw-bold" style={{ fontSize: '1.1rem' }}>
+                                        <p className="mb-0" style={{ fontSize: '1.1rem', fontWeight: 600 }}>
                                             ELECTION DATE: {new Date(previewData.election_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase()}
                                         </p>
                                     )}
                                 </div>
                             )}
                             <div className="mb-4" style={{ width: '120px', height: '10px', background: 'var(--secondary)', border: '2px solid white' }}></div>
-                            <p className="lead mb-5 fw-bold" style={{ lineHeight: 1.8, fontSize: '20px' }}>
+                            <p className="lead mb-5" style={{ lineHeight: 1.8, fontSize: '20px', fontWeight: 400 }}>
                                 {previewData.bio_text}
                             </p>
                             <div className="d-flex gap-3 flex-wrap">
-                                <a href="#" className="btn btn-light btn-lg px-5 fw-bold" style={{ border: '4px solid var(--secondary)' }}>
+                                <a href="#" className="btn btn-light btn-lg px-5" style={{ border: '4px solid var(--secondary)', fontWeight: 600 }}>
                                     DONATE NOW
                                 </a>
-                                <button className="btn btn-lg px-4 fw-bold" style={{ border: '4px solid var(--secondary)', backgroundColor: 'var(--secondary)', color: '#333' }}>
+                                <button className="btn btn-lg px-4" style={{ border: '4px solid var(--secondary)', backgroundColor: 'var(--secondary)', color: '#333', fontWeight: 600 }}>
                                     GET INVOLVED
                                 </button>
                             </div>
@@ -236,7 +236,7 @@ const BoldPreview = () => {
                             >
                                 <div className="text-primary-bold">
                                     <i className="bi bi-person-circle" style={{ fontSize: '140px', color: 'white' }}></i>
-                                    <p className="mt-3 mb-0 fw-bold">HEADSHOT PLACEHOLDER</p>
+                                    <p className="mt-3 mb-0" style={{ fontWeight: 600 }}>HEADSHOT PLACEHOLDER</p>
                                 </div>
                             </div>
                         </div>
@@ -266,7 +266,7 @@ const BoldPreview = () => {
                 }}></div>
                 <div className="container py-5 position-relative" style={{ zIndex: 1 }}>
                     <div className="text-center mb-5">
-                        <h2 className="display-3 fw-black mb-3 text-uppercase text-white" style={{ letterSpacing: '2px' }}>
+                        <h2 className="display-3 mb-3 text-uppercase text-white" style={{ letterSpacing: '2px', fontWeight: 700 }}>
                             My Top Issues & Concerns
                         </h2>
                         <div style={{ height: '10px', width: '200px', margin: '20px auto', background: 'var(--secondary)', border: '2px solid white' }}></div>
@@ -291,22 +291,22 @@ const BoldPreview = () => {
                                                     >
                                                         <div>
                                                             <i className="bi bi-image" style={{ fontSize: '80px', opacity: 0.7, color: 'white' }}></i>
-                                                            <p className="mt-3 mb-0 fw-bold text-uppercase" style={{ letterSpacing: '1px', color: 'white' }}>Image</p>
+                                                            <p className="mt-3 mb-0 text-uppercase" style={{ letterSpacing: '1px', color: 'white', fontWeight: 600 }}>Image</p>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-7 p-5 text-white">
-                                                    <h3 className="fw-black mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px' }}>{pillar.title}</h3>
+                                                    <h3 className="mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px', fontWeight: 700 }}>{pillar.title}</h3>
                                                     <p className="mb-4 lead" style={{ lineHeight: 1.8, fontSize: '1.1rem' }}>{pillar.desc}</p>
-                                                    <button className="btn btn-lg fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white' }}>READ MORE</button>
+                                                    <button className="btn btn-lg" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white', fontWeight: 600 }}>READ MORE</button>
                                                 </div>
                                             </>
                                         ) : (
                                             <>
                                                 <div className="col-md-7 p-5 text-white">
-                                                    <h3 className="fw-black mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px' }}>{pillar.title}</h3>
+                                                    <h3 className="mb-4 text-uppercase text-white" style={{ letterSpacing: '1px', fontSize: '2rem', borderBottom: '4px solid var(--secondary)', paddingBottom: '15px', fontWeight: 700 }}>{pillar.title}</h3>
                                                     <p className="mb-4 lead" style={{ lineHeight: 1.8, fontSize: '1.1rem' }}>{pillar.desc}</p>
-                                                    <button className="btn btn-lg fw-bold" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white' }}>READ MORE</button>
+                                                    <button className="btn btn-lg" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white', fontWeight: 600 }}>READ MORE</button>
                                                 </div>
                                                 <div className="col-md-5 p-0">
                                                     <div 
@@ -315,7 +315,7 @@ const BoldPreview = () => {
                                                     >
                                                         <div>
                                                             <i className="bi bi-image" style={{ fontSize: '80px', opacity: 0.7, color: 'white' }}></i>
-                                                            <p className="mt-3 mb-0 fw-bold text-uppercase" style={{ letterSpacing: '1px', color: 'white' }}>Image</p>
+                                                            <p className="mt-3 mb-0 text-uppercase" style={{ letterSpacing: '1px', color: 'white', fontWeight: 600 }}>Image</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -335,11 +335,11 @@ const BoldPreview = () => {
                     <div className="row justify-content-center">
                         <div className="col-lg-8">
                             <div className="card card-bold p-5 bg-white text-dark" style={{ border: '6px solid var(--primary)', boxShadow: '15px 15px 0 rgba(0,0,0,0.3)' }}>
-                                <h2 className="text-center fw-black mb-4 text-uppercase" style={{ letterSpacing: '2px', color: 'var(--primary)' }}>
+                                <h2 className="text-center mb-4 text-uppercase" style={{ letterSpacing: '2px', color: 'var(--primary)', fontWeight: 700 }}>
                                     Get in Touch
                                 </h2>
                                 <div style={{ height: '8px', width: '150px', margin: '20px auto', background: 'var(--primary)' }}></div>
-                                <p className="text-center mb-4 fw-bold">
+                                <p className="text-center mb-4" style={{ fontWeight: 400 }}>
                                     Have a question? Want to volunteer? Send us a message.
                                 </p>
                                 <form>
@@ -347,7 +347,8 @@ const BoldPreview = () => {
                                         <div className="col-md-6 mb-3">
                                             <input 
                                                 type="text" 
-                                                className="form-control form-control-lg border-3 border-dark rounded-0 fw-bold" 
+                                                className="form-control form-control-lg border-3 border-dark rounded-0"
+                                                style={{ fontWeight: 400 }} 
                                                 placeholder="FIRST NAME" 
                                                 disabled
                                             />
@@ -355,7 +356,8 @@ const BoldPreview = () => {
                                         <div className="col-md-6 mb-3">
                                             <input 
                                                 type="text" 
-                                                className="form-control form-control-lg border-3 border-dark rounded-0 fw-bold" 
+                                                className="form-control form-control-lg border-3 border-dark rounded-0"
+                                                style={{ fontWeight: 400 }} 
                                                 placeholder="LAST NAME" 
                                                 disabled
                                             />
@@ -392,11 +394,11 @@ const BoldPreview = () => {
             {/* Footer */}
             <footer className="bg-primary-bold py-5 text-white" style={{ borderTop: `8px solid var(--secondary)` }}>
                 <div className="container text-center">
-                    <h4 className="mb-3 fw-black text-uppercase text-white" style={{ letterSpacing: '2px' }}>
+                    <h4 className="mb-3 text-uppercase text-white" style={{ letterSpacing: '2px', fontWeight: 700 }}>
                         {previewData.first_name} {previewData.last_name}
                     </h4>
                     <div style={{ height: '4px', width: '100px', margin: '15px auto', background: 'var(--secondary)' }}></div>
-                    <p className="text-white-50 mb-4 fw-bold">
+                    <p className="text-white-50 mb-4" style={{ fontWeight: 400 }}>
                         Paid for by the Committee to Elect {previewData.first_name} {previewData.last_name}
                     </p>
                     <div className="d-flex justify-content-center gap-3 mb-4">
@@ -404,7 +406,7 @@ const BoldPreview = () => {
                         <a href="#" className="text-white"><i className="bi bi-twitter fs-4"></i></a>
                         <a href="#" className="text-white"><i className="bi bi-instagram fs-4"></i></a>
                     </div>
-                    <p className="small text-white-50 mb-0 fw-bold">&copy; 2025 All Rights Reserved.</p>
+                    <p className="small text-white-50 mb-0" style={{ fontWeight: 400 }}>&copy; 2025 All Rights Reserved.</p>
                 </div>
             </footer>
         </div>

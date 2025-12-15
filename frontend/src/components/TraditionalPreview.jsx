@@ -36,7 +36,7 @@ const TraditionalPreview = () => {
             <style>
                 {`
                     .traditional-preview-wrapper {
-                        font-family: 'Georgia', 'Times New Roman', serif;
+                        font-family: 'Open Sans', sans-serif;
                         color: #333;
                         overflow-x: hidden;
                     }
@@ -118,7 +118,7 @@ const TraditionalPreview = () => {
             <div className="preview-header sticky-top">
                 <div className="container">
                     <div className="d-flex justify-content-between align-items-center">
-                        <h4 className="mb-0 text-primary-traditional fw-bold">Traditional Template Preview</h4>
+                        <h4 className="mb-0 text-primary-traditional" style={{ fontWeight: 600 }}>Traditional Template Preview</h4>
                         <button 
                             className="btn btn-outline-secondary"
                             onClick={() => navigate(-1)}
@@ -132,7 +132,7 @@ const TraditionalPreview = () => {
             {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary-traditional py-3" style={{ borderBottom: '3px solid var(--secondary)' }}>
                 <div className="container">
-                    <a className="navbar-brand fw-bold" href="#about">
+                    <a className="navbar-brand" href="#about" style={{ fontWeight: 600 }}>
                         {previewData.position_running_for || `${previewData.last_name} for Office`}
                     </a>
                     <button 
@@ -189,11 +189,11 @@ const TraditionalPreview = () => {
                                     </div>
                                 </div>
                             </div>
-                            <h1 className="display-4 fw-bold mb-3 text-center" style={{ color: '#212529' }}>
+                            <h1 className="display-4 mb-3 text-center" style={{ color: '#212529', fontWeight: 600 }}>
                                 {previewData.first_name} {previewData.last_name}
                             </h1>
                             <div className="text-center mb-2">
-                                <p className="mb-1 fw-bold" style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>
+                                <p className="mb-1" style={{ color: 'var(--primary)', fontSize: '1.1rem', fontWeight: 600 }}>
                                     {previewData.tag_line || 'Vote for Leadership'}
                                 </p>
                             </div>
@@ -226,7 +226,7 @@ const TraditionalPreview = () => {
                         </div>
                         <div className="col-lg-7" id="contact">
                             <div className="card card-traditional p-4" style={{ border: '3px solid var(--primary)', backgroundColor: 'white' }}>
-                                <h3 className="fw-bold mb-3 text-center" style={{ color: 'var(--primary)' }}>Get in Touch</h3>
+                                <h3 className="mb-3 text-center" style={{ color: 'var(--primary)', fontWeight: 600 }}>Get in Touch</h3>
                                 <div style={{ width: '100px', height: '3px', margin: '15px auto', backgroundColor: 'var(--primary)' }}></div>
                                 <p className="text-center text-muted mb-4 small">
                                     Have a question? Want to volunteer? Send us a message.
@@ -238,7 +238,7 @@ const TraditionalPreview = () => {
                                                 type="text" 
                                                 className="form-control form-control-lg rounded-0" 
                                                 placeholder="First Name" 
-                                                style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                                style={{ fontFamily: 'Open Sans, sans-serif' }}
                                                 disabled
                                             />
                                         </div>
@@ -247,7 +247,7 @@ const TraditionalPreview = () => {
                                                 type="text" 
                                                 className="form-control form-control-lg rounded-0" 
                                                 placeholder="Last Name" 
-                                                style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                                                style={{ fontFamily: 'Open Sans, sans-serif' }}
                                                 disabled
                                             />
                                         </div>
@@ -286,7 +286,7 @@ const TraditionalPreview = () => {
             <section id="platform" className="py-5 bg-white">
                 <div className="container py-5">
                     <div className="text-center mb-5">
-                        <h2 className="display-5 fw-bold mb-3" style={{ color: '#212529' }}>My Top Issues & Concerns</h2>
+                        <h2 className="display-5 mb-3" style={{ color: '#212529', fontWeight: 600 }}>My Top Issues & Concerns</h2>
                         <div style={{ width: '100px', height: '3px', margin: '20px auto', backgroundColor: 'var(--primary)' }}></div>
                     </div>
 
@@ -306,7 +306,7 @@ const TraditionalPreview = () => {
                                     </div>
                                     <div className="card-body p-4">
                                         <div className="pillar-section-traditional">
-                                            <h4 className="fw-bold mb-3" style={{ color: '#212529' }}>{pillar.title}</h4>
+                                            <h4 className="mb-3" style={{ color: '#212529', fontWeight: 600 }}>{pillar.title}</h4>
                                             <p className="text-muted mb-3" style={{ lineHeight: 1.7 }}>{pillar.desc}</p>
                                         </div>
                                         <button className="btn btn-primary-traditional w-100 rounded-0">Learn More</button>
