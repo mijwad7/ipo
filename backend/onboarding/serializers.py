@@ -1,8 +1,14 @@
 from rest_framework import serializers
-from .models import CampaignSubmission
+from .models import CampaignSubmission, OrganizationSubmission
 
 class CampaignSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignSubmission
+        fields = '__all__'
+        read_only_fields = ('slug', 'created_at', 'otp_verified', 'otp_code')
+
+class OrganizationSubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrganizationSubmission
         fields = '__all__'
         read_only_fields = ('slug', 'created_at', 'otp_verified', 'otp_code')

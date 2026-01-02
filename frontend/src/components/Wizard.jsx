@@ -3,53 +3,23 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
 import WizardProgressBar from './wizard/WizardProgressBar';
+import Step0TypeSelection from './wizard/Step0TypeSelection';
 import Step1Identity from './wizard/Step1Identity';
-import Step2Election from './wizard/Step2Election';
-import Step3Bio from './wizard/Step3Bio';
-import Step4Platform from './wizard/Step4Platform';
-import Step5Customization from './wizard/Step5Customization';
-
-const STORAGE_KEY = 'campaign_wizard_data';
+import Step2TemplateSelection from './wizard/Step2TemplateSelection';
+import Step3Election from './wizard/Step2Election';
+import Step4Bio from './wizard/Step3Bio';
+import Step5Platform from './wizard/Step4Platform';
+import Step6Customization from './wizard/Step5Customization';
 
 const Wizard = () => {
     const navigate = useNavigate();
     
-    // Load saved data from localStorage on mount
-    const loadSavedData = () => {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                const formData = parsed.formData || getInitialFormData();
-                // Reset image fields to null since File objects can't be restored
-                // Users will need to re-upload images, but all text data is preserved
-                formData.headshot = null;
-                formData.background_picture = null;
-                formData.action_shot_1 = null;
-                formData.action_shot_2 = null;
-                formData.action_shot_3 = null;
-                return {
-                    step: parsed.step || 1,
-                    formData,
-                    otpSent: parsed.otpSent || false,
-                    customSlugManuallyEdited: parsed.customSlugManuallyEdited || false,
-                    customPillarMode: parsed.customPillarMode || { 1: false, 2: false, 3: false },
-                };
-            }
-        } catch (error) {
-            console.error('Error loading saved data:', error);
-            localStorage.removeItem(STORAGE_KEY);
-        }
-        return {
-            step: 1,
-            formData: getInitialFormData(),
-            otpSent: false,
-            customSlugManuallyEdited: false,
-            customPillarMode: { 1: false, 2: false, 3: false },
-        };
-    };
-
     const getInitialFormData = () => ({
+        // Type selection
+        submission_type: 'campaign',
+        organization_subtype: null,
+        campaign_subtype: 'election',
+
         first_name: '',
         last_name: '',
         email: '',
@@ -57,9 +27,10 @@ const Wizard = () => {
         otp_code: '',
         otp_verified: false,
 
-        // Election details
+        // Election/Organization details
         riding_zone_name: '',
         election_date: '',
+        organization_name: '', // Required for organizations
 
         // Bio
         headshot: null,
@@ -67,8 +38,13 @@ const Wizard = () => {
         bio_text: '',
         position_running_for: '',
         tag_line: '',
+        
+        // Organization-specific images
+        logo: null,
+        owner_photo: null,
+        sales_team_photo: null,
 
-        // Platform
+        // Platform/Services
         pillar_1: '',
         pillar_1_desc: '',
         pillar_2: '',
@@ -78,9 +54,21 @@ const Wizard = () => {
         action_shot_1: null,
         action_shot_2: null,
         action_shot_3: null,
+        
+        // Organization services (completely custom)
+        service_1: '',
+        service_1_desc: '',
+        service_2: '',
+        service_2_desc: '',
+        service_3: '',
+        service_3_desc: '',
+        service_image_1: null,
+        service_image_2: null,
+        service_image_3: null,
 
         // Customization
         template_style: 'modern',
+        preferred_template: 'modern',
         primary_color: '#1D3557',
         secondary_color: '#F1FAEE',
         custom_slug: '',
@@ -92,19 +80,17 @@ const Wizard = () => {
         event_date: '',
     });
 
-    const savedData = loadSavedData();
-    const [step, setStep] = useState(savedData.step);
+    const [step, setStep] = useState(0);
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState({ show: false, message: '', type: 'danger' });
-    const [formData, setFormData] = useState(savedData.formData);
-    const [progressRestored, setProgressRestored] = useState({ show: false, message: '' });
+    const [formData, setFormData] = useState(getInitialFormData());
 
-    const [otpSent, setOtpSent] = useState(savedData.otpSent);
+    const [otpSent, setOtpSent] = useState(false);
     const [pillarDescriptions, setPillarDescriptions] = useState({});
-    const [customSlugManuallyEdited, setCustomSlugManuallyEdited] = useState(savedData.customSlugManuallyEdited);
+    const [customSlugManuallyEdited, setCustomSlugManuallyEdited] = useState(false);
     const [electionDateError, setElectionDateError] = useState('');
     const [customSlugError, setCustomSlugError] = useState('');
-    const [customPillarMode, setCustomPillarMode] = useState(savedData.customPillarMode);
+    const [customPillarMode, setCustomPillarMode] = useState({ 1: false, 2: false, 3: false });
     const [hoveredTemplate, setHoveredTemplate] = useState(null);
 
     const showAlert = (message, type = 'danger') => {
@@ -121,90 +107,17 @@ const Wizard = () => {
         }, 100);
     };
 
-    const TOTAL_STEPS = 5;
+    const TOTAL_STEPS = 7;
 
     const stepConfig = [
+        { number: 0, name: 'Type', time: '15 sec' },
         { number: 1, name: 'Identity', time: '30 sec' },
-        { number: 2, name: 'Election Details', time: '30 sec' },
-        { number: 3, name: 'Bio Setup', time: '30 sec' },
-        { number: 4, name: 'Platform', time: '30 sec' },
-        { number: 5, name: 'Customization', time: '30 sec' },
+        { number: 2, name: 'Template', time: '20 sec' },
+        { number: 3, name: formData.submission_type === 'organization' ? 'Organization' : 'Election', time: '30 sec' },
+        { number: 4, name: 'Bio Setup', time: '30 sec' },
+        { number: 5, name: formData.submission_type === 'organization' ? 'Services' : 'Platform', time: '30 sec' },
+        { number: 6, name: 'Customization', time: '30 sec' },
     ];
-
-    // Save data to localStorage whenever formData, step, or other state changes
-    useEffect(() => {
-        try {
-            const dataToSave = {
-                step,
-                formData: {
-                    ...formData,
-                    // Don't save File objects, but save metadata
-                    headshot: formData.headshot ? { 
-                        name: formData.headshot.name, 
-                        size: formData.headshot.size, 
-                        type: formData.headshot.type 
-                    } : null,
-                    background_picture: formData.background_picture ? { 
-                        name: formData.background_picture.name, 
-                        size: formData.background_picture.size, 
-                        type: formData.background_picture.type 
-                    } : null,
-                    action_shot_1: formData.action_shot_1 ? { 
-                        name: formData.action_shot_1.name, 
-                        size: formData.action_shot_1.size, 
-                        type: formData.action_shot_1.type 
-                    } : null,
-                    action_shot_2: formData.action_shot_2 ? { 
-                        name: formData.action_shot_2.name, 
-                        size: formData.action_shot_2.size, 
-                        type: formData.action_shot_2.type 
-                    } : null,
-                    action_shot_3: formData.action_shot_3 ? { 
-                        name: formData.action_shot_3.name, 
-                        size: formData.action_shot_3.size, 
-                        type: formData.action_shot_3.type 
-                    } : null,
-                },
-                otpSent,
-                customSlugManuallyEdited,
-                customPillarMode,
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-        } catch (error) {
-            console.error('Error saving data to localStorage:', error);
-        }
-    }, [formData, step, otpSent, customSlugManuallyEdited, customPillarMode]);
-
-    // Show notification if data was restored on mount
-    useEffect(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                if (parsed.step > 1 || parsed.formData.first_name || parsed.formData.last_name) {
-                    const hasImages = parsed.formData.headshot || parsed.formData.action_shot_1 || 
-                                     parsed.formData.action_shot_2 || parsed.formData.action_shot_3;
-                    if (hasImages) {
-                        setProgressRestored({ 
-                            show: true, 
-                            message: 'Your previous progress has been restored! Please re-upload any images.' 
-                        });
-                    } else {
-                        setProgressRestored({ 
-                            show: true, 
-                            message: 'Your previous progress has been restored!' 
-                        });
-                    }
-                    // Auto-hide after 8 seconds
-                    setTimeout(() => {
-                        setProgressRestored({ show: false, message: '' });
-                    }, 8000);
-                }
-            } catch (error) {
-                // Ignore errors
-            }
-        }
-    }, []);
 
     // Fetch pillar descriptions on mount
     useEffect(() => {
@@ -329,35 +242,74 @@ const Wizard = () => {
 
     const handleNext = () => {
         // Basic validation before moving to next step
+        if (step === 0) {
+            if (!formData.submission_type) {
+                showAlert('Please select a type', 'warning');
+                return;
+            }
+            if (formData.submission_type === 'organization' && !formData.organization_subtype) {
+                showAlert('Please select an organization type', 'warning');
+                return;
+            }
+            if (formData.submission_type === 'campaign' && !formData.campaign_subtype) {
+                showAlert('Please select a campaign type', 'warning');
+                return;
+            }
+        }
         if (step === 1 && !formData.otp_verified) {
             showAlert('Please verify your phone number first', 'warning');
             return;
         }
-        if (step === 2) {
-            if (!formData.riding_zone_name || !formData.election_date) {
-                showAlert('Please fill in all election details', 'warning');
-                return;
+        if (step === 3) {
+            if (formData.submission_type === 'organization') {
+                if (!formData.organization_name || !formData.organization_name.trim()) {
+                    showAlert('Please enter your organization name', 'warning');
+                    return;
+                }
+            } else {
+                if (!formData.riding_zone_name || !formData.election_date) {
+                    showAlert('Please fill in all election details', 'warning');
+                    return;
+                }
+                if (formData.election_date) {
+                    const selectedDate = new Date(formData.election_date);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    if (selectedDate <= today) {
+                        setElectionDateError('Election date must be in the future');
+                        showAlert('Election date must be in the future', 'warning');
+                        return;
+                    }
+                }
             }
-            if (formData.election_date) {
-                const selectedDate = new Date(formData.election_date);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                if (selectedDate <= today) {
-                    setElectionDateError('Election date must be in the future');
-                    showAlert('Election date must be in the future', 'warning');
+        }
+        if (step === 4) {
+            if (formData.submission_type === 'organization') {
+                if (!formData.logo || !formData.owner_photo || !formData.bio_text) {
+                    showAlert('Please upload logo, owner photo and provide a bio', 'warning');
+                    return;
+                }
+            } else {
+                if (!formData.headshot || !formData.bio_text) {
+                    showAlert('Please upload a headshot and provide a bio', 'warning');
                     return;
                 }
             }
         }
-        if (step === 3 && (!formData.headshot || !formData.bio_text)) {
-            showAlert('Please upload a headshot and provide a bio', 'warning');
-            return;
-        }
-        if (step === 4 && (!formData.pillar_1 || !formData.pillar_2 || !formData.pillar_3)) {
-            showAlert('Please select all 3 pillars', 'warning');
-            return;
-        }
         if (step === 5) {
+            if (formData.submission_type === 'organization') {
+                if (!formData.service_1 || !formData.service_2 || !formData.service_3) {
+                    showAlert('Please enter all 3 services', 'warning');
+                    return;
+                }
+            } else {
+                if (!formData.pillar_1 || !formData.pillar_2 || !formData.pillar_3) {
+                    showAlert('Please select all 3 pillars', 'warning');
+                    return;
+                }
+            }
+        }
+        if (step === 6) {
             if (formData.custom_slug && !/^[a-z0-9]+$/.test(formData.custom_slug)) {
                 setCustomSlugError('Only letters and numbers allowed (no spaces, hyphens, or special characters)');
                 showAlert('Please fix the custom URL format. Only letters and numbers are allowed.', 'warning');
@@ -370,19 +322,65 @@ const Wizard = () => {
     const handleSubmit = async () => {
         setLoading(true);
         const data = new FormData();
+        
+        // Always include submission_type first
+        data.append('submission_type', formData.submission_type);
+        
+        // Define which fields to exclude based on submission type
+        const organizationExcludeFields = [
+            'headshot', 'position_running_for', 'donation_url', 'event_calendar_url',
+            'riding_zone_name', 'election_date', 'pillar_1', 'pillar_1_desc',
+            'pillar_2', 'pillar_2_desc', 'pillar_3', 'pillar_3_desc',
+            'action_shot_1', 'action_shot_2', 'action_shot_3', 'campaign_subtype'
+        ];
+        
+        const campaignExcludeFields = [
+            'logo', 'owner_photo', 'sales_team_photo', 'organization_name',
+            'organization_subtype', 'service_1', 'service_1_desc',
+            'service_2', 'service_2_desc', 'service_3', 'service_3_desc',
+            'service_image_1', 'service_image_2', 'service_image_3'
+        ];
+        
+        const imageFields = [
+            'headshot', 'background_picture', 'logo', 'owner_photo', 'sales_team_photo',
+            'action_shot_1', 'action_shot_2', 'action_shot_3',
+            'service_image_1', 'service_image_2', 'service_image_3'
+        ];
+        
+        // Process all form fields
         Object.keys(formData).forEach(key => {
-            if (['headshot', 'background_picture', 'action_shot_1', 'action_shot_2', 'action_shot_3'].includes(key)) {
+            // Skip submission_type (already added)
+            if (key === 'submission_type') {
+                return;
+            }
+            
+            // Handle image fields
+            if (imageFields.includes(key)) {
                 if (formData[key]) {
                     data.append(key, formData[key], formData[key].name);
                 }
-            } else if (key === 'custom_slug') {
-                // Only send custom_slug if it was manually edited, otherwise let backend generate from names
+                return;
+            }
+            
+            // Handle custom_slug
+            if (key === 'custom_slug') {
                 if (customSlugManuallyEdited && formData.custom_slug && formData.custom_slug.trim()) {
                     data.append(key, formData[key]);
                 }
-                // If not manually edited, don't send it - backend will generate from first_name + last_name
-            } else {
-                data.append(key, formData[key]);
+                return;
+            }
+            
+            // Filter fields based on submission type
+            const excludeFields = formData.submission_type === 'organization' 
+                ? organizationExcludeFields 
+                : campaignExcludeFields;
+            
+            if (!excludeFields.includes(key)) {
+                const value = formData[key];
+                // Only append if value exists and is not empty
+                if (value !== null && value !== undefined && value !== '') {
+                    data.append(key, value);
+                }
             }
         });
 
@@ -393,8 +391,6 @@ const Wizard = () => {
                 },
             });
             setLoading(false);
-            // Clear saved data on successful submission
-            localStorage.removeItem(STORAGE_KEY);
             navigate('/success', { state: { submission: res.data } });
         } catch (error) {
             setLoading(false);
@@ -421,10 +417,10 @@ const Wizard = () => {
                         textShadow: '0 2px 10px rgba(0,0,0,0.2)',
                         fontSize: '2.5rem'
                     }}>
-                        Build Your Campaign HQ
+                        {formData.submission_type === 'organization' ? 'Build Your Organization Site' : 'Build Your Campaign HQ'}
                     </h2>
                     <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.1rem' }}>
-                        Create your professional campaign site in minutes
+                        Create your professional {formData.submission_type === 'organization' ? 'organization' : 'campaign'} site in minutes
                     </p>
                 </div>
 
@@ -433,20 +429,6 @@ const Wizard = () => {
                     stepConfig={stepConfig} 
                     totalSteps={TOTAL_STEPS} 
                 />
-
-                {/* Progress Restored Notification - Top of Form */}
-                {progressRestored.show && (
-                    <div className="alert alert-success alert-dismissible fade show shadow-sm mb-3" role="alert" style={{ borderRadius: '12px', border: 'none' }}>
-                        <i className="bi bi-check-circle-fill me-2"></i>
-                        {progressRestored.message}
-                        <button 
-                            type="button" 
-                            className="btn-close" 
-                            onClick={() => setProgressRestored({ show: false, message: '' })}
-                            aria-label="Close"
-                        ></button>
-                    </div>
-                )}
 
                 {loading && (
                     <div className="card border-0 shadow-lg text-center p-5" style={{ borderRadius: '16px', background: '#ffffff' }}>
@@ -459,6 +441,18 @@ const Wizard = () => {
 
                 {!loading && (
                     <>
+                        {step === 0 && (
+                            <Step0TypeSelection
+                                formData={formData}
+                                handleChange={handleChange}
+                                setFormData={setFormData}
+                                setStep={setStep}
+                                onNext={handleNext}
+                                alert={alert}
+                                setAlert={setAlert}
+                            />
+                        )}
+
                         {step === 1 && (
                             <Step1Identity
                                 formData={formData}
@@ -474,7 +468,21 @@ const Wizard = () => {
                         )}
 
                         {step === 2 && (
-                            <Step2Election
+                            <Step2TemplateSelection
+                                formData={formData}
+                                handleChange={handleChange}
+                                hoveredTemplate={hoveredTemplate}
+                                setHoveredTemplate={setHoveredTemplate}
+                                setFormData={setFormData}
+                                setStep={setStep}
+                                onNext={handleNext}
+                                alert={alert}
+                                setAlert={setAlert}
+                            />
+                        )}
+
+                        {step === 3 && (
+                            <Step3Election
                                 formData={formData}
                                 handleChange={handleChange}
                                 electionDateError={electionDateError}
@@ -485,8 +493,8 @@ const Wizard = () => {
                             />
                         )}
 
-                        {step === 3 && (
-                            <Step3Bio
+                        {step === 4 && (
+                            <Step4Bio
                                 formData={formData}
                                 handleChange={handleChange}
                                 handleImageUpload={handleImageUpload}
@@ -497,8 +505,8 @@ const Wizard = () => {
                             />
                         )}
 
-                        {step === 4 && (
-                            <Step4Platform
+                        {step === 5 && (
+                            <Step5Platform
                                 formData={formData}
                                 handleChange={handleChange}
                                 handleImageUpload={handleImageUpload}
@@ -512,8 +520,8 @@ const Wizard = () => {
                             />
                         )}
 
-                        {step === 5 && (
-                            <Step5Customization
+                        {step === 6 && (
+                            <Step6Customization
                                 formData={formData}
                                 handleChange={handleChange}
                                 customSlugError={customSlugError}

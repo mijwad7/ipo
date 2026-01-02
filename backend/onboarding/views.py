@@ -2,36 +2,59 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import CampaignSubmission, PillarDescription
-from .serializers import CampaignSubmissionSerializer
+from .models import CampaignSubmission, OrganizationSubmission, PillarDescription
+from .serializers import CampaignSubmissionSerializer, OrganizationSubmissionSerializer
 import random # Stub for OTP generator
 
-class SubmissionCreateView(generics.CreateAPIView):
-    queryset = CampaignSubmission.objects.all()
-    serializer_class = CampaignSubmissionSerializer
+class SubmissionCreateView(APIView):
     parser_classes = (MultiPartParser, FormParser)
+    
+    def post(self, request):
+        submission_type = request.data.get('submission_type', 'campaign')
+        
+        if submission_type == 'organization':
+            serializer = OrganizationSubmissionSerializer(data=request.data)
+        else:
+            serializer = CampaignSubmissionSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            instance = serializer.save()
+            # Add submission_type to response for frontend
+            response_data = serializer.data
+            response_data['submission_type'] = submission_type
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MirrorView(APIView):
     """
-    Retrieve campaign by slug. Supports password protection.
+    Retrieve submission by slug. Supports password protection.
     Accepts password via query parameter (?password=xxx) or POST body.
+    Supports template parameter in URL: /mirror/{slug}/{template}/
+    Works with both CampaignSubmission and OrganizationSubmission
     """
     def get_object(self, slug):
+        # Try campaign first
         try:
-            return CampaignSubmission.objects.get(slug=slug)
+            return CampaignSubmission.objects.get(slug=slug), 'campaign'
         except CampaignSubmission.DoesNotExist:
-            return None
+            pass
+        
+        # Try organization
+        try:
+            return OrganizationSubmission.objects.get(slug=slug), 'organization'
+        except OrganizationSubmission.DoesNotExist:
+            return None, None
     
-    def get(self, request, slug):
-        campaign = self.get_object(slug)
-        if not campaign:
+    def get(self, request, slug, template=None):
+        submission, sub_type = self.get_object(slug)
+        if not submission:
             return Response(
-                {'error': 'Campaign not found'},
+                {'error': 'Submission not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
         
         # Check if password protection is enabled
-        if campaign.is_password_protected:
+        if submission.is_password_protected:
             # Get password from query parameters
             provided_password = request.query_params.get('password')
             
@@ -42,27 +65,38 @@ class MirrorView(APIView):
                 )
             
             # Verify password
-            if provided_password != campaign.password:
+            if provided_password != submission.password:
                 return Response(
                     {'error': 'Incorrect password', 'requires_password': True},
                     status=status.HTTP_401_UNAUTHORIZED
                 )
         
-        # Password is correct or no password protection - return the data
-        serializer = CampaignSubmissionSerializer(campaign)
-        return Response(serializer.data)
+        # Use appropriate serializer based on type
+        if sub_type == 'organization':
+            serializer = OrganizationSubmissionSerializer(submission)
+        else:
+            serializer = CampaignSubmissionSerializer(submission)
+        
+        data = serializer.data
+        data['submission_type'] = sub_type  # Add type to response
+        
+        # Override template_style if template parameter is provided
+        if template and template in ['modern', 'traditional', 'bold']:
+            data['template_style'] = template
+        
+        return Response(data)
     
-    def post(self, request, slug):
+    def post(self, request, slug, template=None):
         """Handle password verification via POST"""
-        campaign = self.get_object(slug)
-        if not campaign:
+        submission, sub_type = self.get_object(slug)
+        if not submission:
             return Response(
-                {'error': 'Campaign not found'},
+                {'error': 'Submission not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
         
         # Check if password protection is enabled
-        if campaign.is_password_protected:
+        if submission.is_password_protected:
             # Get password from request data
             provided_password = request.data.get('password')
             
@@ -73,15 +107,26 @@ class MirrorView(APIView):
                 )
             
             # Verify password
-            if provided_password != campaign.password:
+            if provided_password != submission.password:
                 return Response(
                     {'error': 'Incorrect password', 'requires_password': True},
                     status=status.HTTP_401_UNAUTHORIZED
                 )
         
-        # Password is correct or no password protection - return the data
-        serializer = CampaignSubmissionSerializer(campaign)
-        return Response(serializer.data)
+        # Use appropriate serializer based on type
+        if sub_type == 'organization':
+            serializer = OrganizationSubmissionSerializer(submission)
+        else:
+            serializer = CampaignSubmissionSerializer(submission)
+        
+        data = serializer.data
+        data['submission_type'] = sub_type  # Add type to response
+        
+        # Override template_style if template parameter is provided
+        if template and template in ['modern', 'traditional', 'bold']:
+            data['template_style'] = template
+        
+        return Response(data)
 
 class OTPRequestView(APIView):
     def post(self, request):

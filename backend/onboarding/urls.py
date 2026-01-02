@@ -3,6 +3,7 @@ from .views import SubmissionCreateView, MirrorView, OTPRequestView, OTPVerifyVi
 
 urlpatterns = [
     path('submissions/', SubmissionCreateView.as_view(), name='submission-create'),
+    path('mirror/<slug:slug>/<str:template>/', MirrorView.as_view(), name='mirror-detail-template'),
     path('mirror/<slug:slug>/', MirrorView.as_view(), name='mirror-detail'),
     path('otp/send/', OTPRequestView.as_view(), name='otp-send'),
     path('otp/verify/', OTPVerifyView.as_view(), name='otp-verify'),

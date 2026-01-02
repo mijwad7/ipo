@@ -26,16 +26,39 @@ const SuccessPage = () => {
 
     if (!submission) return <div className="container mt-5">No submission data found.</div>;
 
-    const tempUrl = `/temp/${submission.slug}`;
-    const fullUrl = `${window.location.origin}${tempUrl}`;
+    // Generate all 3 template URLs
+    const baseUrl = window.location.origin;
+    const templateUrls = {
+        modern: {
+            path: `/temp/${submission.slug}/modern`,
+            full: `${baseUrl}/temp/${submission.slug}/modern`,
+            name: 'Modern'
+        },
+        traditional: {
+            path: `/temp/${submission.slug}/traditional`,
+            full: `${baseUrl}/temp/${submission.slug}/traditional`,
+            name: 'Traditional'
+        },
+        bold: {
+            path: `/temp/${submission.slug}/bold`,
+            full: `${baseUrl}/temp/${submission.slug}/bold`,
+            name: 'Bold'
+        }
+    };
+    
+    // Use preferred template or default to modern
+    const preferredTemplate = submission.preferred_template || submission.template_style || 'modern';
+    const preferredUrl = templateUrls[preferredTemplate] || templateUrls.modern;
     
     // Default message template
-    const defaultMessageTemplate = "Hey, I've been seriously thinking about running lately and wanted to get your honest take before I mention it to anyone else. I literally just threw this together in under 3 minutes as a super-rough private placeholder site just to see the idea in real life (definitely not public, I'll take it down right after you see it). Nothing's polished, it's mostly just a vibe check, but curious what your gut reaction is—does this feel like it could connect, or am I totally off base? Appreciate you looking! [link]";
+    const defaultMessageTemplate = submission.submission_type === 'organization'
+        ? "Hey, I've been working on something for our organization and wanted to get your honest take. I literally just threw this together in under 3 minutes as a super-rough private placeholder site just to see the idea in real life (definitely not public, I'll take it down right after you see it). Nothing's polished, it's mostly just a vibe check, but curious what your gut reaction is—does this feel like it could connect, or am I totally off base? Appreciate you looking! [link]"
+        : "Hey, I've been seriously thinking about running lately and wanted to get your honest take before I mention it to anyone else. I literally just threw this together in under 3 minutes as a super-rough private placeholder site just to see the idea in real life (definitely not public, I'll take it down right after you see it). Nothing's polished, it's mostly just a vibe check, but curious what your gut reaction is—does this feel like it could connect, or am I totally off base? Appreciate you looking! [link]";
     
-    // Get message text with link replacement
+    // Get message text with link replacement (using preferred template)
     const getMessageText = () => {
         const msg = message || defaultMessageTemplate;
-        return msg.replace('[link]', fullUrl);
+        return msg.replace('[link]', preferredUrl.full);
     };
     
     const messageText = getMessageText();
@@ -105,7 +128,7 @@ const SuccessPage = () => {
                         fontWeight: '700',
                         fontSize: '2.5rem'
                     }}>
-                        Your Campaign is Live!
+                        Your {submission.submission_type === 'organization' ? 'Organization Site' : 'Campaign'} is Live!
                     </h1>
                     <div className="alert d-inline-block border-0 shadow-sm" style={{
                         background: 'linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(56, 161, 105, 0.1) 100%)',
@@ -113,7 +136,7 @@ const SuccessPage = () => {
                         border: '2px solid rgba(72, 187, 120, 0.3)',
                         padding: '1rem 1.5rem'
                     }}>
-                        <h4 className="mb-2" style={{ color: '#22543d', fontWeight: '600' }}>🎉 Your campaign was built in under 3 minutes!</h4>
+                        <h4 className="mb-2" style={{ color: '#22543d', fontWeight: '600' }}>🎉 Your {submission.submission_type === 'organization' ? 'organization site' : 'campaign'} was built in under 3 minutes!</h4>
                         <p className="mb-0" style={{ color: '#2f855a' }}>That's just 1 minute per page - faster than you can order coffee!</p>
                     </div>
                 </div>
@@ -186,43 +209,61 @@ const SuccessPage = () => {
                     Your instant headquarters has been generated.
                 </p>
 
-                <div className="my-4 text-center">
-                    <Link 
-                        target="_blank" 
-                        to={tempUrl} 
-                        className="btn btn-lg px-5 mb-3"
-                        style={{
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            border: 'none',
-                            color: '#ffffff',
-                            fontWeight: '600',
-                            borderRadius: '10px',
-                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                            textDecoration: 'none',
-                            display: 'inline-block'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.target.style.transform = 'translateY(-2px)';
-                            e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.target.style.transform = 'translateY(0)';
-                            e.target.style.boxShadow = 'none';
-                        }}
-                    >
-                        <i className="bi bi-box-arrow-up-right me-2"></i>
-                        View My Temporary Site
-                    </Link>
+                <div className="my-4">
+                    <h5 className="text-center mb-3" style={{ color: '#2d3748', fontWeight: '600' }}>Your 3 Template Versions</h5>
+                    <p className="text-center text-muted mb-4" style={{ fontSize: '0.9rem' }}>
+                        All 3 templates have been generated! Click any link below to view:
+                    </p>
+                    <div className="row g-3 mb-4">
+                        {Object.entries(templateUrls).map(([key, urlData]) => (
+                            <div key={key} className="col-md-4">
+                                <Link 
+                                    target="_blank" 
+                                    to={urlData.path} 
+                                    className="btn btn-lg w-100"
+                                    style={{
+                                        background: preferredTemplate === key 
+                                            ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                                            : 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%)',
+                                        border: 'none',
+                                        color: preferredTemplate === key ? '#ffffff' : '#4a5568',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                        textDecoration: 'none',
+                                        display: 'block',
+                                        position: 'relative'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    {preferredTemplate === key && (
+                                        <span className="badge bg-success position-absolute top-0 start-100 translate-middle" style={{ fontSize: '0.6rem' }}>
+                                            Preferred
+                                        </span>
+                                    )}
+                                    <i className="bi bi-box-arrow-up-right me-2"></i>
+                                    {urlData.name}
+                                </Link>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="card mb-4 border-0 shadow-sm" style={{ borderRadius: '16px', background: '#f7fafc' }}>
                     <div className="card-body p-4">
-                        <h5 className="mb-3" style={{ color: '#2d3748', fontWeight: '600' }}>Share this link:</h5>
-                        <div className="input-group">
+                        <h5 className="mb-3" style={{ color: '#2d3748', fontWeight: '600' }}>Share Your Preferred Template:</h5>
+                        <div className="input-group mb-3">
                             <input 
                                 type="text" 
                                 className="form-control" 
-                                value={fullUrl} 
+                                value={preferredUrl.full} 
                                 readOnly
                                 style={{ 
                                     borderRadius: '10px 0 0 10px',
@@ -235,7 +276,7 @@ const SuccessPage = () => {
                             <button 
                                 className="btn" 
                                 onClick={() => {
-                                    navigator.clipboard.writeText(fullUrl);
+                                    navigator.clipboard.writeText(preferredUrl.full);
                                     setCopied(true);
                                     setTimeout(() => setCopied(false), 2000);
                                 }}
@@ -251,6 +292,58 @@ const SuccessPage = () => {
                             >
                                 {copied ? '✓ Copied!' : 'Copy Link'}
                             </button>
+                        </div>
+                        <div className="accordion" id="allTemplatesAccordion">
+                            <div className="accordion-item border-0" style={{ borderRadius: '10px', background: '#ffffff' }}>
+                                <h2 className="accordion-header">
+                                    <button 
+                                        className="accordion-button collapsed" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#allTemplatesCollapse"
+                                        style={{ 
+                                            borderRadius: '10px',
+                                            background: '#f7fafc',
+                                            border: 'none',
+                                            color: '#2d3748',
+                                            fontWeight: '600'
+                                        }}
+                                    >
+                                        View All 3 Template Links
+                                    </button>
+                                </h2>
+                                <div id="allTemplatesCollapse" className="accordion-collapse collapse" data-bs-parent="#allTemplatesAccordion">
+                                    <div className="accordion-body p-3">
+                                        {Object.entries(templateUrls).map(([key, urlData]) => (
+                                            <div key={key} className="mb-2">
+                                                <label className="small fw-semibold mb-1" style={{ color: '#4a5568' }}>{urlData.name} Template:</label>
+                                                <div className="input-group input-group-sm">
+                                                    <input 
+                                                        type="text" 
+                                                        className="form-control" 
+                                                        value={urlData.full} 
+                                                        readOnly
+                                                        style={{ 
+                                                            fontSize: '0.85rem',
+                                                            background: '#ffffff'
+                                                        }}
+                                                    />
+                                                    <button 
+                                                        className="btn btn-sm btn-outline-secondary" 
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(urlData.full);
+                                                            setCopied(true);
+                                                            setTimeout(() => setCopied(false), 2000);
+                                                        }}
+                                                    >
+                                                        Copy
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         {alert.show && (
                             <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mt-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>

@@ -54,7 +54,7 @@ const Step5Customization = ({
         <div className="card p-4 border-0 shadow-lg" style={{ borderRadius: '16px', background: '#ffffff' }}>
             <h4 className="mb-4" style={{ color: '#2d3748', fontWeight: '600' }}>
                 <i className="bi bi-palette me-2" style={{ color: '#667eea' }}></i>
-                Step 5: Customization
+                Step 6: Customization
             </h4>
             
             {/* Disclosure Notice */}
@@ -313,7 +313,7 @@ const Step5Customization = ({
             <div className="d-flex gap-2 mt-4">
                 <button 
                     className="btn" 
-                    onClick={() => setStep(4)}
+                    onClick={() => setStep(5)}
                     style={{
                         background: '#e2e8f0',
                         border: 'none',

@@ -1,8 +1,10 @@
 import React from 'react';
 
 const WizardProgressBar = ({ step, stepConfig, totalSteps }) => {
-    const progressPercentage = (step / totalSteps) * 100;
-    const currentStepConfig = stepConfig[step - 1];
+    // step is 0-indexed, so we add 1 for display and calculation
+    const displayStep = step + 1;
+    const progressPercentage = (displayStep / totalSteps) * 100;
+    const currentStepConfig = stepConfig[step];
 
     return (
         <div className="card mb-4 border-0 shadow-lg" style={{ borderRadius: '16px', overflow: 'hidden' }}>
@@ -10,7 +12,7 @@ const WizardProgressBar = ({ step, stepConfig, totalSteps }) => {
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h5 className="mb-1" style={{ color: '#2d3748', fontWeight: '600' }}>
-                            Step {step} of {totalSteps} - {currentStepConfig.name}
+                            Step {displayStep} of {totalSteps} - {currentStepConfig.name}
                         </h5>
                         <small style={{ color: '#718096' }}>~{currentStepConfig.time}</small>
                     </div>
@@ -57,10 +59,10 @@ const WizardProgressBar = ({ step, stepConfig, totalSteps }) => {
                                 width: '32px',
                                 height: '32px',
                                 borderRadius: '50%',
-                                background: idx + 1 <= step 
+                                background: idx <= step 
                                     ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
                                     : '#e2e8f0',
-                                color: idx + 1 <= step ? '#ffffff' : '#a0aec0',
+                                color: idx <= step ? '#ffffff' : '#a0aec0',
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -69,12 +71,12 @@ const WizardProgressBar = ({ step, stepConfig, totalSteps }) => {
                                 marginBottom: '0.5rem',
                                 transition: 'all 0.3s ease'
                             }}>
-                                {idx + 1 <= step ? '✓' : config.number}
+                                {idx <= step ? '✓' : config.number}
                             </div>
                             <div style={{ 
                                 fontSize: '0.75rem',
-                                color: idx + 1 <= step ? '#667eea' : '#a0aec0',
-                                fontWeight: idx + 1 <= step ? '600' : '400'
+                                color: idx <= step ? '#667eea' : '#a0aec0',
+                                fontWeight: idx <= step ? '600' : '400'
                             }}>
                                 {config.name}
                             </div>

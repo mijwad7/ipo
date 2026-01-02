@@ -34,50 +34,71 @@ const Step2Election = ({ formData, handleChange, electionDateError, setStep, onN
     const selectedDate = formData.election_date ? new Date(formData.election_date) : null;
     const minDate = new Date();
 
+    const isOrganization = formData.submission_type === 'organization';
+
     return (
         <div className="card p-4 border-0 shadow-lg" style={{ borderRadius: '16px', background: '#ffffff' }}>
             <h4 className="mb-4" style={{ color: '#2d3748', fontWeight: '600' }}>
-                <i className="bi bi-calendar-check me-2" style={{ color: '#667eea' }}></i>
-                Step 2: Election Details
+                <i className={`bi ${isOrganization ? 'bi-building' : 'bi-calendar-check'} me-2`} style={{ color: '#667eea' }}></i>
+                Step 3: {isOrganization ? 'Organization Details' : 'Election Details'}
             </h4>
-            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Riding / Zone Name</label>
-            <input 
-                name="riding_zone_name" 
-                className="form-control mb-3" 
-                placeholder="e.g., District 5, Ward 3" 
-                value={formData.riding_zone_name}
-                onChange={handleChange}
-                style={inputStyle}
-                required
-            />
-            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Election Date</label>
-            <div className={`mb-2 ${electionDateError ? 'is-invalid' : ''}`}>
-                <DatePicker
-                    selected={selectedDate}
-                    onChange={handleDateChange}
-                    minDate={minDate}
-                    dateFormat="MMMM dd, yyyy"
-                    placeholderText="Select election date"
-                    className={`form-control ${electionDateError ? 'is-invalid' : ''}`}
-                    wrapperClassName="w-100"
-                    calendarClassName="modern-calendar"
-                    popperClassName="modern-calendar-popper"
-                    style={inputStyle}
-                    required
-                    showPopperArrow={false}
-                    popperPlacement="bottom-start"
-                    popperModifiers={[
-                        {
-                            name: "offset",
-                            options: {
-                                offset: [0, 8]
-                            }
-                        }
-                    ]}
-                />
-            </div>
-            {electionDateError && (
-                <div className="text-danger small mb-3">{electionDateError}</div>
+            
+            {isOrganization ? (
+                <>
+                    <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Organization Name</label>
+                    <input 
+                        name="organization_name" 
+                        className="form-control mb-3" 
+                        placeholder="e.g., St. Mary's Church, Community Food Bank, Downtown EDA" 
+                        value={formData.organization_name || ''}
+                        onChange={handleChange}
+                        style={inputStyle}
+                        required
+                    />
+                    <small className="text-muted d-block mb-3">Enter the full name of your organization</small>
+                </>
+            ) : (
+                <>
+                    <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Riding / Zone Name</label>
+                    <input 
+                        name="riding_zone_name" 
+                        className="form-control mb-3" 
+                        placeholder="e.g., District 5, Ward 3" 
+                        value={formData.riding_zone_name}
+                        onChange={handleChange}
+                        style={inputStyle}
+                        required
+                    />
+                    <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Election Date</label>
+                    <div className={`mb-2 ${electionDateError ? 'is-invalid' : ''}`}>
+                        <DatePicker
+                            selected={selectedDate}
+                            onChange={handleDateChange}
+                            minDate={minDate}
+                            dateFormat="MMMM dd, yyyy"
+                            placeholderText="Select election date"
+                            className={`form-control ${electionDateError ? 'is-invalid' : ''}`}
+                            wrapperClassName="w-100"
+                            calendarClassName="modern-calendar"
+                            popperClassName="modern-calendar-popper"
+                            style={inputStyle}
+                            required
+                            showPopperArrow={false}
+                            popperPlacement="bottom-start"
+                            popperModifiers={[
+                                {
+                                    name: "offset",
+                                    options: {
+                                        offset: [0, 8]
+                                    }
+                                }
+                            ]}
+                        />
+                    </div>
+                    {electionDateError && (
+                        <div className="text-danger small mb-3">{electionDateError}</div>
+                    )}
+                </>
             )}
             {alert.show && (
                 <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
@@ -92,7 +113,7 @@ const Step2Election = ({ formData, handleChange, electionDateError, setStep, onN
                 </div>
             )}
             <WizardNavigationButtons 
-                onBack={() => setStep(1)} 
+                onBack={() => setStep(2)} 
                 onNext={onNext}
             />
             <style>{`
