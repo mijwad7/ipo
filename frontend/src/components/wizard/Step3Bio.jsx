@@ -40,14 +40,13 @@ const Step3Bio = ({ formData, handleChange, handleImageUpload, setStep, onNext, 
             />
             <small className="text-muted d-block mb-3">Enter your campaign tag line</small>
             
-            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Headshot (Required)</label>
+            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Headshot (Optional)</label>
             <input 
                 type="file" 
                 className="form-control mb-3" 
                 accept="image/*" 
                 onChange={(e) => handleImageUpload(e, 'headshot')}
                 style={inputStyle}
-                required
             />
             {formData.headshot && (
                 <div className="text-success small mb-3">✓ Image selected: {formData.headshot.name}</div>
@@ -98,4 +97,3 @@ const Step3Bio = ({ formData, handleChange, handleImageUpload, setStep, onNext, 
 };
 
 export default Step3Bio;
-

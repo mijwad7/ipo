@@ -349,8 +349,8 @@ const Wizard = () => {
                 }
             }
         }
-        if (step === 3 && (!formData.headshot || !formData.bio_text)) {
-            showAlert('Please upload a headshot and provide a bio', 'warning');
+        if (step === 3 && !formData.bio_text) {
+            showAlert('Please provide a bio', 'warning');
             return;
         }
         if (step === 4 && (!formData.pillar_1 || !formData.pillar_2 || !formData.pillar_3)) {

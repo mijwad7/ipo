@@ -44,7 +44,7 @@ class CampaignSubmission(models.Model):
     donation_url = models.URLField(blank=True, null=True)
     event_calendar_url = models.CharField(max_length=200, blank=True, null=True) # Changed to char for flexibility
     
-    headshot = models.ImageField(upload_to='headshots/')
+    headshot = models.ImageField(upload_to='headshots/', blank=True, null=True)
     background_picture = models.ImageField(upload_to='backgrounds/', blank=True, null=True)
     # Action shots - keeping simple for MVP
     action_shot_1 = models.ImageField(upload_to='action_shots/', blank=True, null=True)

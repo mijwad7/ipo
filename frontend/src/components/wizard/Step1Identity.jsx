@@ -1,8 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert, setFormData, setStep, alert, setAlert }) => {
+    const [emailError, setEmailError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+
+    const validateEmail = (email) => {
+        if (!email) {
+            setEmailError('');
+            return false;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setEmailError('Please enter a valid email address');
+            return false;
+        }
+        setEmailError('');
+        return true;
+    };
+
+    const validatePhone = (phone) => {
+        if (!phone) {
+            setPhoneError('');
+            return false;
+        }
+        // Basic phone validation - allows digits, spaces, dashes, parentheses, and + sign
+        const phoneRegex = /^[\d\s\-\(\)\+]+$/;
+        const digitsOnly = phone.replace(/\D/g, '');
+        
+        if (!phoneRegex.test(phone) || digitsOnly.length < 10) {
+            setPhoneError('Please enter a valid phone number (at least 10 digits)');
+            return false;
+        }
+        setPhoneError('');
+        return true;
+    };
+
+    const handleEmailChange = (e) => {
+        handleChange(e);
+        validateEmail(e.target.value);
+    };
+
+    const handlePhoneChange = (e) => {
+        handleChange(e);
+        validatePhone(e.target.value);
+    };
+
     const sendOtp = async () => {
+        if (!validatePhone(formData.phone)) {
+            showAlert('Please enter a valid phone number before sending OTP', 'warning');
+            return;
+        }
         try {
             await axios.post('/api/otp/send/', { phone: formData.phone });
             setOtpSent(true);
@@ -58,6 +106,7 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                 <i className="bi bi-person-badge me-2" style={{ color: '#667eea' }}></i>
                 Step 1: Identity
             </h4>
+            <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>First Name</label>
             <input 
                 name="first_name" 
                 className="form-control mb-3" 
@@ -66,6 +115,7 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                 onChange={handleChange}
                 style={inputStyle}
             />
+            <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Last Name</label>
             <input 
                 name="last_name" 
                 className="form-control mb-3" 
@@ -74,22 +124,29 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                 onChange={handleChange}
                 style={inputStyle}
             />
+            <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Email</label>
             <input 
                 name="email" 
-                className="form-control mb-3" 
+                className={`form-control mb-1 ${emailError ? 'is-invalid' : ''}`}
                 placeholder="Email" 
                 type="email" 
                 value={formData.email}
-                onChange={handleChange}
+                onChange={handleEmailChange}
+                onBlur={(e) => validateEmail(e.target.value)}
                 style={inputStyle}
             />
-            <div className="d-flex gap-2 mb-3">
+            {emailError && (
+                <div className="text-danger small mb-3">{emailError}</div>
+            )}
+            <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Mobile Phone</label>
+            <div className="d-flex gap-2 mb-1">
                 <input 
                     name="phone" 
-                    className="form-control" 
+                    className={`form-control ${phoneError ? 'is-invalid' : ''}`}
                     placeholder="Mobile Phone" 
                     value={formData.phone}
-                    onChange={handleChange}
+                    onChange={handlePhoneChange}
+                    onBlur={(e) => validatePhone(e.target.value)}
                     style={inputStyle}
                 />
                 <button 
@@ -102,6 +159,9 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                     Send OTP
                 </button>
             </div>
+            {phoneError && (
+                <div className="text-danger small mb-3">{phoneError}</div>
+            )}
             {otpSent && (
                 <>
                     <label className="form-label fw-bold">One Time Password (OTP) Check</label>
