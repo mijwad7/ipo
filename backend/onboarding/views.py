@@ -28,6 +28,20 @@ class SubmissionCreateView(generics.CreateAPIView):
     parser_classes = (MultiPartParser, FormParser)
     
     def create(self, request, *args, **kwargs):
+        # Check if contact_id was provided from OTP verification
+        # This allows us to update the existing contact instead of creating a new one
+        contact_id_from_otp = request.data.get('ghl_contact_id') or request.data.get('contact_id')
+        
+        # If contact_id is provided, add it to the request data so it gets saved
+        if contact_id_from_otp:
+            # Make request.data mutable if it's a QueryDict
+            if hasattr(request.data, '_mutable'):
+                request.data._mutable = True
+            # If it's a regular dict, we can modify it directly
+            if isinstance(request.data, dict):
+                request.data['ghl_contact_id'] = contact_id_from_otp
+            logger.info(f"Setting ghl_contact_id from OTP: {contact_id_from_otp}")
+        
         # Create the campaign submission first
         response = super().create(request, *args, **kwargs)
         
@@ -38,6 +52,7 @@ class SubmissionCreateView(generics.CreateAPIView):
             
             try:
                 submission = CampaignSubmission.objects.get(id=submission_id)
+                
                 ghl_location_id = self.create_ghl_location(submission)
                 
                 if ghl_location_id:
@@ -56,15 +71,15 @@ class SubmissionCreateView(generics.CreateAPIView):
                         
                         # If contact was already created during OTP verification, update it
                         if submission.ghl_contact_id:
-                            logger.info(f"Updating existing contact {submission.ghl_contact_id} in static location")
+                            logger.info(f"Updating existing contact {submission.ghl_contact_id} in static location with all custom fields")
                             contact_updated = self.update_ghl_contact_with_custom_fields(submission, submission.ghl_contact_id)
                             if contact_updated:
                                 logger.info(f"✓ Contact updated successfully in static location: {submission.ghl_contact_id}")
                             else:
                                 logger.warning(f"⚠ Failed to update contact in static location for submission {submission_id}")
                         else:
-                            # Create new contact in static location if it doesn't exist
-                            logger.info(f"Creating new contact in static location {static_location_id}")
+                            # Create new contact in static location if it doesn't exist (fallback)
+                            logger.info(f"Creating new contact in static location {static_location_id} (no contact_id from OTP)")
                             new_contact_id = self.create_ghl_contact(submission, static_location_id)
                             
                             if new_contact_id:
@@ -1154,6 +1169,10 @@ class MirrorView(APIView):
 
 class OTPRequestView(APIView):
     def post(self, request):
+        """
+        Create/update contact in GHL and send OTP via SMS
+        Uses GHL upsert API to create contact, stores OTP in custom field, sends SMS
+        """
         phone = request.data.get('phone')
         email = request.data.get('email', '')
         first_name = request.data.get('first_name', '')
@@ -1166,47 +1185,73 @@ class OTPRequestView(APIView):
         if phone and not phone.startswith('+'):
             phone = f"+{phone}"
         
-        # Generate OTP code (4 digits)
-        otp_code = str(random.randint(1000, 9999))
-        
-        # Store OTP in memory (expires in 10 minutes)
-        otp_storage[phone] = {
-            'code': otp_code,
-            'expires_at': datetime.now() + timedelta(minutes=10)
-        }
-        
-        logger.info(f"OTP generated for {phone}: {otp_code}")
-        
-        # For testing: log the OTP (remove in production)
-        print(f"\n=== OTP FOR TESTING ===")
-        print(f"Phone: {phone}")
-        print(f"OTP Code: {otp_code}")
-        print(f"=======================\n")
-        
-        return Response({
-            'message': 'OTP Sent',
-            'otp_code': otp_code  # Remove this in production - only for testing
-        }, status=status.HTTP_200_OK)
-    
-    def create_or_update_ghl_contact_for_otp(self, phone, email, first_name, last_name):
-        """
-        Create or update contact in GHL static location for OTP verification
-        Generates OTP code and sets it in the app_otp custom field using the custom field ID
-        Returns dict with contact_id and otp_code if successful
-        """
+        # Validate GHL configuration
         if not settings.GHL_LOCATION_API_TOKEN or not settings.GHL_OTP_LOCATION_ID:
-            logger.warning("GHL location token or OTP location ID not configured")
-            return None
+            logger.error("GHL location token or OTP location ID not configured")
+            return Response(
+                {'error': 'OTP service not configured'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+        if not settings.GHL_APP_OTP_FIELD_ID:
+            logger.error("GHL_APP_OTP_FIELD_ID not configured")
+            return Response(
+                {'error': 'OTP service not configured'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
         
         location_id = settings.GHL_OTP_LOCATION_ID
+        api_token = settings.GHL_LOCATION_API_TOKEN
         
         # Generate OTP code (4 digits)
         otp_code = str(random.randint(1000, 9999))
-        logger.info(f"Generated OTP code: {otp_code} for phone: {phone}")
+        logger.info(f"Generating OTP for {phone}: {otp_code}")
         
-        # Prepare contact payload (without custom fields - set separately)
+        # Create or update contact in GHL using upsert
+        contact_result = self.create_or_update_ghl_contact_for_otp(
+            phone, email, first_name, last_name, otp_code, location_id, api_token
+        )
+        
+        if not contact_result:
+            logger.error(f"Failed to create/update contact for OTP: {phone}")
+            return Response(
+                {'error': 'Failed to process OTP request'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+        contact_id = contact_result.get('contact_id')
+        
+        # Send OTP via SMS using GHL
+        sms_sent = self.send_otp_sms(contact_id, phone, otp_code, location_id, api_token)
+        
+        if not sms_sent:
+            logger.warning(f"OTP stored in contact but SMS may not have been sent: {phone}")
+            # Still return success since OTP is stored in contact
+        
+        logger.info(f"OTP request completed for {phone}, contact_id: {contact_id}")
+        
+        return Response({
+            'message': 'OTP sent successfully',
+            'contact_id': contact_id  # Return contact_id for verification
+        }, status=status.HTTP_200_OK)
+    
+    def create_or_update_ghl_contact_for_otp(self, phone, email, first_name, last_name, otp_code, location_id, api_token):
+        """
+        Create or update contact in GHL static location for OTP verification using upsert API
+        Sets OTP code in the app_otp custom field using the custom field ID
+        Returns dict with contact_id if successful
+        """
+        logger.info(f"Creating/updating contact for OTP: phone={phone}, email={email}")
+        
+        # Prepare full name
+        full_name = None
+        if first_name or last_name:
+            full_name = f"{first_name or ''} {last_name or ''}".strip()
+        
+        # Prepare contact payload for upsert
         payload = {
             "phone": phone,
+            "locationId": location_id,
         }
         
         if email:
@@ -1215,73 +1260,71 @@ class OTPRequestView(APIView):
             payload["firstName"] = first_name
         if last_name:
             payload["lastName"] = last_name
+        if full_name:
+            payload["name"] = full_name
+        
+        # Add OTP to custom fields
+        if settings.GHL_APP_OTP_FIELD_ID:
+            payload["customFields"] = [
+                {
+                    "id": settings.GHL_APP_OTP_FIELD_ID,
+                    "field_value": otp_code
+                }
+            ]
         
         headers = {
-            'Authorization': f'Bearer {settings.GHL_LOCATION_API_TOKEN}',
+            'Authorization': f'Bearer {api_token}',
             'Content-Type': 'application/json',
             'Version': '2021-07-28',
             'Accept': 'application/json'
         }
         
         try:
-            # Try to create contact first (GHL may handle duplicates automatically)
-            create_url = f"{settings.GHL_API_BASE_URL}/contacts/"
-            create_payload = {**payload, "locationId": location_id}
-            ghl_response = requests.post(create_url, json=create_payload, headers=headers, timeout=30)
+            # Use upsert API to create or update contact
+            upsert_url = f"{settings.GHL_API_BASE_URL}/contacts/upsert"
+            logger.info(f"Upserting contact for OTP: {upsert_url}")
             
-            contact_id = None
+            ghl_response = requests.post(upsert_url, json=payload, headers=headers, timeout=30)
+            
+            logger.info(f"Upsert response status: {ghl_response.status_code}")
+            
             if ghl_response.status_code in [200, 201]:
-                # Contact created successfully
-                contact_data = ghl_response.json()
-                contact_id = contact_data.get('contact', {}).get('id') or contact_data.get('id')
-            elif ghl_response.status_code == 409 or 'duplicate' in ghl_response.text.lower():
-                # Contact already exists, try to find and update it
-                # Search by phone using query parameter
-                search_url = f"{settings.GHL_API_BASE_URL}/contacts/"
-                search_params = {
-                    "phone": phone,
-                    "locationId": location_id
-                }
-                search_response = requests.get(search_url, params=search_params, headers=headers, timeout=30)
-                
-                if search_response.status_code == 200:
-                    search_data = search_response.json()
-                    contacts = search_data.get('contacts', [])
-                    if contacts:
-                        contact_id = contacts[0].get('id')
-                        # Update existing contact (without custom fields)
-                        update_url = f"{settings.GHL_API_BASE_URL}/contacts/{contact_id}"
-                        ghl_response = requests.put(update_url, json=payload, headers=headers, timeout=30)
-                    else:
-                        logger.error("Contact exists but could not be found by phone")
+                try:
+                    ghl_data = ghl_response.json()
+                    succeeded = ghl_data.get('succeded', ghl_data.get('succeeded', True))
+                    
+                    if not succeeded:
+                        logger.error(f"Upsert API returned success=false: {ghl_data}")
                         return None
-                else:
-                    logger.error(f"Failed to search for contact: {search_response.status_code} - {search_response.text}")
+                    
+                    contact_id = ghl_data.get('contact', {}).get('id') or ghl_data.get('id')
+                    
+                    if contact_id:
+                        is_new = ghl_data.get('new', False)
+                        action = "created" if is_new else "updated"
+                        logger.info(f"✓ Contact {action} for OTP: {contact_id}, OTP stored: {otp_code}")
+                        return {
+                            'contact_id': contact_id,
+                            'otp_code': otp_code
+                        }
+                    else:
+                        logger.error(f"Contact upserted but no ID found: {ghl_data}")
+                        return None
+                except Exception as e:
+                    logger.error(f"Error parsing upsert response: {str(e)}")
+                    logger.error(f"Response: {ghl_response.text[:500]}")
                     return None
-            
-            # If contact was created/updated successfully, set the custom field separately
-            if ghl_response.status_code in [200, 201] and contact_id:
-                # Set OTP in custom field using separate endpoint
-                custom_field_set = self.set_contact_custom_field(contact_id, settings.GHL_APP_OTP_FIELD_ID or 'app_otp', otp_code)
-                if custom_field_set:
-                    logger.info(f"GHL contact created/updated for OTP: {contact_id}, OTP: {otp_code}")
-                    return {
-                        'contact_id': contact_id,
-                        'otp_code': otp_code
-                    }
-                else:
-                    logger.warning(f"Contact created but failed to set OTP custom field: {contact_id}")
-                    # Still return contact_id even if custom field failed
-                    return {
-                        'contact_id': contact_id,
-                        'otp_code': otp_code
-                    }
             else:
-                logger.error(f"GHL API error creating/updating contact: {ghl_response.status_code} - {ghl_response.text}")
+                logger.error(f"GHL API error upserting contact: {ghl_response.status_code} - {ghl_response.text}")
                 return None
                 
         except requests.exceptions.RequestException as e:
-            logger.error(f"GHL API request failed for contact creation/update: {str(e)}")
+            logger.error(f"GHL API request failed for contact upsert: {str(e)}")
+            logger.exception("Full exception traceback:")
+            return None
+        except Exception as e:
+            logger.error(f"Unexpected error upserting contact: {str(e)}")
+            logger.exception("Full exception traceback:")
             return None
     
     def set_contact_custom_field(self, contact_id, field_id_or_name, value):
@@ -1354,56 +1397,103 @@ class OTPRequestView(APIView):
             logger.error(f"GHL API request failed for custom field update: {str(e)}")
             return False
     
-    def send_otp_sms(self, contact_id, phone, otp_code):
+    def send_otp_sms(self, contact_id, phone, otp_code, location_id, api_token):
         """
         Send OTP code via SMS using GHL API
         """
-        if not settings.GHL_LOCATION_API_TOKEN or not settings.GHL_OTP_LOCATION_ID:
+        if not contact_id or not phone or not otp_code:
+            logger.warning("Missing required parameters for SMS sending")
             return False
-        
-        location_id = settings.GHL_OTP_LOCATION_ID
-        
-        headers = {
-            'Authorization': f'Bearer {settings.GHL_LOCATION_API_TOKEN}',
-            'Content-Type': 'application/json',
-            'Version': '2021-07-28',
-            'Accept': 'application/json'
-        }
         
         # Format phone number
         formatted_phone = phone if phone.startswith('+') else f"+{phone}"
         
-        # Prepare SMS payload
+        # Prepare SMS payload according to GHL API documentation
+        # Required fields: type (SMS), contactId, status
+        # For SMS: use toNumber for recipient, message for content
         sms_payload = {
-            "phoneNumber": formatted_phone,
-            "message": f"Your OTP code is: {otp_code}",
-            "contactId": contact_id,
-            "locationId": location_id
+            "type": "SMS",  # Must be uppercase "SMS" not "sms"
+            "contactId": contact_id,  # Required
+            "toNumber": formatted_phone,  # Recipient phone number (not phoneNumber)
+            "message": f"Your OTP code is: {otp_code}",  # Message content
+            "status": "pending"  # Required: delivered, failed, pending, or read
+        }
+        
+        # Note: Version header for messages API is 2021-04-15 (not 2021-07-28)
+        headers = {
+            'Authorization': f'Bearer {api_token}',
+            'Content-Type': 'application/json',
+            'Version': '2021-04-15',  # Messages API uses this version
+            'Accept': 'application/json'
         }
         
         try:
             # GHL SMS endpoint
-            sms_url = f"{settings.GHL_API_BASE_URL}/conversations/messages/"
+            sms_url = f"{settings.GHL_API_BASE_URL}/conversations/messages"
+            logger.info(f"=== Sending OTP SMS ===")
+            logger.info(f"URL: {sms_url}")
+            logger.info(f"Payload: type=SMS, contactId={contact_id}, toNumber={formatted_phone}, message length={len(sms_payload['message'])}")
+            logger.info(f"Headers: Version=2021-04-15, Authorization=Bearer {api_token[:10]}...")
+            
             sms_response = requests.post(sms_url, json=sms_payload, headers=headers, timeout=30)
             
+            logger.info(f"SMS response status: {sms_response.status_code}")
+            logger.info(f"SMS response headers: {dict(sms_response.headers)}")
+            
+            # Log full response for debugging
+            try:
+                response_data = sms_response.json()
+                logger.info(f"SMS response data: {response_data}")
+                
+                # Check if messageId is present (indicates successful message creation)
+                message_id = response_data.get('messageId') or response_data.get('messageIds', [])
+                if message_id:
+                    logger.info(f"✓ Message ID(s) returned: {message_id}")
+                else:
+                    logger.warning(f"⚠ No messageId in response - message may not have been queued")
+                
+            except Exception as e:
+                logger.warning(f"Response is not JSON: {sms_response.text[:500]}")
+            
             if sms_response.status_code in [200, 201]:
-                logger.info(f"OTP SMS sent successfully to {formatted_phone}")
-                return True
+                # Check response body to ensure message was actually queued
+                try:
+                    response_data = sms_response.json()
+                    message_id = response_data.get('messageId') or (response_data.get('messageIds', []) and response_data.get('messageIds', [])[0])
+                    
+                    if message_id:
+                        logger.info(f"✓ OTP SMS queued successfully to {formatted_phone}, messageId: {message_id}")
+                        return True
+                    else:
+                        logger.warning(f"⚠ API returned 200 but no messageId - SMS may not have been queued")
+                        logger.warning(f"Response: {response_data}")
+                        return False
+                except:
+                    logger.warning(f"⚠ Could not parse response to verify messageId")
+                    logger.info(f"✓ OTP SMS sent successfully to {formatted_phone} (response: {sms_response.status_code})")
+                    return True
             else:
-                logger.error(f"Failed to send OTP SMS: {sms_response.status_code} - {sms_response.text}")
+                logger.error(f"✗ Failed to send OTP SMS: {sms_response.status_code}")
+                logger.error(f"Error response: {sms_response.text}")
                 return False
                 
         except requests.exceptions.RequestException as e:
-            logger.error(f"GHL API request failed for SMS sending: {str(e)}")
+            logger.error(f"✗ GHL API request failed for SMS sending: {str(e)}")
+            logger.exception("Full exception traceback:")
+            return False
+        except Exception as e:
+            logger.error(f"✗ Unexpected error sending SMS: {str(e)}")
+            logger.exception("Full exception traceback:")
             return False
 
 class OTPVerifyView(APIView):
     def post(self, request):
         """
-        Simplified OTP verification - accepts any 4-digit number as valid
+        Verify OTP by checking the app_otp custom field in GHL contact
         """
         code = request.data.get('code')
         phone = request.data.get('phone')
+        contact_id = request.data.get('contact_id')  # Optional, will search by phone if not provided
         
         if not code:
             return Response({'error': 'OTP code is required'}, status=status.HTTP_400_BAD_REQUEST)
@@ -1415,22 +1505,47 @@ class OTPVerifyView(APIView):
         if phone and not phone.startswith('+'):
             phone = f"+{phone}"
         
-        # Simplified verification: accept any 4-digit number
+        # Validate code format
         code_str = str(code).strip()
+        if not code_str.isdigit() or len(code_str) != 4:
+            return Response(
+                {'message': 'Invalid Code. Please enter a 4-digit number.', 'verified': False}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
-        # Check if it's a 4-digit number
-        if code_str.isdigit() and len(code_str) == 4:
-            logger.info(f"OTP verified (simplified mode) for {phone} with code: {code_str}")
-            return Response({'message': 'Verified', 'verified': True}, status=status.HTTP_200_OK)
+        # Verify OTP from GHL
+        verification_result = self.verify_ghl_otp(contact_id, phone, code_str)
+        
+        if verification_result:
+            # Get contact_id if we don't have it (from verification)
+            if not contact_id and verification_result.get('contact_id'):
+                contact_id = verification_result.get('contact_id')
+            
+            logger.info(f"✓ OTP verified successfully for {phone}, contact_id: {contact_id}")
+            return Response({
+                'message': 'Verified', 
+                'verified': True,
+                'contact_id': contact_id  # Return contact_id for form submission
+            }, status=status.HTTP_200_OK)
         else:
-            logger.warning(f"Invalid OTP format for {phone}: code must be 4 digits, got: {code_str}")
-            return Response({'message': 'Invalid Code. Please enter a 4-digit number.', 'verified': False}, status=status.HTTP_400_BAD_REQUEST)
+            logger.warning(f"✗ OTP verification failed for {phone}: code {code_str}")
+            return Response({'message': 'Invalid Code', 'verified': False}, status=status.HTTP_400_BAD_REQUEST)
     
     def verify_ghl_otp(self, contact_id, phone, code):
         """
         Verify OTP by checking the app_otp custom field in GHL contact
+        Uses GHL_APP_OTP_FIELD_ID to retrieve the OTP value
         """
+        if not settings.GHL_LOCATION_API_TOKEN or not settings.GHL_OTP_LOCATION_ID:
+            logger.error("GHL location token or OTP location ID not configured")
+            return False
+        
+        if not settings.GHL_APP_OTP_FIELD_ID:
+            logger.error("GHL_APP_OTP_FIELD_ID not configured")
+            return False
+        
         location_id = settings.GHL_OTP_LOCATION_ID
+        otp_field_id = settings.GHL_APP_OTP_FIELD_ID
         
         headers = {
             'Authorization': f'Bearer {settings.GHL_LOCATION_API_TOKEN}',
@@ -1440,20 +1555,30 @@ class OTPVerifyView(APIView):
         }
         
         try:
-            # If contact_id provided, use it; otherwise search by phone
+            # If contact_id not provided, search by phone
             if not contact_id and phone:
                 formatted_phone = phone if phone.startswith('+') else f"+{phone}"
+                logger.info(f"Searching for contact by phone: {formatted_phone}")
+                
                 search_url = f"{settings.GHL_API_BASE_URL}/contacts/"
                 search_params = {
                     "phone": formatted_phone,
                     "locationId": location_id
                 }
                 search_response = requests.get(search_url, params=search_params, headers=headers, timeout=30)
+                
                 if search_response.status_code == 200:
                     search_data = search_response.json()
                     contacts = search_data.get('contacts', [])
                     if contacts:
                         contact_id = contacts[0].get('id')
+                        logger.info(f"Found contact by phone: {contact_id}")
+                    else:
+                        logger.warning(f"No contact found for phone: {formatted_phone}")
+                        return False
+                else:
+                    logger.error(f"Failed to search for contact: {search_response.status_code} - {search_response.text}")
+                    return False
             
             if not contact_id:
                 logger.error("Contact ID not found for OTP verification")
@@ -1461,6 +1586,8 @@ class OTPVerifyView(APIView):
             
             # Get contact details to check app_otp custom field
             get_url = f"{settings.GHL_API_BASE_URL}/contacts/{contact_id}"
+            logger.info(f"Getting contact details: {get_url}")
+            
             get_response = requests.get(get_url, headers=headers, timeout=30)
             
             if get_response.status_code == 200:
@@ -1468,41 +1595,51 @@ class OTPVerifyView(APIView):
                 contact = contact_data.get('contact', contact_data)
                 
                 # Check custom fields for app_otp
-                # GHL may return custom fields as object with field IDs or names as keys
+                # GHL returns custom fields in different formats
                 custom_fields = contact.get('customField', {})
-                if isinstance(custom_fields, list):
-                    # If it's an array, convert to dict (by name and by ID)
-                    custom_fields_dict = {}
-                    for field in custom_fields:
+                custom_fields_array = contact.get('customFields', [])
+                
+                # Try to get OTP value from custom fields
+                app_otp = None
+                
+                # Method 1: Check customField object (field ID as key)
+                if isinstance(custom_fields, dict):
+                    app_otp = custom_fields.get(otp_field_id)
+                    if not app_otp:
+                        app_otp = custom_fields.get('app_otp')
+                
+                # Method 2: Check customFields array
+                if not app_otp and isinstance(custom_fields_array, list):
+                    for field in custom_fields_array:
                         if isinstance(field, dict):
                             field_id = field.get('id')
                             field_name = field.get('name')
-                            field_value = field.get('value')
-                            if field_id:
-                                custom_fields_dict[field_id] = field_value
-                            if field_name:
-                                custom_fields_dict[field_name] = field_value
-                    custom_fields = custom_fields_dict
+                            field_value = field.get('value') or field.get('field_value')
+                            
+                            if field_id == otp_field_id or field_name == 'app_otp':
+                                app_otp = field_value
+                                break
                 
-                # Try to get OTP by custom field ID first, then by name
-                app_otp = None
-                if settings.GHL_APP_OTP_FIELD_ID:
-                    app_otp = custom_fields.get(settings.GHL_APP_OTP_FIELD_ID)
-                if not app_otp:
-                    app_otp = custom_fields.get('app_otp') or custom_fields.get('App OTP')
+                logger.info(f"Retrieved OTP from contact: {app_otp} (expected: {code})")
                 
+                # Verify OTP
                 if app_otp and str(app_otp).strip() == str(code).strip():
-                    logger.info(f"OTP verified successfully for contact {contact_id}")
-                    return True
+                    logger.info(f"✓ OTP verified successfully for contact {contact_id}")
+                    return {'verified': True, 'contact_id': contact_id}
                 else:
-                    logger.warning(f"OTP mismatch. Expected: {app_otp}, Got: {code}")
+                    logger.warning(f"✗ OTP mismatch. Stored: {app_otp}, Provided: {code}")
                     return False
             else:
-                logger.error(f"Failed to get contact: {get_response.status_code} - {get_response.text}")
+                logger.error(f"✗ Failed to get contact: {get_response.status_code} - {get_response.text[:500]}")
                 return False
                 
         except requests.exceptions.RequestException as e:
-            logger.error(f"GHL API request failed for OTP verification: {str(e)}")
+            logger.error(f"✗ GHL API request failed for OTP verification: {str(e)}")
+            logger.exception("Full exception traceback:")
+            return False
+        except Exception as e:
+            logger.error(f"✗ Unexpected error verifying OTP: {str(e)}")
+            logger.exception("Full exception traceback:")
             return False
 
 class PillarDescriptionsView(APIView):
