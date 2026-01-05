@@ -215,67 +215,138 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                 <div className="text-danger small mb-3">{emailError}</div>
             )}
             <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Mobile Phone</label>
-            <div className="d-flex gap-2 mb-1">
-                <div className="d-flex" style={{ flex: '0 0 auto' }}>
-                    <select
-                        name="country_code"
-                        value={formData.country_code || '+1'}
-                        onChange={handleCountryCodeChange}
-                        className="form-select"
-                        style={{
-                            ...inputStyle,
-                            borderTopRightRadius: '0',
-                            borderBottomRightRadius: '0',
-                            borderRight: 'none',
-                            paddingRight: '0.5rem',
-                            width: '120px',
-                            cursor: 'pointer'
+            <div className="mb-1">
+                {/* Mobile: Stack vertically, Desktop: Horizontal */}
+                <div className="phone-input-container">
+                    <div className="d-flex phone-input-group">
+                        <select
+                            name="country_code"
+                            value={formData.country_code || '+1'}
+                            onChange={handleCountryCodeChange}
+                            className="form-select country-code-select"
+                            style={{
+                                ...inputStyle,
+                                paddingRight: '0.5rem',
+                                width: '120px',
+                                minWidth: '120px',
+                                cursor: 'pointer',
+                                flexShrink: 0
+                            }}
+                        >
+                            {COUNTRIES.map((country) => (
+                                <option key={`${country.code}-${country.name}`} value={country.code}>
+                                    {country.flag} {country.code}
+                                </option>
+                            ))}
+                        </select>
+                        <input 
+                            name="phone" 
+                            className={`form-control phone-input ${phoneError ? 'is-invalid' : ''}`}
+                            placeholder="Phone Number" 
+                            value={formData.phone || ''}
+                            onChange={handlePhoneChange}
+                            onBlur={(e) => validatePhone(e.target.value)}
+                            style={{
+                                ...inputStyle,
+                                flex: '1',
+                                minWidth: '0'
+                            }}
+                        />
+                    </div>
+                    <button 
+                        className="btn send-otp-btn" 
+                        onClick={sendOtp}
+                        disabled={sendingOtp}
+                        style={{ 
+                            ...buttonStyle, 
+                            opacity: sendingOtp ? 0.7 : 1, 
+                            cursor: sendingOtp ? 'not-allowed' : 'pointer', 
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0
                         }}
+                        onMouseEnter={!sendingOtp ? handleButtonHover : undefined}
+                        onMouseLeave={!sendingOtp ? handleButtonLeave : undefined}
                     >
-                        {COUNTRIES.map((country) => (
-                            <option key={`${country.code}-${country.name}`} value={country.code}>
-                                {country.flag} {country.code}
-                            </option>
-                        ))}
-                    </select>
-                    <input 
-                        name="phone" 
-                        className={`form-control ${phoneError ? 'is-invalid' : ''}`}
-                        placeholder="Phone Number" 
-                        value={formData.phone || ''}
-                        onChange={handlePhoneChange}
-                        onBlur={(e) => validatePhone(e.target.value)}
-                        style={{
-                            ...inputStyle,
-                            borderTopLeftRadius: '0',
-                            borderBottomLeftRadius: '0',
-                            flex: '1'
-                        }}
-                    />
+                        {sendingOtp ? (
+                            <>
+                                <span 
+                                    className="spinner-border spinner-border-sm me-2" 
+                                    role="status" 
+                                    aria-hidden="true"
+                                    style={{ borderColor: 'rgba(255, 255, 255, 0.3)', borderRightColor: '#ffffff' }}
+                                ></span>
+                                Sending...
+                            </>
+                        ) : (
+                            'Send OTP'
+                        )}
+                    </button>
                 </div>
-                <button 
-                    className="btn" 
-                    onClick={sendOtp}
-                    disabled={sendingOtp}
-                    style={{ ...buttonStyle, opacity: sendingOtp ? 0.7 : 1, cursor: sendingOtp ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' }}
-                    onMouseEnter={!sendingOtp ? handleButtonHover : undefined}
-                    onMouseLeave={!sendingOtp ? handleButtonLeave : undefined}
-                >
-                    {sendingOtp ? (
-                        <>
-                            <span 
-                                className="spinner-border spinner-border-sm me-2" 
-                                role="status" 
-                                aria-hidden="true"
-                                style={{ borderColor: 'rgba(255, 255, 255, 0.3)', borderRightColor: '#ffffff' }}
-                            ></span>
-                            Sending...
-                        </>
-                    ) : (
-                        'Send OTP'
-                    )}
-                </button>
             </div>
+            <style>{`
+                .phone-input-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+                
+                .phone-input-group {
+                    flex: 1 1 auto;
+                    min-width: 0;
+                }
+                
+                /* Mobile styles */
+                @media (max-width: 767.98px) {
+                    .phone-input-container {
+                        gap: 0.75rem;
+                    }
+                    
+                    .phone-input-group {
+                        flex-direction: column;
+                    }
+                    
+                    .country-code-select {
+                        border-radius: 10px !important;
+                        border: 2px solid #e2e8f0 !important;
+                        width: 100% !important;
+                        min-width: 100% !important;
+                    }
+                    
+                    .phone-input {
+                        border-radius: 10px !important;
+                        border: 2px solid #e2e8f0 !important;
+                        width: 100% !important;
+                    }
+                    
+                    .send-otp-btn {
+                        width: 100% !important;
+                    }
+                }
+                
+                /* Desktop styles */
+                @media (min-width: 768px) {
+                    .phone-input-container {
+                        flex-direction: row;
+                        gap: 0.5rem;
+                    }
+                    
+                    .phone-input-group {
+                        flex-direction: row;
+                    }
+                    
+                    .country-code-select {
+                        border-top-right-radius: 0 !important;
+                        border-bottom-right-radius: 0 !important;
+                        border-right: none !important;
+                    }
+                    
+                    .phone-input {
+                        border-top-left-radius: 0 !important;
+                        border-bottom-left-radius: 0 !important;
+                        border-left: none !important;
+                    }
+                }
+            `}</style>
             {phoneError && (
                 <div className="text-danger small mb-3">{phoneError}</div>
             )}
