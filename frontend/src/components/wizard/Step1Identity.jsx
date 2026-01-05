@@ -1,10 +1,54 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+// Country codes with flags (emoji flags)
+const COUNTRIES = [
+    { code: '+1', name: 'Canada', flag: '🇨🇦' },
+    { code: '+1', name: 'United States', flag: '🇺🇸' },
+    { code: '+44', name: 'United Kingdom', flag: '🇬🇧' },
+    { code: '+61', name: 'Australia', flag: '🇦🇺' },
+    { code: '+91', name: 'India', flag: '🇮🇳' },
+    { code: '+86', name: 'China', flag: '🇨🇳' },
+    { code: '+81', name: 'Japan', flag: '🇯🇵' },
+    { code: '+49', name: 'Germany', flag: '🇩🇪' },
+    { code: '+33', name: 'France', flag: '🇫🇷' },
+    { code: '+39', name: 'Italy', flag: '🇮🇹' },
+    { code: '+34', name: 'Spain', flag: '🇪🇸' },
+    { code: '+31', name: 'Netherlands', flag: '🇳🇱' },
+    { code: '+32', name: 'Belgium', flag: '🇧🇪' },
+    { code: '+41', name: 'Switzerland', flag: '🇨🇭' },
+    { code: '+46', name: 'Sweden', flag: '🇸🇪' },
+    { code: '+47', name: 'Norway', flag: '🇳🇴' },
+    { code: '+45', name: 'Denmark', flag: '🇩🇰' },
+    { code: '+358', name: 'Finland', flag: '🇫🇮' },
+    { code: '+353', name: 'Ireland', flag: '🇮🇪' },
+    { code: '+351', name: 'Portugal', flag: '🇵🇹' },
+    { code: '+7', name: 'Russia', flag: '🇷🇺' },
+    { code: '+82', name: 'South Korea', flag: '🇰🇷' },
+    { code: '+65', name: 'Singapore', flag: '🇸🇬' },
+    { code: '+60', name: 'Malaysia', flag: '🇲🇾' },
+    { code: '+64', name: 'New Zealand', flag: '🇳🇿' },
+    { code: '+27', name: 'South Africa', flag: '🇿🇦' },
+    { code: '+55', name: 'Brazil', flag: '🇧🇷' },
+    { code: '+52', name: 'Mexico', flag: '🇲🇽' },
+    { code: '+54', name: 'Argentina', flag: '🇦🇷' },
+    { code: '+971', name: 'UAE', flag: '🇦🇪' },
+    { code: '+966', name: 'Saudi Arabia', flag: '🇸🇦' },
+    { code: '+974', name: 'Qatar', flag: '🇶🇦' },
+    { code: '+965', name: 'Kuwait', flag: '🇰🇼' },
+    { code: '+973', name: 'Bahrain', flag: '🇧🇭' },
+    { code: '+968', name: 'Oman', flag: '🇴🇲' },
+];
+
 const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert, setFormData, setStep, alert, setAlert }) => {
     const [emailError, setEmailError] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [sendingOtp, setSendingOtp] = useState(false);
+    
+    // Initialize country_code if not set (default to Canada +1)
+    if (!formData.country_code) {
+        setFormData(prev => ({ ...prev, country_code: '+1' }));
+    }
 
     const validateEmail = (email) => {
         if (!email) {
@@ -25,16 +69,21 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
             setPhoneError('');
             return false;
         }
-        // Basic phone validation - allows digits, spaces, dashes, parentheses, and + sign
-        const phoneRegex = /^[\d\s\-\(\)\+]+$/;
+        // Phone validation - only digits, spaces, dashes, parentheses (no + sign since country code is separate)
+        const phoneRegex = /^[\d\s\-\(\)]+$/;
         const digitsOnly = phone.replace(/\D/g, '');
         
-        if (!phoneRegex.test(phone) || digitsOnly.length < 10) {
-            setPhoneError('Please enter a valid phone number (at least 10 digits)');
+        // Minimum 7 digits, maximum 15 digits (without country code)
+        if (!phoneRegex.test(phone) || digitsOnly.length < 7 || digitsOnly.length > 15) {
+            setPhoneError('Please enter a valid phone number (7-15 digits)');
             return false;
         }
         setPhoneError('');
         return true;
+    };
+    
+    const handleCountryCodeChange = (e) => {
+        setFormData(prev => ({ ...prev, country_code: e.target.value }));
     };
 
     const handleEmailChange = (e) => {
@@ -54,8 +103,13 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
         }
         setSendingOtp(true);
         try {
+            // Combine country code and phone number
+            const countryCode = formData.country_code || '+1';
+            const phoneNumber = formData.phone.replace(/\D/g, ''); // Remove non-digits
+            const fullPhone = `${countryCode}${phoneNumber}`;
+            
             const res = await axios.post('/api/otp/send/', { 
-                phone: formData.phone,
+                phone: fullPhone,
                 email: formData.email,
                 first_name: formData.first_name,
                 last_name: formData.last_name
@@ -75,9 +129,14 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
 
     const verifyOtp = async () => {
         try {
+            // Combine country code and phone number for verification
+            const countryCode = formData.country_code || '+1';
+            const phoneNumber = formData.phone.replace(/\D/g, ''); // Remove non-digits
+            const fullPhone = `${countryCode}${phoneNumber}`;
+            
             const res = await axios.post('/api/otp/verify/', { 
                 code: formData.otp_code,
-                phone: formData.phone,
+                phone: fullPhone,
                 contact_id: formData.ghl_contact_id
             });
             if (res.data.verified) {
@@ -157,20 +216,48 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
             )}
             <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Mobile Phone</label>
             <div className="d-flex gap-2 mb-1">
-                <input 
-                    name="phone" 
-                    className={`form-control ${phoneError ? 'is-invalid' : ''}`}
-                    placeholder="Mobile Phone" 
-                    value={formData.phone}
-                    onChange={handlePhoneChange}
-                    onBlur={(e) => validatePhone(e.target.value)}
-                    style={inputStyle}
-                />
+                <div className="d-flex" style={{ flex: '0 0 auto' }}>
+                    <select
+                        name="country_code"
+                        value={formData.country_code || '+1'}
+                        onChange={handleCountryCodeChange}
+                        className="form-select"
+                        style={{
+                            ...inputStyle,
+                            borderTopRightRadius: '0',
+                            borderBottomRightRadius: '0',
+                            borderRight: 'none',
+                            paddingRight: '0.5rem',
+                            width: '120px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        {COUNTRIES.map((country) => (
+                            <option key={`${country.code}-${country.name}`} value={country.code}>
+                                {country.flag} {country.code}
+                            </option>
+                        ))}
+                    </select>
+                    <input 
+                        name="phone" 
+                        className={`form-control ${phoneError ? 'is-invalid' : ''}`}
+                        placeholder="Phone Number" 
+                        value={formData.phone || ''}
+                        onChange={handlePhoneChange}
+                        onBlur={(e) => validatePhone(e.target.value)}
+                        style={{
+                            ...inputStyle,
+                            borderTopLeftRadius: '0',
+                            borderBottomLeftRadius: '0',
+                            flex: '1'
+                        }}
+                    />
+                </div>
                 <button 
                     className="btn" 
                     onClick={sendOtp}
                     disabled={sendingOtp}
-                    style={{ ...buttonStyle, opacity: sendingOtp ? 0.7 : 1, cursor: sendingOtp ? 'not-allowed' : 'pointer' }}
+                    style={{ ...buttonStyle, opacity: sendingOtp ? 0.7 : 1, cursor: sendingOtp ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' }}
                     onMouseEnter={!sendingOtp ? handleButtonHover : undefined}
                     onMouseLeave={!sendingOtp ? handleButtonLeave : undefined}
                 >

@@ -53,6 +53,7 @@ const Wizard = () => {
         first_name: '',
         last_name: '',
         email: '',
+        country_code: '+1',  // Default to Canada
         phone: '',
         otp_code: '',
         otp_verified: false,
@@ -382,7 +383,14 @@ const Wizard = () => {
                     data.append(key, formData[key]);
                 }
                 // If not manually edited, don't send it - backend will generate from first_name + last_name
-            } else {
+            } else if (key === 'phone') {
+                // Combine country code and phone number for submission
+                const countryCode = formData.country_code || '+1';
+                const phoneNumber = (formData.phone || '').replace(/\D/g, ''); // Remove non-digits
+                const fullPhone = phoneNumber ? `${countryCode}${phoneNumber}` : '';
+                data.append('phone', fullPhone);
+            } else if (key !== 'country_code') {
+                // Don't send country_code separately, it's already combined with phone
                 data.append(key, formData[key]);
             }
         });
