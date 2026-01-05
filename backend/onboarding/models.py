@@ -65,6 +65,10 @@ class CampaignSubmission(models.Model):
     otp_code = models.CharField(max_length=6, blank=True, null=True)
     otp_verified = models.BooleanField(default=False)
     
+    # GHL Integration
+    ghl_location_id = models.CharField(max_length=100, blank=True, null=True, help_text="GoHighLevel Location/Sub-Account ID")
+    ghl_contact_id = models.CharField(max_length=100, blank=True, null=True, help_text="GoHighLevel Contact ID for OTP verification")
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):

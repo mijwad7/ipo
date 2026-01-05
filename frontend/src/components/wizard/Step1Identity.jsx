@@ -52,7 +52,16 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
             return;
         }
         try {
-            await axios.post('/api/otp/send/', { phone: formData.phone });
+            const res = await axios.post('/api/otp/send/', { 
+                phone: formData.phone,
+                email: formData.email,
+                first_name: formData.first_name,
+                last_name: formData.last_name
+            });
+            // Store contact_id for OTP verification
+            if (res.data.contact_id) {
+                setFormData(prev => ({ ...prev, ghl_contact_id: res.data.contact_id }));
+            }
             setOtpSent(true);
             showAlert('OTP Sent', 'success');
         } catch (error) {
@@ -62,7 +71,11 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
 
     const verifyOtp = async () => {
         try {
-            const res = await axios.post('/api/otp/verify/', { code: formData.otp_code });
+            const res = await axios.post('/api/otp/verify/', { 
+                code: formData.otp_code,
+                phone: formData.phone,
+                contact_id: formData.ghl_contact_id
+            });
             if (res.data.verified) {
                 setFormData(prev => ({ ...prev, otp_verified: true }));
                 setStep(2);

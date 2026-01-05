@@ -56,6 +56,7 @@ const Wizard = () => {
         phone: '',
         otp_code: '',
         otp_verified: false,
+        ghl_contact_id: '',  // Store GHL contact ID for OTP verification
 
         // Election details
         riding_zone_name: '',
