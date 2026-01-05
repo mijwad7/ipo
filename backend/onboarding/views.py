@@ -440,7 +440,7 @@ class SubmissionCreateView(generics.CreateAPIView):
         website = None
         if submission.slug:
             # You may need to adjust this based on your actual domain
-            base_url = os.environ.get('BASE_URL', 'https://thetrumpet.app')
+            base_url = os.environ.get('BASE_URL', 'https://go.thetrumpet.app')
             website = f"{base_url}/temp/{submission.slug}"
         
         # Prepare request payload
@@ -609,7 +609,7 @@ class SubmissionCreateView(generics.CreateAPIView):
         
         # Add website URL
         if submission.slug:
-            base_url = os.environ.get('BASE_URL', 'https://thetrumpet.app')
+            base_url = os.environ.get('BASE_URL', 'https://go.thetrumpet.app')
             website_url = f"{base_url}/temp/{submission.slug}"
             custom_fields["Campaign Website URL"] = website_url
         
@@ -831,7 +831,7 @@ class SubmissionCreateView(generics.CreateAPIView):
         
         # Add website URL
         if submission.slug:
-            base_url = os.environ.get('BASE_URL', 'https://thetrumpet.app')
+            base_url = os.environ.get('BASE_URL', 'https://go.thetrumpet.app')
             website_url = f"{base_url}/temp/{submission.slug}"
             custom_fields["Campaign Website URL"] = website_url
         
