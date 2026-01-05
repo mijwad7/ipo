@@ -10,6 +10,7 @@ import requests
 import logging
 import os
 import time
+import json
 from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
@@ -190,31 +191,55 @@ class SubmissionCreateView(generics.CreateAPIView):
         Returns:
             URL string if successful, None otherwise
         """
+        logger.info(f"=== upload_image_to_ghl_custom_field called ===")
+        logger.info(f"Field name: {field_name}, Location ID: {location_id}, Contact ID: {contact_id}")
+        
         if not image_field:
-            logger.debug(f"No {field_name} image to upload")
+            logger.warning(f"No {field_name} image to upload (image_field is None/empty)")
+            return None
+        
+        if not contact_id:
+            logger.error(f"Cannot upload {field_name}: contact_id is required but was None")
             return None
         
         try:
             logger.info(f"Uploading {field_name} to GHL custom field: {custom_field_id}")
             
             # Read the image file
-            if hasattr(image_field, 'read'):
-                image_field.open('rb')
-                file_content = image_field.read()
-                file_name = image_field.name
-                image_field.close()
-            elif hasattr(image_field, 'path'):
-                # Django ImageField with path
-                file_path = image_field.path
-                with open(file_path, 'rb') as f:
-                    file_content = f.read()
-                file_name = os.path.basename(file_path)
-            else:
-                # File path string
-                file_path = str(image_field)
-                with open(file_path, 'rb') as f:
-                    file_content = f.read()
-                file_name = os.path.basename(file_path)
+            try:
+                if hasattr(image_field, 'read'):
+                    logger.info(f"Reading image_field as file-like object")
+                    image_field.open('rb')
+                    file_content = image_field.read()
+                    file_name = image_field.name
+                    image_field.close()
+                    logger.info(f"Read file: {file_name}, size: {len(file_content)} bytes")
+                elif hasattr(image_field, 'path'):
+                    # Django ImageField with path
+                    logger.info(f"Reading image_field from path: {image_field.path}")
+                    file_path = image_field.path
+                    if not os.path.exists(file_path):
+                        logger.error(f"File path does not exist: {file_path}")
+                        return None
+                    with open(file_path, 'rb') as f:
+                        file_content = f.read()
+                    file_name = os.path.basename(file_path)
+                    logger.info(f"Read file from path: {file_name}, size: {len(file_content)} bytes")
+                else:
+                    # File path string
+                    logger.info(f"Reading image_field as string path: {image_field}")
+                    file_path = str(image_field)
+                    if not os.path.exists(file_path):
+                        logger.error(f"File path does not exist: {file_path}")
+                        return None
+                    with open(file_path, 'rb') as f:
+                        file_content = f.read()
+                    file_name = os.path.basename(file_path)
+                    logger.info(f"Read file from string path: {file_name}, size: {len(file_content)} bytes")
+            except Exception as e:
+                logger.error(f"✗ Error reading image file for {field_name}: {str(e)}")
+                logger.exception("Full exception traceback:")
+                return None
             
             # Get file extension and content type
             file_ext = os.path.splitext(file_name)[1].lower()
@@ -228,64 +253,114 @@ class SubmissionCreateView(generics.CreateAPIView):
             content_type = content_type_map.get(file_ext, 'image/jpeg')
             
             # Prepare multipart form data
+            # According to GHL API docs: POST /locations/:locationId/customFields/upload
+            # The file should be sent as multipart/form-data
+            # Standard field name for file uploads is 'file'
             files = {
                 'file': (file_name, file_content, content_type)
             }
             
             # Prepare form data
+            # According to GHL API docs: id can be Contact Id/Opportunity Id/Custom Field Id
+            # For contact uploads, we use contact_id
+            if not contact_id:
+                logger.error(f"Cannot upload {field_name}: contact_id is required")
+                return None
+            
             data = {
-                'id': custom_field_id or contact_id,  # Use custom field ID or contact ID
+                'id': contact_id,  # Contact ID for contact-specific uploads
                 'maxFiles': '15'
             }
             
             headers = {
                 'Authorization': f'Bearer {api_token}',
                 'Version': '2021-07-28',
+                'Accept': 'application/json'
+                # Note: Don't set Content-Type header - requests will set it automatically for multipart/form-data
             }
             
             # Upload to GHL custom fields upload endpoint
             api_url = f"{settings.GHL_API_BASE_URL}/locations/{location_id}/customFields/upload"
             
-            logger.info(f"Uploading {field_name} to: {api_url}")
-            logger.info(f"Custom field ID: {custom_field_id}, Contact ID: {contact_id}")
+            logger.info(f"=== Uploading {field_name} ===")
+            logger.info(f"URL: {api_url}")
+            logger.info(f"Contact ID: {contact_id}, Location ID: {location_id}")
+            logger.info(f"File: {file_name}, Size: {len(file_content)} bytes, Type: {content_type}")
+            logger.info(f"Form data: {data}")
+            logger.info(f"Files dict keys: {list(files.keys())}")
             
-            response = requests.post(
-                api_url,
-                files=files,
-                data=data,
-                headers=headers,
-                timeout=60  # Longer timeout for file uploads
-            )
+            try:
+                response = requests.post(
+                    api_url,
+                    files=files,
+                    data=data,
+                    headers=headers,
+                    timeout=60  # Longer timeout for file uploads
+                )
+            except requests.exceptions.RequestException as e:
+                logger.error(f"✗ Request exception during upload: {str(e)}")
+                logger.exception("Full exception traceback:")
+                return None
             
             logger.info(f"Upload response status: {response.status_code}")
+            logger.info(f"Upload response headers: {dict(response.headers)}")
+            
+            # Log full response for debugging
+            response_text = response.text
+            logger.info(f"Upload response text (first 1000 chars): {response_text[:1000]}")
             
             if response.status_code in [200, 201]:
                 try:
                     response_data = response.json()
+                    logger.info(f"Upload response JSON: {response_data}")
+                    
                     uploaded_files = response_data.get('uploadedFiles', {})
                     meta = response_data.get('meta', [])
                     
-                    # Get the URL from uploadedFiles (it's a dict with filename -> URL)
-                    if uploaded_files:
+                    logger.info(f"uploadedFiles: {uploaded_files} (type: {type(uploaded_files)})")
+                    logger.info(f"meta: {meta} (type: {type(meta)})")
+                    
+                    file_url = None
+                    
+                    # Method 1: Get URL from uploadedFiles (dict with filename -> URL)
+                    if uploaded_files and isinstance(uploaded_files, dict) and len(uploaded_files) > 0:
                         # Get the first (and usually only) file URL
                         file_url = list(uploaded_files.values())[0]
-                        logger.info(f"✓ {field_name} uploaded successfully: {file_url}")
+                        logger.info(f"✓ Found URL in uploadedFiles: {file_url}")
+                    
+                    # Method 2: Get URL from meta array (array of objects with 'url' field)
+                    if not file_url and meta and isinstance(meta, list) and len(meta) > 0:
+                        logger.info(f"Checking meta array for URL...")
+                        for idx, meta_item in enumerate(meta):
+                            logger.info(f"  meta[{idx}]: {meta_item} (type: {type(meta_item)})")
+                            if isinstance(meta_item, dict):
+                                file_url = meta_item.get('url')
+                                if file_url:
+                                    logger.info(f"✓ Found URL in meta[{idx}]: {file_url}")
+                                    break
+                    
+                    if file_url:
+                        logger.info(f"✓✓ {field_name} uploaded successfully! URL: {file_url}")
                         return file_url
-                    elif meta and len(meta) > 0:
-                        # Fallback to meta array
-                        file_url = meta[0].get('url')
-                        if file_url:
-                            logger.info(f"✓ {field_name} uploaded successfully (from meta): {file_url}")
-                            return file_url
                     else:
-                        logger.warning(f"⚠ {field_name} uploaded but no URL in response: {response_data}")
+                        logger.error(f"✗ {field_name} uploaded but no URL found in response!")
+                        logger.error(f"  uploadedFiles: {uploaded_files}")
+                        logger.error(f"  meta: {meta}")
+                        logger.error(f"  Full response_data: {response_data}")
                         return None
+                        
+                except json.JSONDecodeError as e:
+                    logger.error(f"✗ Response is not valid JSON: {str(e)}")
+                    logger.error(f"Response text: {response_text}")
+                    return None
                 except Exception as e:
                     logger.error(f"✗ Error parsing {field_name} upload response: {str(e)}")
-                    logger.error(f"Response: {response.text[:500]}")
+                    logger.error(f"Response: {response_text[:500]}")
+                    logger.exception("Full exception traceback:")
                     return None
             else:
-                logger.error(f"✗ Failed to upload {field_name}: {response.status_code} - {response.text[:500]}")
+                logger.error(f"✗ Failed to upload {field_name}: {response.status_code}")
+                logger.error(f"Error response: {response_text}")
                 return None
                 
         except FileNotFoundError as e:
@@ -300,6 +375,14 @@ class SubmissionCreateView(generics.CreateAPIView):
         """
         Upload all contact images and return a dict of field_name -> image_url
         """
+        logger.info(f"=== upload_contact_images called ===")
+        logger.info(f"Submission ID: {submission.id}, Contact ID: {contact_id}, Location ID: {location_id}")
+        logger.info(f"Has headshot: {bool(submission.headshot)}")
+        logger.info(f"Has background_picture: {bool(submission.background_picture)}")
+        logger.info(f"Has action_shot_1: {bool(submission.action_shot_1)}")
+        logger.info(f"Has action_shot_2: {bool(submission.action_shot_2)}")
+        logger.info(f"Has action_shot_3: {bool(submission.action_shot_3)}")
+        
         image_urls = {}
         
         # Upload headshot
@@ -378,7 +461,12 @@ class SubmissionCreateView(generics.CreateAPIView):
         Update contact with image URLs in custom fields
         """
         if not image_urls:
+            logger.warning("No image URLs provided to update")
             return False
+        
+        logger.info(f"=== Updating contact {contact_id} with {len(image_urls)} image URLs ===")
+        logger.info(f"Available field mappings: {list(field_id_mapping.keys())[:20]}...")  # Log first 20 keys
+        logger.info(f"Image URLs to map: {list(image_urls.keys())}")
         
         # Build custom fields array with image URLs
         image_custom_fields = []
@@ -390,49 +478,37 @@ class SubmissionCreateView(generics.CreateAPIView):
             if field_id:
                 image_custom_fields.append({
                     "id": field_id,
-                    "field_value": image_url
+                    "field_value": image_url  # Use "field_value" to match upsert endpoint format
                 })
-                logger.info(f"Mapped image URL field: {field_name} -> {field_id}")
+                logger.info(f"✓ Mapped image URL field: '{field_name}' -> {field_id} = {image_url[:50]}...")
             else:
                 missing_fields.append(field_name)
-                logger.warning(f"⚠ Image URL field '{field_name}' not found in GHL. Skipping.")
+                logger.warning(f"⚠ Image URL field '{field_name}' not found in GHL field mapping")
+                # Try to find similar field names
+                similar_fields = [k for k in field_id_mapping.keys() if field_name.lower() in k.lower() or k.lower() in field_name.lower()]
+                if similar_fields:
+                    logger.warning(f"  Similar fields found: {similar_fields}")
         
         if missing_fields:
             logger.warning(f"⚠ The following image URL fields are missing in GHL: {', '.join(missing_fields)}")
+            logger.warning(f"⚠ Available custom fields: {sorted(list(field_id_mapping.keys()))}")
             logger.warning(f"⚠ Please create these custom fields in GHL for location {location_id}")
         
         if not image_custom_fields:
-            logger.warning("No image URL fields to update")
+            logger.error("✗ No image URL fields to update - all fields were missing!")
             return False
         
-        # Update contact with image URLs
-        headers = {
-            'Authorization': f'Bearer {api_token}',
-            'Content-Type': 'application/json',
-            'Version': '2021-07-28',
-            'Accept': 'application/json'
-        }
+        # Update contact with image URLs using the standard method
+        # This method handles both "value" and "field_value" formats
+        logger.info(f"=== Updating contact {contact_id} with {len(image_custom_fields)} image URLs ===")
+        success = self.set_contact_custom_fields(contact_id, location_id, image_custom_fields, api_token)
         
-        try:
-            update_url = f"{settings.GHL_API_BASE_URL}/contacts/{contact_id}"
-            payload = {
-                "customFields": image_custom_fields
-            }
-            
-            logger.info(f"Updating contact {contact_id} with {len(image_custom_fields)} image URL fields")
-            response = requests.put(update_url, json=payload, headers=headers, timeout=30)
-            
-            if response.status_code in [200, 201]:
-                logger.info(f"✓ Image URLs updated successfully for contact {contact_id}")
-                return True
-            else:
-                logger.error(f"✗ Failed to update image URLs: {response.status_code} - {response.text[:500]}")
-                return False
-                
-        except Exception as e:
-            logger.error(f"✗ Error updating image URLs: {str(e)}")
-            logger.exception("Full exception traceback:")
-            return False
+        if success:
+            logger.info(f"✓ Image URLs updated successfully for contact {contact_id}")
+        else:
+            logger.error(f"✗ Failed to update image URLs for contact {contact_id}")
+        
+        return success
     
     def create_ghl_location(self, submission):
         """
@@ -711,6 +787,17 @@ class SubmissionCreateView(generics.CreateAPIView):
                         logger.info(f"✓ Custom fields verified/set for contact {contact_id}")
                     else:
                         logger.warning(f"⚠ Custom fields may not have been set correctly for contact {contact_id}")
+                
+                # Upload images and store URLs in custom fields
+                logger.info(f"Uploading images for contact {contact_id}...")
+                image_urls = self.upload_contact_images(submission, contact_id, location_id, settings.GHL_LOCATION_API_TOKEN, field_id_mapping)
+                
+                # If we got image URLs, update the contact with them
+                if image_urls:
+                    logger.info(f"Updating contact with {len(image_urls)} image URLs")
+                    self.update_contact_image_urls(contact_id, image_urls, location_id, settings.GHL_LOCATION_API_TOKEN, field_id_mapping)
+                else:
+                    logger.warning(f"⚠ No image URLs returned from upload_contact_images for contact {contact_id}")
                 
                 logger.info(f"=== Contact update completed successfully: {contact_id} ===")
                 return True
