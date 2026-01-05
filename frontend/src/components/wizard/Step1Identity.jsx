@@ -4,6 +4,7 @@ import axios from 'axios';
 const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert, setFormData, setStep, alert, setAlert }) => {
     const [emailError, setEmailError] = useState('');
     const [phoneError, setPhoneError] = useState('');
+    const [sendingOtp, setSendingOtp] = useState(false);
 
     const validateEmail = (email) => {
         if (!email) {
@@ -51,6 +52,7 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
             showAlert('Please enter a valid phone number before sending OTP', 'warning');
             return;
         }
+        setSendingOtp(true);
         try {
             const res = await axios.post('/api/otp/send/', { 
                 phone: formData.phone,
@@ -66,6 +68,8 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
             showAlert('OTP Sent', 'success');
         } catch (error) {
             showAlert('Failed to send OTP. Please try again.', 'danger');
+        } finally {
+            setSendingOtp(false);
         }
     };
 
@@ -165,11 +169,24 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                 <button 
                     className="btn" 
                     onClick={sendOtp}
-                    style={buttonStyle}
-                    onMouseEnter={handleButtonHover}
-                    onMouseLeave={handleButtonLeave}
+                    disabled={sendingOtp}
+                    style={{ ...buttonStyle, opacity: sendingOtp ? 0.7 : 1, cursor: sendingOtp ? 'not-allowed' : 'pointer' }}
+                    onMouseEnter={!sendingOtp ? handleButtonHover : undefined}
+                    onMouseLeave={!sendingOtp ? handleButtonLeave : undefined}
                 >
-                    Send OTP
+                    {sendingOtp ? (
+                        <>
+                            <span 
+                                className="spinner-border spinner-border-sm me-2" 
+                                role="status" 
+                                aria-hidden="true"
+                                style={{ borderColor: 'rgba(255, 255, 255, 0.3)', borderRightColor: '#ffffff' }}
+                            ></span>
+                            Sending...
+                        </>
+                    ) : (
+                        'Send OTP'
+                    )}
                 </button>
             </div>
             {phoneError && (
