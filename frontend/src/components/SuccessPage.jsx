@@ -2,10 +2,51 @@ import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 
+// Country codes
+const COUNTRIES = [
+    { code: '+1', name: 'Canada', flag: '🇨🇦' },
+    { code: '+1', name: 'United States', flag: '🇺🇸' },
+    { code: '+44', name: 'United Kingdom', flag: '🇬🇧' },
+    { code: '+61', name: 'Australia', flag: '🇦🇺' },
+    { code: '+91', name: 'India', flag: '🇮🇳' },
+    { code: '+86', name: 'China', flag: '🇨🇳' },
+    { code: '+81', name: 'Japan', flag: '🇯🇵' },
+    { code: '+49', name: 'Germany', flag: '🇩🇪' },
+    { code: '+33', name: 'France', flag: '🇫🇷' },
+    { code: '+39', name: 'Italy', flag: '🇮🇹' },
+    { code: '+34', name: 'Spain', flag: '🇪🇸' },
+    { code: '+31', name: 'Netherlands', flag: '🇳🇱' },
+    { code: '+32', name: 'Belgium', flag: '🇧🇪' },
+    { code: '+41', name: 'Switzerland', flag: '🇨🇭' },
+    { code: '+46', name: 'Sweden', flag: '🇸🇪' },
+    { code: '+47', name: 'Norway', flag: '🇳🇴' },
+    { code: '+45', name: 'Denmark', flag: '🇩🇰' },
+    { code: '+358', name: 'Finland', flag: '🇫🇮' },
+    { code: '+353', name: 'Ireland', flag: '🇮🇪' },
+    { code: '+351', name: 'Portugal', flag: '🇵🇹' },
+    { code: '+7', name: 'Russia', flag: '🇷🇺' },
+    { code: '+82', name: 'South Korea', flag: '🇰🇷' },
+    { code: '+65', name: 'Singapore', flag: '🇸🇬' },
+    { code: '+60', name: 'Malaysia', flag: '🇲🇾' },
+    { code: '+64', name: 'New Zealand', flag: '🇳🇿' },
+    { code: '+27', name: 'South Africa', flag: '🇿🇦' },
+    { code: '+55', name: 'Brazil', flag: '🇧🇷' },
+    { code: '+52', name: 'Mexico', flag: '🇲🇽' },
+    { code: '+54', name: 'Argentina', flag: '🇦🇷' },
+    { code: '+971', name: 'UAE', flag: '🇦🇪' },
+    { code: '+966', name: 'Saudi Arabia', flag: '🇸🇦' },
+    { code: '+974', name: 'Qatar', flag: '🇶🇦' },
+    { code: '+965', name: 'Kuwait', flag: '🇰🇼' },
+    { code: '+973', name: 'Bahrain', flag: '🇧🇭' },
+    { code: '+968', name: 'Oman', flag: '🇴🇲' },
+];
+
 const SuccessPage = () => {
     const location = useLocation();
     const submission = location.state?.submission;
     const [phone, setPhone] = useState('');
+    const [countryCode, setCountryCode] = useState('+1');
+    const [phoneError, setPhoneError] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [copied, setCopied] = useState(false);
@@ -51,18 +92,37 @@ const SuccessPage = () => {
         });
     };
 
+    const validatePhone = (phoneNumber) => {
+        if (!phoneNumber) {
+            setPhoneError('');
+            return false;
+        }
+        // Phone validation - only digits, spaces, dashes, parentheses
+        const phoneRegex = /^[\d\s\-\(\)]+$/;
+        const digitsOnly = phoneNumber.replace(/\D/g, '');
+
+        // Minimum 7 digits, maximum 15 digits (without country code)
+        if (!phoneRegex.test(phoneNumber) || digitsOnly.length < 7 || digitsOnly.length > 15) {
+            setPhoneError('Please enter a valid phone number (7-15 digits)');
+            return false;
+        }
+        setPhoneError('');
+        return true;
+    };
+
     const [sending, setSending] = useState(false);
 
     const handleSendSMS = async () => {
-        if (!phone.trim()) {
-            showAlert('Please enter a phone number', 'warning');
+        if (!validatePhone(phone)) {
+            showAlert('Please enter a valid phone number', 'warning');
             return;
         }
 
         setSending(true);
         try {
+            const fullPhone = `${countryCode}${phone.replace(/\D/g, '')}`;
             await axios.post('/api/share/', {
-                phone: phone,
+                phone: fullPhone,
                 message: messageText
             });
             showAlert('SMS sent successfully!', 'success');
@@ -302,19 +362,114 @@ const SuccessPage = () => {
                         <div className="card-body p-4" style={{ background: '#ffffff' }}>
                             <div className="mb-3">
                                 <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Phone Number (for SMS)</label>
-                                <input
-                                    type="tel"
-                                    className="form-control"
-                                    placeholder="e.g., +1234567890"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    style={{
-                                        borderRadius: '10px',
-                                        border: '2px solid #e2e8f0',
-                                        padding: '0.75rem 1rem',
-                                        fontSize: '1rem'
-                                    }}
-                                />
+                                <div className="phone-input-container">
+                                    <div className="d-flex phone-input-group">
+                                        <select
+                                            value={countryCode}
+                                            onChange={(e) => setCountryCode(e.target.value)}
+                                            className="form-select country-code-select"
+                                            style={{
+                                                borderRadius: '10px',
+                                                border: '2px solid #e2e8f0',
+                                                padding: '0.75rem 1rem',
+                                                fontSize: '1rem',
+                                                paddingRight: '0.5rem',
+                                                width: '120px',
+                                                minWidth: '120px',
+                                                cursor: 'pointer',
+                                                flexShrink: 0
+                                            }}
+                                        >
+                                            {COUNTRIES.map((country, idx) => (
+                                                <option key={`${country.code}-${country.name}-${idx}`} value={country.code}>
+                                                    {country.flag} {country.code}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <input
+                                            type="tel"
+                                            className={`form-control phone-input ${phoneError ? 'is-invalid' : ''}`}
+                                            placeholder="Phone Number"
+                                            value={phone}
+                                            onChange={(e) => {
+                                                setPhone(e.target.value);
+                                                validatePhone(e.target.value);
+                                            }}
+                                            onBlur={(e) => validatePhone(e.target.value)}
+                                            style={{
+                                                borderRadius: '10px',
+                                                border: '2px solid #e2e8f0',
+                                                padding: '0.75rem 1rem',
+                                                fontSize: '1rem',
+                                                flex: '1',
+                                                minWidth: '0'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                {phoneError && (
+                                    <div className="text-danger small mt-1">{phoneError}</div>
+                                )}
+                                <style>{`
+                                    .phone-input-container {
+                                        display: flex;
+                                        flex-direction: column;
+                                        gap: 0.5rem;
+                                    }
+                                    
+                                    .phone-input-group {
+                                        flex: 1 1 auto;
+                                        min-width: 0;
+                                    }
+                                    
+                                    /* Mobile styles */
+                                    @media (max-width: 767.98px) {
+                                        .phone-input-container {
+                                            gap: 0.75rem;
+                                        }
+                                        
+                                        .phone-input-group {
+                                            flex-direction: column;
+                                        }
+                                        
+                                        .country-code-select {
+                                            border-radius: 10px !important;
+                                            border: 2px solid #e2e8f0 !important;
+                                            width: 100% !important;
+                                            min-width: 100% !important;
+                                        }
+                                        
+                                        .phone-input {
+                                            border-radius: 10px !important;
+                                            border: 2px solid #e2e8f0 !important;
+                                            width: 100% !important;
+                                        }
+                                    }
+                                    
+                                    /* Desktop styles */
+                                    @media (min-width: 768px) {
+                                        .phone-input-container {
+                                            flex-direction: row;
+                                            gap: 0.5rem;
+                                        }
+                                        
+                                        .phone-input-group {
+                                            flex-direction: row;
+                                        }
+                                        
+                                        .country-code-select {
+                                            border-top-right-radius: 0 !important;
+                                            border-bottom-right-radius: 0 !important;
+                                            border-right: none !important;
+                                        }
+                                        
+                                        .phone-input {
+                                            border-top-left-radius: 0 !important;
+                                            border-bottom-left-radius: 0 !important;
+                                            border-left: none !important;
+                                        }
+                                    }
+                                `}</style>
                             </div>
 
                             <div className="mb-3">
