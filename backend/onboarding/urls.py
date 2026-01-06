@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SubmissionCreateView, MirrorView, OTPRequestView, OTPVerifyView, PillarDescriptionsView, ShareCampaignView
+from .views import SubmissionCreateView, MirrorView, OTPRequestView, OTPVerifyView, PillarDescriptionsView, ShareCampaignView, SuccessPageView, OTPS
 
 urlpatterns = [
     path('submissions/', SubmissionCreateView.as_view(), name='submission-create'),

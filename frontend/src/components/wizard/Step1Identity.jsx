@@ -44,7 +44,7 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
     const [emailError, setEmailError] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [sendingOtp, setSendingOtp] = useState(false);
-    
+
     // Initialize country_code if not set (default to Canada +1)
     if (!formData.country_code) {
         setFormData(prev => ({ ...prev, country_code: '+1' }));
@@ -72,7 +72,7 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
         // Phone validation - only digits, spaces, dashes, parentheses (no + sign since country code is separate)
         const phoneRegex = /^[\d\s\-\(\)]+$/;
         const digitsOnly = phone.replace(/\D/g, '');
-        
+
         // Minimum 7 digits, maximum 15 digits (without country code)
         if (!phoneRegex.test(phone) || digitsOnly.length < 7 || digitsOnly.length > 15) {
             setPhoneError('Please enter a valid phone number (7-15 digits)');
@@ -81,7 +81,7 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
         setPhoneError('');
         return true;
     };
-    
+
     const handleCountryCodeChange = (e) => {
         setFormData(prev => ({ ...prev, country_code: e.target.value }));
     };
@@ -107,8 +107,8 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
             const countryCode = formData.country_code || '+1';
             const phoneNumber = formData.phone.replace(/\D/g, ''); // Remove non-digits
             const fullPhone = `${countryCode}${phoneNumber}`;
-            
-            const res = await axios.post('/api/otp/send/', { 
+
+            const res = await axios.post('/api/otp/request/', {
                 phone: fullPhone,
                 email: formData.email,
                 first_name: formData.first_name,
@@ -133,8 +133,8 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
             const countryCode = formData.country_code || '+1';
             const phoneNumber = formData.phone.replace(/\D/g, ''); // Remove non-digits
             const fullPhone = `${countryCode}${phoneNumber}`;
-            
-            const res = await axios.post('/api/otp/verify/', { 
+
+            const res = await axios.post('/api/otp/verify/', {
                 code: formData.otp_code,
                 phone: fullPhone,
                 contact_id: formData.ghl_contact_id
@@ -183,29 +183,29 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                 Step 1: Identity
             </h4>
             <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>First Name</label>
-            <input 
-                name="first_name" 
-                className="form-control mb-3" 
-                placeholder="First Name" 
+            <input
+                name="first_name"
+                className="form-control mb-3"
+                placeholder="First Name"
                 value={formData.first_name}
                 onChange={handleChange}
                 style={inputStyle}
             />
             <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Last Name</label>
-            <input 
-                name="last_name" 
-                className="form-control mb-3" 
-                placeholder="Last Name" 
+            <input
+                name="last_name"
+                className="form-control mb-3"
+                placeholder="Last Name"
                 value={formData.last_name}
                 onChange={handleChange}
                 style={inputStyle}
             />
             <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Email</label>
-            <input 
-                name="email" 
+            <input
+                name="email"
                 className={`form-control mb-1 ${emailError ? 'is-invalid' : ''}`}
-                placeholder="Email" 
-                type="email" 
+                placeholder="Email"
+                type="email"
                 value={formData.email}
                 onChange={handleEmailChange}
                 onBlur={(e) => validateEmail(e.target.value)}
@@ -239,10 +239,10 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                                 </option>
                             ))}
                         </select>
-                        <input 
-                            name="phone" 
+                        <input
+                            name="phone"
                             className={`form-control phone-input ${phoneError ? 'is-invalid' : ''}`}
-                            placeholder="Phone Number" 
+                            placeholder="Phone Number"
                             value={formData.phone || ''}
                             onChange={handlePhoneChange}
                             onBlur={(e) => validatePhone(e.target.value)}
@@ -253,14 +253,14 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                             }}
                         />
                     </div>
-                    <button 
-                        className="btn send-otp-btn" 
+                    <button
+                        className="btn send-otp-btn"
                         onClick={sendOtp}
                         disabled={sendingOtp}
-                        style={{ 
-                            ...buttonStyle, 
-                            opacity: sendingOtp ? 0.7 : 1, 
-                            cursor: sendingOtp ? 'not-allowed' : 'pointer', 
+                        style={{
+                            ...buttonStyle,
+                            opacity: sendingOtp ? 0.7 : 1,
+                            cursor: sendingOtp ? 'not-allowed' : 'pointer',
                             whiteSpace: 'nowrap',
                             flexShrink: 0
                         }}
@@ -269,9 +269,9 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                     >
                         {sendingOtp ? (
                             <>
-                                <span 
-                                    className="spinner-border spinner-border-sm me-2" 
-                                    role="status" 
+                                <span
+                                    className="spinner-border spinner-border-sm me-2"
+                                    role="status"
                                     aria-hidden="true"
                                     style={{ borderColor: 'rgba(255, 255, 255, 0.3)', borderRightColor: '#ffffff' }}
                                 ></span>
@@ -353,10 +353,10 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
             {otpSent && (
                 <>
                     <label className="form-label fw-bold">One Time Password (OTP) Check</label>
-                    <input 
-                        name="otp_code" 
-                        className="form-control mb-3" 
-                        placeholder="Enter One Time Password (OTP)" 
+                    <input
+                        name="otp_code"
+                        className="form-control mb-3"
+                        placeholder="Enter One Time Password (OTP)"
                         value={formData.otp_code}
                         onChange={handleChange}
                         style={inputStyle}
@@ -368,16 +368,16 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                         <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
                             <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
                             {alert.message}
-                            <button 
-                                type="button" 
-                                className="btn-close" 
+                            <button
+                                type="button"
+                                className="btn-close"
                                 onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
                                 aria-label="Close"
                             ></button>
                         </div>
                     )}
-                    <button 
-                        className="btn" 
+                    <button
+                        className="btn"
                         onClick={verifyOtp}
                         style={{ ...buttonStyle, padding: '0.75rem 2rem' }}
                         onMouseEnter={handleButtonHover}
@@ -391,9 +391,9 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                 <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mt-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
                     <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
                     {alert.message}
-                    <button 
-                        type="button" 
-                        className="btn-close" 
+                    <button
+                        type="button"
+                        className="btn-close"
                         onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
                         aria-label="Close"
                     ></button>
