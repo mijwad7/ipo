@@ -12,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/start" element={<Wizard />} />
         <Route path="/temp/:slug" element={<MirrorPage />} />
+        <Route path="/temp/:slug/:templateType" element={<MirrorPage />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/preview/modern" element={<ModernPreview />} />
         <Route path="/preview/traditional" element={<TraditionalPreview />} />

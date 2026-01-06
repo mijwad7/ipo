@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const MirrorPage = () => {
-    const { slug } = useParams();
+    const { slug, templateType } = useParams();
     const [data, setData] = useState(null);
     const [error, setError] = useState(false);
     const [requiresPassword, setRequiresPassword] = useState(false);
@@ -25,13 +25,13 @@ const MirrorPage = () => {
     const loadCampaign = useCallback(async (pwd = null) => {
         setLoading(true);
         setPasswordError('');
-        
+
         try {
             const storedPwd = pwd || getStoredPassword();
-            const url = storedPwd 
+            const url = storedPwd
                 ? `/api/mirror/${slug}/?password=${encodeURIComponent(storedPwd)}`
                 : `/api/mirror/${slug}/`;
-            
+
             const res = await axios.get(url);
             setData(res.data);
             setRequiresPassword(false);
@@ -129,8 +129,8 @@ const MirrorPage = () => {
         </div>
     );
 
-    // Determine template style (default to modern if not specified)
-    const templateStyle = data.template_style || 'modern';
+    // Determine template style (use URL param if present, otherwise default to stored preference or modern)
+    const templateStyle = templateType ? templateType.toLowerCase() : (data.template_style || 'modern');
 
     // Render Modern Template
     const renderModernTemplate = () => {
@@ -222,13 +222,13 @@ const MirrorPage = () => {
                         <a className="navbar-brand text-white" href="#about" style={{ fontWeight: 600, color: 'white !important' }}>
                             {data.position_running_for || `${data.last_name} for Office`}
                         </a>
-                        <button 
-                            className="navbar-toggler" 
-                            type="button" 
-                            data-bs-toggle="collapse" 
+                        <button
+                            className="navbar-toggler"
+                            type="button"
+                            data-bs-toggle="collapse"
                             data-bs-target="#navbarNav"
-                            aria-controls="navbarNav" 
-                            aria-expanded="false" 
+                            aria-controls="navbarNav"
+                            aria-expanded="false"
                             aria-label="Toggle navigation"
                             style={{ borderColor: 'rgba(255,255,255,0.5)' }}
                         >
@@ -247,6 +247,16 @@ const MirrorPage = () => {
                                 </li>
                                 <li className="nav-item ms-2">
                                     <a href={data.donation_url || "#"} className="btn rounded-pill px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', fontWeight: '600' }}>DONATE</a>
+                                </li>
+                                <li className="nav-item dropdown ms-2">
+                                    <a className="nav-link dropdown-toggle px-3 rounded-pill" style={{ border: '1px solid rgba(255,255,255,0.5)', color: 'white' }} href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Styles
+                                    </a>
+                                    <ul className="dropdown-menu dropdown-menu-end shadow border-0">
+                                        <li><a className="dropdown-item" href={`/temp/${slug}/modern`}>Modern</a></li>
+                                        <li><a className="dropdown-item" href={`/temp/${slug}/traditional`}>Traditional</a></li>
+                                        <li><a className="dropdown-item" href={`/temp/${slug}/bold`}>Bold</a></li>
+                                    </ul>
                                 </li>
                             </ul>
                         </div>
@@ -336,7 +346,7 @@ const MirrorPage = () => {
                             ].filter(p => p.title).map((pillar, idx) => (
                                 <div key={idx} className="col-md-4">
                                     <div className="card card-modern h-100" style={{ border: '2px solid var(--secondary)' }}>
-                                        <div 
+                                        <div
                                             className="bg-primary-modern text-white p-4 text-center"
                                             style={{ minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                         >
@@ -495,13 +505,13 @@ const MirrorPage = () => {
                         <a className="navbar-brand" href="#about" style={{ fontWeight: 600 }}>
                             {data.position_running_for || `${data.last_name} for Office`}
                         </a>
-                        <button 
-                            className="navbar-toggler" 
-                            type="button" 
-                            data-bs-toggle="collapse" 
+                        <button
+                            className="navbar-toggler"
+                            type="button"
+                            data-bs-toggle="collapse"
                             data-bs-target="#navbarNavTraditional"
-                            aria-controls="navbarNavTraditional" 
-                            aria-expanded="false" 
+                            aria-controls="navbarNavTraditional"
+                            aria-expanded="false"
                             aria-label="Toggle navigation"
                             style={{ borderColor: 'rgba(255,255,255,0.5)' }}
                         >
@@ -520,6 +530,16 @@ const MirrorPage = () => {
                                 </li>
                                 <li className="nav-item ms-2">
                                     <a href={data.donation_url || "#"} className="btn rounded-0 px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', fontWeight: '500' }}>DONATE</a>
+                                </li>
+                                <li className="nav-item dropdown ms-2">
+                                    <a className="nav-link dropdown-toggle px-3 rounded-0" style={{ border: '1px solid rgba(255,255,255,0.5)', color: 'white' }} href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Styles
+                                    </a>
+                                    <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-0">
+                                        <li><a className="dropdown-item" href={`/temp/${slug}/modern`}>Modern</a></li>
+                                        <li><a className="dropdown-item" href={`/temp/${slug}/traditional`}>Traditional</a></li>
+                                        <li><a className="dropdown-item" href={`/temp/${slug}/bold`}>Bold</a></li>
+                                    </ul>
                                 </li>
                             </ul>
                         </div>
@@ -545,9 +565,9 @@ const MirrorPage = () => {
                                     {data.first_name} {data.last_name}
                                 </h1>
                                 <div className="text-center mb-2">
-                                <p className="mb-1" style={{ color: 'var(--primary)', fontSize: '1.1rem', fontWeight: 600 }}>
-                                    {data.tag_line || 'Vote for Leadership'}
-                                </p>
+                                    <p className="mb-1" style={{ color: 'var(--primary)', fontSize: '1.1rem', fontWeight: 600 }}>
+                                        {data.tag_line || 'Vote for Leadership'}
+                                    </p>
                                 </div>
                                 {(data.riding_zone_name || data.election_date) && (
                                     <div className="text-center mb-3">
@@ -588,35 +608,35 @@ const MirrorPage = () => {
                                     <form>
                                         <div className="row mb-3">
                                             <div className="col-md-6 mb-3">
-                                                <input 
-                                                    type="text" 
-                                                    className="form-control form-control-lg rounded-0" 
-                                                    placeholder="First Name" 
+                                                <input
+                                                    type="text"
+                                                    className="form-control form-control-lg rounded-0"
+                                                    placeholder="First Name"
                                                     style={{ fontFamily: 'Open Sans, sans-serif' }}
                                                 />
                                             </div>
                                             <div className="col-md-6 mb-3">
-                                                <input 
-                                                    type="text" 
-                                                    className="form-control form-control-lg rounded-0" 
-                                                    placeholder="Last Name" 
+                                                <input
+                                                    type="text"
+                                                    className="form-control form-control-lg rounded-0"
+                                                    placeholder="Last Name"
                                                     style={{ fontFamily: 'Open Sans, sans-serif' }}
                                                 />
                                             </div>
                                         </div>
                                         <div className="mb-3">
-                                            <input 
-                                                type="email" 
-                                                className="form-control form-control-lg rounded-0" 
-                                                placeholder="Email Address" 
+                                            <input
+                                                type="email"
+                                                className="form-control form-control-lg rounded-0"
+                                                placeholder="Email Address"
                                                 style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
                                             />
                                         </div>
                                         <div className="mb-4">
-                                            <textarea 
-                                                className="form-control form-control-lg rounded-0" 
-                                                rows="4" 
-                                                placeholder="Your Message" 
+                                            <textarea
+                                                className="form-control form-control-lg rounded-0"
+                                                rows="4"
+                                                placeholder="Your Message"
                                                 style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
                                             ></textarea>
                                         </div>
@@ -646,7 +666,7 @@ const MirrorPage = () => {
                             ].filter(p => p.title).map((pillar, idx) => (
                                 <div key={idx} className="col-md-4 mb-4">
                                     <div className="card card-traditional h-100">
-                                        <div 
+                                        <div
                                             className="bg-light p-4 text-center border-bottom"
                                             style={{ minHeight: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                         >
@@ -670,7 +690,7 @@ const MirrorPage = () => {
                     </div>
                 </section>
 
-                <footer className="bg-primary-traditional text-white py-5 position-relative" style={{ 
+                <footer className="bg-primary-traditional text-white py-5 position-relative" style={{
                     borderTop: `4px solid var(--secondary)`,
                     backgroundImage: data.background_picture ? `url(${data.background_picture})` : 'none',
                     backgroundSize: 'cover',
@@ -806,13 +826,13 @@ const MirrorPage = () => {
                         <a className="navbar-brand text-uppercase" href="#about" style={{ fontSize: '24px', letterSpacing: '2px', fontWeight: 700 }}>
                             {data.position_running_for ? data.position_running_for.toUpperCase() : `${data.last_name} FOR OFFICE`}
                         </a>
-                        <button 
-                            className="navbar-toggler" 
-                            type="button" 
-                            data-bs-toggle="collapse" 
+                        <button
+                            className="navbar-toggler"
+                            type="button"
+                            data-bs-toggle="collapse"
                             data-bs-target="#navbarNavBold"
-                            aria-controls="navbarNavBold" 
-                            aria-expanded="false" 
+                            aria-controls="navbarNavBold"
+                            aria-expanded="false"
                             aria-label="Toggle navigation"
                             style={{ borderColor: 'rgba(255,255,255,0.5)' }}
                         >
@@ -831,6 +851,16 @@ const MirrorPage = () => {
                                 </li>
                                 <li className="nav-item ms-2">
                                     <a href={data.donation_url || "#"} className="btn px-4" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid var(--secondary)', fontWeight: 600 }}>DONATE</a>
+                                </li>
+                                <li className="nav-item dropdown ms-2">
+                                    <a className="nav-link dropdown-toggle px-3" style={{ border: '2px solid white', color: 'white', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }} href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        STYLES
+                                    </a>
+                                    <ul className="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-0">
+                                        <li><a className="dropdown-item text-uppercase fw-bold" href={`/temp/${slug}/modern`}>Modern</a></li>
+                                        <li><a className="dropdown-item text-uppercase fw-bold" href={`/temp/${slug}/traditional`}>Traditional</a></li>
+                                        <li><a className="dropdown-item text-uppercase fw-bold" href={`/temp/${slug}/bold`}>Bold</a></li>
+                                    </ul>
                                 </li>
                             </ul>
                         </div>
@@ -891,8 +921,8 @@ const MirrorPage = () => {
                     </div>
                 </header>
 
-                <section id="platform" className="py-5 bg-primary-bold text-white position-relative" style={{ 
-                    borderTop: '8px solid var(--secondary)', 
+                <section id="platform" className="py-5 bg-primary-bold text-white position-relative" style={{
+                    borderTop: '8px solid var(--secondary)',
                     borderBottom: '8px solid var(--secondary)',
                     backgroundImage: data.background_picture ? `url(${data.background_picture})` : 'none',
                     backgroundSize: 'cover',
@@ -930,7 +960,7 @@ const MirrorPage = () => {
                                             {!isEven ? (
                                                 <>
                                                     <div className="col-md-5 p-0">
-                                                        <div 
+                                                        <div
                                                             className="text-center d-flex align-items-center justify-content-center"
                                                             style={{ minHeight: '300px', padding: '20px', background: 'transparent', border: '4px solid white' }}
                                                         >
@@ -958,7 +988,7 @@ const MirrorPage = () => {
                                                         <button className="btn btn-lg" style={{ backgroundColor: 'var(--secondary)', color: '#333', border: '3px solid white', fontWeight: 600 }}>READ MORE</button>
                                                     </div>
                                                     <div className="col-md-5 p-0">
-                                                        <div 
+                                                        <div
                                                             className="text-center d-flex align-items-center justify-content-center"
                                                             style={{ minHeight: '300px', padding: '20px', background: 'transparent', border: '4px solid white' }}
                                                         >
