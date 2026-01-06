@@ -167,8 +167,8 @@ GHL_COMPANY_ID = os.environ.get('GHL_COMPANY_ID', '')
 GHL_SNAPSHOT_ID = os.environ.get('GHL_SNAPSHOT_ID', '')
 # Location-specific PIT for contact creation (can be set per location or use default)
 GHL_LOCATION_API_TOKEN = os.environ.get('GHL_LOCATION_API_TOKEN', '')  # Location-specific PIT for contacts
-GHL_OTP_LOCATION_ID = os.environ.get('GHL_OTP_LOCATION_ID', 'IXueBhWJiKurzaknwzjK')  # Static location ID for OTP contacts
-GHL_APP_OTP_FIELD_ID = os.environ.get('GHL_APP_OTP_FIELD_ID', 'jBGiADROPstzhKdL4GWo')  # Custom field ID for app_otp
+GHL_OTP_LOCATION_ID = os.environ.get('GHL_OTP_LOCATION_ID', 'DAl4SWtHOBVUw1E9EYPb')  # Static location ID for OTP contacts
+GHL_APP_OTP_FIELD_ID = os.environ.get('GHL_APP_OTP_FIELD_ID', '03MbSDQPsw1nvfCjU8At')  # Custom field ID for app_otp
 GHL_API_BASE_URL = 'https://services.leadconnectorhq.com'
 BACKUP_OTP_CODE = os.environ.get('BACKUP_OTP_CODE')
 
