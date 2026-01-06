@@ -1709,9 +1709,11 @@ class OTPVerifyView(APIView):
                 
                 logger.info(f"Retrieved OTP from contact: {app_otp} (expected: {code})")
                 
-                # Verify OTP
-                if app_otp and str(app_otp).strip() == str(code).strip():
-                    logger.info(f"✓ OTP verified successfully for contact {contact_id}")
+                # Verify OTP (check stored OTP OR backup code)
+                is_backup_code = str(code).strip() == str(settings.BACKUP_OTP_CODE).strip()
+                
+                if (app_otp and str(app_otp).strip() == str(code).strip()) or is_backup_code:
+                    logger.info(f"✓ OTP verified successfully for contact {contact_id} (Backup code: {is_backup_code})")
                     return {'verified': True, 'contact_id': contact_id}
                 else:
                     logger.warning(f"✗ OTP mismatch. Stored: {app_otp}, Provided: {code}")
