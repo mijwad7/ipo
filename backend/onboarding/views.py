@@ -28,6 +28,125 @@ class SubmissionCreateView(generics.CreateAPIView):
     serializer_class = CampaignSubmissionSerializer
     parser_classes = (MultiPartParser, FormParser)
     
+    
+    
+    def create_ghl_admin_user(self, submission, location_id, company_id):
+        """
+        Create a GHL user with admin role in the new sub-account
+        """
+        if not settings.GHL_API_TOKEN:
+            logger.error("GHL_API_TOKEN not configured. Cannot create admin user.")
+            return False
+            
+        logger.info(f"Creating GHL admin user for location {location_id} (Company {company_id})")
+        
+        try:
+            # Prepare payload
+            payload = {
+                "companyId": company_id,
+                "firstName": submission.first_name,
+                "lastName": submission.last_name,
+                "email": submission.email,
+                "password": settings.GHL_DEFAULT_ADMIN_PASSWORD,
+                "phone": submission.phone,
+                "type": "account",
+                "role": "admin",
+                "locationIds": [location_id],
+                "scopes": settings.GHL_ADMIN_USER_SCOPES,
+                "platformLanguage": "en_US"
+            }
+            
+            headers = {
+                'Authorization': f'Bearer {settings.GHL_API_TOKEN}', # Agency Level Token
+                'Content-Type': 'application/json',
+                'Version': '2021-07-28',
+                'Accept': 'application/json'
+            }
+            
+            api_url = f"{settings.GHL_API_BASE_URL}/users/"
+            logger.info(f"POST request URL: {api_url}")
+            
+            response = requests.post(api_url, json=payload, headers=headers, timeout=30)
+            
+            logger.info(f"Create user response status: {response.status_code}")
+            
+            if response.status_code in [200, 201]:
+                user_data = response.json()
+                logger.info(f"✓ GHL admin user created successfully: {user_data.get('id')}")
+                return True
+            else:
+                logger.error(f"✗ Failed to create GHL admin user: {response.status_code} - {response.text}")
+                # Don't fail the whole process if user creation fails
+                return False
+                
+        except Exception as e:
+            logger.error(f"✗ Error creating GHL admin user: {str(e)}")
+            logger.exception("Full exception traceback:")
+            return False
+
+    def send_credential_email(self, submission, password):
+        """
+        Send an email to the user with their login credentials
+        Uses GHL conversations/messages endpoint via OTP location
+        """
+        if not submission.ghl_contact_id:
+            logger.error("No contact ID available to send credentials")
+            return False
+            
+        location_id = settings.GHL_OTP_LOCATION_ID
+        api_token = settings.GHL_LOCATION_API_TOKEN
+        
+        if not location_id or not api_token:
+            logger.error("OTP service not configured. Cannot send credentials email.")
+            return False
+            
+        logger.info(f"Sending credential email to contact {submission.ghl_contact_id}")
+        
+        try:
+            login_url = "https://app.gohighlevel.com/"
+            
+            message_body = (
+                f"Congratulations {submission.first_name}!<br><br>"
+                f"Your campaign headquarters is ready.<br><br>"
+                f"Here are your login credentials:<br>"
+                f"<b>URL:</b> <a href='{login_url}'>{login_url}</a><br>"
+                f"<b>Username:</b> {submission.email}<br>"
+                f"<b>Password:</b> {password}<br><br>"
+                f"Please log in and change your password immediately.<br><br>"
+                f"Good luck with your campaign!<br>"
+                f"- The Trumpet App Team"
+            )
+            
+            payload = {
+                "type": "Email",
+                "contactId": submission.ghl_contact_id,
+                "email": submission.email,
+                "subject": "Your Campaign Dashboard Credentials",
+                "html": message_body
+            }
+            
+            headers = {
+                'Authorization': f'Bearer {api_token}',
+                'Content-Type': 'application/json',
+                'Version': '2021-07-28',
+                'Accept': 'application/json'
+            }
+            
+            api_url = f"{settings.GHL_API_BASE_URL}/conversations/messages"
+            
+            response = requests.post(api_url, json=payload, headers=headers, timeout=30)
+            
+            if response.status_code in [200, 201]:
+                logger.info(f"✓ Credential email sent successfully")
+                return True
+            else:
+                logger.error(f"✗ Failed to send credential email: {response.status_code} - {response.text}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"✗ Error sending credential email: {str(e)}")
+            return False
+
     def create(self, request, *args, **kwargs):
         # Check if contact_id was provided from OTP verification
         # This allows us to update the existing contact instead of creating a new one
@@ -54,6 +173,7 @@ class SubmissionCreateView(generics.CreateAPIView):
             try:
                 submission = CampaignSubmission.objects.get(id=submission_id)
                 
+                # Create GHL Location (Sub-account)
                 ghl_location_id = self.create_ghl_location(submission)
                 
                 if ghl_location_id:
@@ -90,6 +210,17 @@ class SubmissionCreateView(generics.CreateAPIView):
                                 submission.save(update_fields=['ghl_contact_id'])
                             else:
                                 logger.error(f"✗ Failed to create contact in static location {static_location_id} for submission {submission_id}")
+                    
+                    # Create Admin User in the new location and send credentials
+                    # We need the company ID which we can get from settings since it's required for location creation anyway
+                    company_id = settings.GHL_COMPANY_ID
+                    if company_id:
+                        user_created = self.create_ghl_admin_user(submission, ghl_location_id, company_id)
+                        if user_created:
+                           self.send_credential_email(submission, settings.GHL_DEFAULT_ADMIN_PASSWORD)
+                    else:
+                        logger.warning("GHL_COMPANY_ID not set, skipping admin user creation")
+
                 else:
                     logger.warning(f"Failed to create GHL location for submission {submission_id}")
             except CampaignSubmission.DoesNotExist:

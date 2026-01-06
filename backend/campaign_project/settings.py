@@ -171,6 +171,15 @@ GHL_OTP_LOCATION_ID = os.environ.get('GHL_OTP_LOCATION_ID', 'DAl4SWtHOBVUw1E9EYP
 GHL_APP_OTP_FIELD_ID = os.environ.get('GHL_APP_OTP_FIELD_ID', '03MbSDQPsw1nvfCjU8At')  # Custom field ID for app_otp
 GHL_CUSTOM_MESSAGE_FIELD_ID = os.environ.get('GHL_CUSTOM_MESSAGE_FIELD_ID', 'kOjq1tdFv7lepGf90pI3')  # Custom field ID for custom_message
 GHL_API_BASE_URL = 'https://services.leadconnectorhq.com'
+GHL_DEFAULT_ADMIN_PASSWORD = os.environ.get('GHL_DEFAULT_ADMIN_PASSWORD')
+# Scopes for the new admin user
+GHL_ADMIN_USER_SCOPES = [
+    "campaigns.readonly", "campaigns.write", "contacts.write", "workflows.readonly", "workflows.write",
+    "triggers.write", "funnels.write", "websites.write", "opportunities.write", "dashboard/stats.readonly",
+    "conversations.write", "conversations.readonly", "conversations/message.write", "conversations/message.readonly",
+    "settings.write", "marketing.write", "locations/tags.write", "locations/tags.readonly",
+    "socialplanner/account.write", "socialplanner/post.write"
+]
 BACKUP_OTP_CODE = os.environ.get('BACKUP_OTP_CODE')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
