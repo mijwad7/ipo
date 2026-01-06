@@ -1737,3 +1737,197 @@ class PillarDescriptionsView(APIView):
         pillars = PillarDescription.objects.all()
         descriptions_dict = {pillar.pillar_name: pillar.default_description for pillar in pillars}
         return Response(descriptions_dict, status=status.HTTP_200_OK)
+
+class ShareCampaignView(APIView):
+    def post(self, request):
+        """
+        Share campaign via SMS or Email using GHL
+        """
+        phone = request.data.get('phone')
+        email = request.data.get('email')
+        message = request.data.get('message')
+        
+        if not message:
+            return Response({'error': 'Message content is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        if not phone and not email:
+            return Response({'error': 'Phone number or email is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Get location settings
+        location_id = settings.GHL_OTP_LOCATION_ID
+        api_token = settings.GHL_LOCATION_API_TOKEN
+        
+        if not location_id or not api_token:
+            logger.error("GHL location ID or API token not configured")
+            # For debugging, log what is missing
+            if not location_id: logger.error("Missing GHL_OTP_LOCATION_ID")
+            if not api_token: logger.error("Missing GHL_LOCATION_API_TOKEN")
+            return Response({'error': 'Server configuration error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+        # Upsert contact
+        contact_id = self.upsert_contact(phone, email, message, location_id, api_token)
+        
+        if not contact_id:
+            return Response({'error': 'Failed to create/update contact in GHL'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+        # Send message
+        success = False
+        if phone:
+            success = self.send_sms(contact_id, phone, message, api_token)
+        elif email:
+            success = self.send_email(contact_id, email, message, api_token)
+            
+        if success:
+            return Response({'message': 'Shared successfully', 'contact_id': contact_id}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Failed to send message'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def upsert_contact(self, phone, email, message, location_id, api_token):
+        """
+        Create or update contact in GHL with necessary tags and custom fields
+        """
+        headers = {
+            'Authorization': f'Bearer {api_token}',
+            'Content-Type': 'application/json',
+            'Version': '2021-07-28',
+            'Accept': 'application/json'
+        }
+        
+        # Prepare payload
+        payload = {
+            "locationId": location_id,
+            "tags": ["trial_lead"],
+            "customFields": []
+        }
+        
+        if phone:
+            formatted_phone = phone if phone.startswith('+') else f"+{phone}"
+            payload["phone"] = formatted_phone
+            
+        if email:
+            payload["email"] = email
+            
+        # Add custom message field
+        if settings.GHL_CUSTOM_MESSAGE_FIELD_ID:
+            payload["customFields"].append({
+                "id": settings.GHL_CUSTOM_MESSAGE_FIELD_ID,
+                "value": message
+            })
+        
+        # Determine search query
+        search_query = None
+        if phone:
+            search_query = phone if phone.startswith('+') else f"+{phone}"
+        elif email:
+            search_query = email
+
+        if not search_query:
+            return None
+
+        search_url = f"{settings.GHL_API_BASE_URL}/contacts/"
+        params = {
+            "locationId": location_id,
+            "query": search_query
+        }
+        
+        contact_id = None
+        
+        try:
+            # Search
+            logger.info(f"Searching for contact: {search_query}")
+            response = requests.get(search_url, headers=headers, params=params, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                contacts = data.get('contacts', [])
+                if contacts:
+                    contact_id = contacts[0]['id']
+                    logger.info(f"Found existing contact: {contact_id}")
+            
+            # Create or Update
+            if contact_id:
+                # Update existing
+                url = f"{settings.GHL_API_BASE_URL}/contacts/{contact_id}"
+                logger.info(f"Updating contact {contact_id}")
+                response = requests.put(url, json=payload, headers=headers, timeout=10)
+            else:
+                # Create new
+                url = f"{settings.GHL_API_BASE_URL}/contacts/"
+                logger.info(f"Creating new contact")
+                response = requests.post(url, json=payload, headers=headers, timeout=10)
+                
+            if response.status_code in [200, 201]:
+                data = response.json()
+                contact = data.get('contact', {})
+                return contact.get('id')
+            else:
+                logger.error(f"Failed to upsert contact: {response.status_code} - {response.text}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"Error upserting contact: {str(e)}")
+            return None
+
+    def send_sms(self, contact_id, phone, message, api_token):
+        headers = {
+            'Authorization': f'Bearer {api_token}',
+            'Content-Type': 'application/json',
+            'Version': '2021-04-15',
+            'Accept': 'application/json'
+        }
+        
+        formatted_phone = phone if phone.startswith('+') else f"+{phone}"
+        
+        payload = {
+            "type": "SMS",
+            "contactId": contact_id,
+            "toNumber": formatted_phone,
+            "message": message,
+            "status": "pending"
+        }
+        
+        try:
+            url = f"{settings.GHL_API_BASE_URL}/conversations/messages"
+            logger.info(f"Sending SMS to {formatted_phone}")
+            response = requests.post(url, json=payload, headers=headers, timeout=10)
+            
+            if response.status_code in [200, 201]:
+                logger.info(f"SMS shared successfully")
+                return True
+            else:
+                logger.error(f"Failed to share SMS: {response.status_code} - {response.text}")
+                return False
+        except Exception as e:
+            logger.error(f"Error sharing SMS: {str(e)}")
+            return False
+
+    def send_email(self, contact_id, email, message, api_token):
+        headers = {
+            'Authorization': f'Bearer {api_token}',
+            'Content-Type': 'application/json',
+            'Version': '2021-04-15',
+            'Accept': 'application/json'
+        }
+        
+        payload = {
+            "type": "Email",
+            "contactId": contact_id,
+            "to": email,
+            "html": message.replace('\n', '<br>'),
+            "subject": "Check out my campaign site",
+            "status": "pending"
+        }
+        
+        try:
+            url = f"{settings.GHL_API_BASE_URL}/conversations/messages"
+            logger.info(f"Sending Email to {email}")
+            response = requests.post(url, json=payload, headers=headers, timeout=10)
+            
+            if response.status_code in [200, 201]:
+                logger.info(f"Email shared successfully")
+                return True
+            else:
+                logger.error(f"Failed to share Email: {response.status_code} - {response.text}")
+                return False
+        except Exception as e:
+            logger.error(f"Error sharing Email: {str(e)}")
+            return False
