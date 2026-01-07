@@ -333,18 +333,7 @@ const SuccessPage = () => {
                                     {copied ? '✓ Copied!' : 'Copy Link'}
                                 </button>
                             </div>
-                            {alert.show && (
-                                <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mt-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
-                                    <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
-                                    {alert.message}
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
-                                        aria-label="Close"
-                                    ></button>
-                                </div>
-                            )}
+
                         </div>
                     </div>
 
@@ -548,6 +537,34 @@ const SuccessPage = () => {
                                 >
                                     <i className="bi bi-phone me-2"></i>
                                     {sending && phone.trim() ? 'Sending...' : 'Send SMS'}
+                                </button>
+                                <button
+                                    className="btn flex-fill"
+                                    onClick={handleSendSMS}
+                                    disabled={!phone.trim() || sending}
+                                    style={{
+                                        background: !phone.trim() || sending ? '#e2e8f0' : 'linear-gradient(135deg, #4299e1 0%, #3182ce 100%)',
+                                        border: 'none',
+                                        color: !phone.trim() || sending ? '#a0aec0' : '#ffffff',
+                                        fontWeight: '600',
+                                        borderRadius: '10px',
+                                        padding: '0.75rem 1rem',
+                                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                        cursor: !phone.trim() || sending ? 'not-allowed' : 'pointer'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (phone.trim() && !sending) {
+                                            e.target.style.transform = 'translateY(-2px)';
+                                            e.target.style.boxShadow = '0 4px 12px rgba(66, 153, 225, 0.4)';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    <i className="bi bi-phone-vibrate me-2"></i>
+                                    {sending && phone.trim() ? 'Sending...' : 'Send SMS to Self'}
                                 </button>
                                 <button
                                     className="btn flex-fill"

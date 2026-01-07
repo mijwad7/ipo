@@ -15,48 +15,48 @@ const Step3Bio = ({ formData, handleChange, handleImageUpload, setStep, onNext, 
                 <i className="bi bi-file-person me-2" style={{ color: '#667eea' }}></i>
                 Step 3: Bio Setup
             </h4>
-            
+
             <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Position Running For</label>
-            <input 
-                type="text" 
-                name="position_running_for" 
-                className="form-control mb-3" 
-                placeholder="e.g., Jeff for Mayor, Jeff for Leadership" 
+            <input
+                type="text"
+                name="position_running_for"
+                className="form-control mb-3"
+                placeholder="e.g., Jeff for Mayor, Jeff for Leadership"
                 value={formData.position_running_for}
                 onChange={handleChange}
                 style={inputStyle}
             />
             <small className="text-muted d-block mb-3">Enter the position you are running for</small>
-            
+
             <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Tag Line</label>
-            <input 
-                type="text" 
-                name="tag_line" 
-                className="form-control mb-3" 
-                placeholder="e.g., Family Faith Freedom, Vote for Leadership" 
+            <input
+                type="text"
+                name="tag_line"
+                className="form-control mb-3"
+                placeholder="e.g., Family Faith Freedom, Vote for Leadership"
                 value={formData.tag_line}
                 onChange={handleChange}
                 style={inputStyle}
             />
             <small className="text-muted d-block mb-3">Enter your campaign tag line</small>
-            
+
             <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Headshot (Optional)</label>
-            <input 
-                type="file" 
-                className="form-control mb-3" 
-                accept="image/*" 
+            <input
+                type="file"
+                className="form-control mb-3"
+                accept="image/*"
                 onChange={(e) => handleImageUpload(e, 'headshot')}
                 style={inputStyle}
             />
             {formData.headshot && (
                 <div className="text-success small mb-3">✓ Image selected: {formData.headshot.name}</div>
             )}
-            
+
             <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Background Picture (Optional)</label>
-            <input 
-                type="file" 
-                className="form-control mb-3" 
-                accept="image/*" 
+            <input
+                type="file"
+                className="form-control mb-3"
+                accept="image/*"
                 onChange={(e) => handleImageUpload(e, 'background_picture')}
                 style={inputStyle}
             />
@@ -64,12 +64,25 @@ const Step3Bio = ({ formData, handleChange, handleImageUpload, setStep, onNext, 
                 <div className="text-success small mb-3">✓ Image selected: {formData.background_picture.name}</div>
             )}
             <small className="text-muted d-block mb-3">This will be used as a background with a color overlay in your chosen theme</small>
-            
-            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Bio</label>
-            <textarea 
-                name="bio_text" 
-                className="form-control mb-3" 
-                placeholder="Tell us about yourself and your campaign..." 
+
+            <div className="d-flex justify-content-between align-items-center mb-2">
+                <label className="form-label fw-semibold mb-0" style={{ color: '#4a5568' }}>Bio (Optional)</label>
+                <button
+                    className="btn btn-sm btn-outline-secondary"
+                    type="button"
+                    onClick={() => {
+                        const filler = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+                        handleChange({ target: { name: 'bio_text', value: filler } });
+                    }}
+                    style={{ fontSize: '0.8rem', borderRadius: '20px' }}
+                >
+                    <i className="bi bi-magic me-1"></i> Fill Random
+                </button>
+            </div>
+            <textarea
+                name="bio_text"
+                className="form-control mb-3"
+                placeholder="Tell us about yourself and your campaign..."
                 rows="5"
                 value={formData.bio_text}
                 onChange={handleChange}
@@ -80,16 +93,16 @@ const Step3Bio = ({ formData, handleChange, handleImageUpload, setStep, onNext, 
                 <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
                     <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
                     {alert.message}
-                    <button 
-                        type="button" 
-                        className="btn-close" 
+                    <button
+                        type="button"
+                        className="btn-close"
                         onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
                         aria-label="Close"
                     ></button>
                 </div>
             )}
-            <WizardNavigationButtons 
-                onBack={() => setStep(2)} 
+            <WizardNavigationButtons
+                onBack={() => setStep(2)}
                 onNext={onNext}
             />
         </div>

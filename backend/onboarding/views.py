@@ -103,7 +103,7 @@ class SubmissionCreateView(generics.CreateAPIView):
         logger.info(f"Sending credential email to contact {submission.ghl_contact_id}")
         
         try:
-            login_url = "https://app.gohighlevel.com/"
+            login_url = "https://agency.hmgcareer.com/"
             
             message_body = (
                 f"Congratulations {submission.first_name}!<br><br>"
@@ -1899,7 +1899,7 @@ class ShareCampaignView(APIView):
         contact_id = self.upsert_contact(phone, email, message, location_id, api_token)
         
         if not contact_id:
-            return Response({'error': 'Failed to create/update contact in GHL'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': 'There has been some sort of issue.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
         # Send message
         success = False
@@ -1924,9 +1924,9 @@ class ShareCampaignView(APIView):
             'Accept': 'application/json'
         }
         
-        # Prepare payload
+        # Prepare payload - DON'T include locationId in initial payload
+        # GHL PUT (update) rejects locationId, only POST (create) needs it
         payload = {
-            "locationId": location_id,
             "tags": ["trial_lead"],
             "customFields": []
         }
@@ -1981,7 +1981,8 @@ class ShareCampaignView(APIView):
                 logger.info(f"Updating contact {contact_id}")
                 response = requests.put(url, json=payload, headers=headers, timeout=10)
             else:
-                # Create new
+                # Create new - Add locationId to payload for creation
+                payload["locationId"] = location_id
                 url = f"{settings.GHL_API_BASE_URL}/contacts/"
                 logger.info(f"Creating new contact")
                 response = requests.post(url, json=payload, headers=headers, timeout=10)
