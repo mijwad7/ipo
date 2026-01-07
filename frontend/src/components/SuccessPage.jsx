@@ -48,6 +48,7 @@ const SuccessPage = () => {
     const [countryCode, setCountryCode] = useState('+1');
     const [phoneError, setPhoneError] = useState('');
     const [email, setEmail] = useState('');
+    const [emailSubject, setEmailSubject] = useState('Want your Comments re: My temp Campaign site');
     const [message, setMessage] = useState('');
     const [copied, setCopied] = useState(false);
     const [alert, setAlert] = useState({ show: false, message: '', type: 'danger' });
@@ -72,7 +73,10 @@ const SuccessPage = () => {
     const fullUrl = `${window.location.origin}${tempUrl}`;
 
     // Default message template
-    const defaultMessageTemplate = "Hey, I've been seriously thinking about running lately and wanted to get your honest take before I mention it to anyone else. I literally just threw this together in under 3 minutes as a super-rough private placeholder site just to see the idea in real life (definitely not public, I'll take it down right after you see it). Nothing's polished, it's mostly just a vibe check, but curious what your gut reaction is—does this feel like it could connect, or am I totally off base? Appreciate you looking! [link]";
+    const defaultMessageTemplate = `Hey, I've been seriously thinking about running lately and wanted to get your honest take before I mention it to anyone else. I literally just threw this together in under 3 minutes as a super-rough private placeholder site just to see the idea in real life (definitely not public, I'll take it down right after you see it). Nothing's polished, it's mostly just a vibe check, but curious what your gut reaction is—does this feel like it could connect, or am I totally off base? Appreciate you looking!
+    
+${submission.first_name} ${submission.last_name}
+[link]`;
 
     // Get message text with link replacement
     const getMessageText = () => {
@@ -145,6 +149,7 @@ const SuccessPage = () => {
         try {
             await axios.post('/api/share/', {
                 email: email,
+                subject: emailSubject,
                 message: messageText
             });
             showAlert('Email sent successfully!', 'success');
@@ -459,6 +464,23 @@ const SuccessPage = () => {
                                         }
                                     }
                                 `}</style>
+                            </div>
+
+                            <div className="mb-3">
+                                <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Email Subject (for Email)</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Subject line"
+                                    value={emailSubject}
+                                    onChange={(e) => setEmailSubject(e.target.value)}
+                                    style={{
+                                        borderRadius: '10px',
+                                        border: '2px solid #e2e8f0',
+                                        padding: '0.75rem 1rem',
+                                        fontSize: '1rem'
+                                    }}
+                                />
                             </div>
 
                             <div className="mb-3">

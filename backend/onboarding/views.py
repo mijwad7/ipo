@@ -147,6 +147,61 @@ class SubmissionCreateView(generics.CreateAPIView):
             logger.error(f"✗ Error sending credential email: {str(e)}")
             return False
 
+    def send_credential_sms(self, submission):
+        """
+        Send an SMS to the user with login details notification
+        Uses GHL conversations/messages endpoint via OTP location
+        """
+        if not submission.ghl_contact_id:
+            logger.error("No contact ID available to send credentials SMS")
+            return False
+            
+        location_id = settings.GHL_OTP_LOCATION_ID
+        api_token = settings.GHL_LOCATION_API_TOKEN
+        
+        if not location_id or not api_token:
+            logger.error("OTP service not configured. Cannot send credentials SMS.")
+            return False
+            
+        logger.info(f"Sending credential SMS to contact {submission.ghl_contact_id}")
+        
+        try:
+            message_body = "We've just emailed you login details to your own thetrumpetapp.com platform"
+            
+            # Format phone number
+            phone = submission.phone
+            formatted_phone = phone if phone.startswith('+') else f"+{phone}"
+            
+            payload = {
+                "type": "SMS",
+                "contactId": submission.ghl_contact_id,
+                "toNumber": formatted_phone,
+                "message": message_body,
+                "status": "pending"
+            }
+            
+            headers = {
+                'Authorization': f'Bearer {api_token}',
+                'Content-Type': 'application/json',
+                'Version': '2021-04-15',
+                'Accept': 'application/json'
+            }
+            
+            api_url = f"{settings.GHL_API_BASE_URL}/conversations/messages"
+            
+            response = requests.post(api_url, json=payload, headers=headers, timeout=30)
+            
+            if response.status_code in [200, 201]:
+                logger.info(f"✓ Credential SMS sent successfully")
+                return True
+            else:
+                logger.error(f"✗ Failed to send credential SMS: {response.status_code} - {response.text}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"✗ Error sending credential SMS: {str(e)}")
+            return False
+
     def create(self, request, *args, **kwargs):
         # Check if contact_id was provided from OTP verification
         # This allows us to update the existing contact instead of creating a new one
@@ -217,7 +272,10 @@ class SubmissionCreateView(generics.CreateAPIView):
                     if company_id:
                         user_created = self.create_ghl_admin_user(submission, ghl_location_id, company_id)
                         if user_created:
-                           self.send_credential_email(submission, settings.GHL_DEFAULT_ADMIN_PASSWORD)
+                            self.send_credential_email(submission, settings.GHL_DEFAULT_ADMIN_PASSWORD)
+                            self.send_credential_sms(submission)
+
+
                     else:
                         logger.warning("GHL_COMPANY_ID not set, skipping admin user creation")
 
@@ -1906,7 +1964,8 @@ class ShareCampaignView(APIView):
         if phone:
             success = self.send_sms(contact_id, phone, message, api_token)
         elif email:
-            success = self.send_email(contact_id, email, message, api_token)
+            subject = request.data.get('subject')
+            success = self.send_email(contact_id, email, message, api_token, subject)
             
         if success:
             return Response({'message': 'Shared successfully', 'contact_id': contact_id}, status=status.HTTP_200_OK)
@@ -2032,7 +2091,7 @@ class ShareCampaignView(APIView):
             logger.error(f"Error sharing SMS: {str(e)}")
             return False
 
-    def send_email(self, contact_id, email, message, api_token):
+    def send_email(self, contact_id, email, message, api_token, subject=None):
         headers = {
             'Authorization': f'Bearer {api_token}',
             'Content-Type': 'application/json',
@@ -2045,7 +2104,7 @@ class ShareCampaignView(APIView):
             "contactId": contact_id,
             "to": email,
             "html": message.replace('\n', '<br>'),
-            "subject": "Check out my campaign site",
+            "subject": subject or "Check out my campaign site",
             "status": "pending"
         }
         
