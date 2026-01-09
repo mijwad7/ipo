@@ -7,14 +7,14 @@ const PILLAR_OPTIONS = [
     "Infrastructure", "Environmental Protection", "Custom"
 ];
 
-const Step4Platform = ({ 
-    formData, 
-    handleChange, 
-    handleImageUpload, 
-    handlePillarChange, 
-    customPillarMode, 
-    setFormData, 
-    setStep, 
+const Step4Platform = ({
+    formData,
+    handleChange,
+    handleImageUpload,
+    handlePillarChange,
+    customPillarMode,
+    setFormData,
+    setStep,
     onNext,
     alert,
     setAlert
@@ -32,9 +32,9 @@ const Step4Platform = ({
                 <i className="bi bi-bullseye me-2" style={{ color: '#667eea' }}></i>
                 Step 4: Platform
             </h4>
-            <p style={{ color: '#718096' }}>Select your top 3 priorities</p>
+            <p style={{ color: '#718096' }}>Select your top 3 priorities (Optional / Skip)</p>
             {[1, 2, 3].map(i => (
-                <div key={i} className="mb-4 p-4 rounded" style={{ 
+                <div key={i} className="mb-4 p-4 rounded" style={{
                     border: '2px solid #e2e8f0',
                     borderRadius: '12px',
                     background: '#f7fafc'
@@ -42,10 +42,10 @@ const Step4Platform = ({
                     <h5 className="mb-3" style={{ color: '#2d3748', fontWeight: '600' }}>Pillar {i}</h5>
 
                     <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Topic</label>
-                    <select 
-                        className="form-control mb-3" 
-                        name={`pillar_${i}`} 
-                        onChange={(e) => handlePillarChange(e, i)} 
+                    <select
+                        className="form-control mb-3"
+                        name={`pillar_${i}`}
+                        onChange={(e) => handlePillarChange(e, i)}
                         value={customPillarMode[i] ? 'Custom' : (formData[`pillar_${i}`] || '')}
                         style={inputStyle}
                     >
@@ -53,10 +53,10 @@ const Step4Platform = ({
                         {PILLAR_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                     </select>
                     {customPillarMode[i] && (
-                        <input 
-                            className="form-control mb-3" 
-                            placeholder="Type custom pillar title" 
-                            name={`pillar_${i}_custom`} 
+                        <input
+                            className="form-control mb-3"
+                            placeholder="Type custom pillar title"
+                            name={`pillar_${i}_custom`}
                             value={formData[`pillar_${i}`] || ''}
                             onChange={(e) => {
                                 setFormData(prev => ({
@@ -96,16 +96,16 @@ const Step4Platform = ({
                 <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
                     <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
                     {alert.message}
-                    <button 
-                        type="button" 
-                        className="btn-close" 
+                    <button
+                        type="button"
+                        className="btn-close"
                         onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
                         aria-label="Close"
                     ></button>
                 </div>
             )}
-            <WizardNavigationButtons 
-                onBack={() => setStep(3)} 
+            <WizardNavigationButtons
+                onBack={() => setStep(3)}
                 onNext={onNext}
             />
         </div>

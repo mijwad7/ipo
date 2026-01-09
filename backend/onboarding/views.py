@@ -166,7 +166,12 @@ class SubmissionCreateView(generics.CreateAPIView):
         logger.info(f"Sending credential SMS to contact {submission.ghl_contact_id}")
         
         try:
-            message_body = "We've just emailed you login details to your own thetrumpetapp.com platform"
+            # Construct the campaign URL
+            # Note: Assuming standard URL structure. Ideally this should come from a centralized URL generator
+            campaign_slug = submission.slug
+            campaign_url = f"https://go.thetrumpet.app/temp/{campaign_slug}"
+            
+            message_body = f"We've just emailed you login details to your own thetrumpetapp.com platform. You can view your temporary website here: {campaign_url}"
             
             # Format phone number
             phone = submission.phone
@@ -216,6 +221,28 @@ class SubmissionCreateView(generics.CreateAPIView):
             if isinstance(request.data, dict):
                 request.data['ghl_contact_id'] = contact_id_from_otp
             logger.info(f"Setting ghl_contact_id from OTP: {contact_id_from_otp}")
+            
+        # Handle optional pillars - provide defaults if missing
+        # Make request.data mutable if not already
+        if hasattr(request.data, '_mutable'):
+            request.data._mutable = True
+            
+        # Default text for pillars
+        default_desc = "This is a key issue for our campaign. We are committed to making a real difference in this area and ensuring positive outcomes for our community."
+        
+        # Check and set defaults for pillars 1-3
+        for i in range(1, 4):
+            pillar_key = f'pillar_{i}'
+            desc_key = f'pillar_{i}_desc'
+            
+            # Check if key exists and has value
+            has_pillar = request.data.get(pillar_key)
+            
+            if not has_pillar:
+                request.data[pillar_key] = f"Issue {i}"
+                if not request.data.get(desc_key):
+                    request.data[desc_key] = default_desc
+                logger.info(f"Using default value for {pillar_key}")
         
         # Create the campaign submission first
         response = super().create(request, *args, **kwargs)

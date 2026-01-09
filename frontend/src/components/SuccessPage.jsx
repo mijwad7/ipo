@@ -278,26 +278,31 @@ ${submission.first_name} ${submission.last_name}
                             to={tempUrl}
                             className="btn btn-lg px-5 mb-3"
                             style={{
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
                                 border: 'none',
                                 color: '#ffffff',
-                                fontWeight: '600',
-                                borderRadius: '10px',
-                                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                fontWeight: '700',
+                                borderRadius: '50px',
+                                padding: '1rem 3rem',
+                                transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                                 textDecoration: 'none',
-                                display: 'inline-block'
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                fontSize: '1.25rem',
+                                boxShadow: '0 10px 20px rgba(255, 107, 107, 0.4)'
                             }}
                             onMouseEnter={(e) => {
-                                e.target.style.transform = 'translateY(-2px)';
-                                e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+                                e.target.style.transform = 'translateY(-3px) scale(1.02)';
+                                e.target.style.boxShadow = '0 15px 30px rgba(255, 107, 107, 0.5)';
                             }}
                             onMouseLeave={(e) => {
-                                e.target.style.transform = 'translateY(0)';
-                                e.target.style.boxShadow = 'none';
+                                e.target.style.transform = 'translateY(0) scale(1)';
+                                e.target.style.boxShadow = '0 10px 20px rgba(255, 107, 107, 0.4)';
                             }}
                         >
-                            <i className="bi bi-box-arrow-up-right me-2"></i>
+                            <i className="bi bi-arrow-right fs-4 me-3"></i>
                             View My Temporary Site
+                            <i className="bi bi-arrow-left fs-4 ms-3"></i>
                         </Link>
                     </div>
 

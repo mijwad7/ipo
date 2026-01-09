@@ -1,14 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
-const Step5Customization = ({ 
-    formData, 
-    handleChange, 
-    customSlugError, 
-    hoveredTemplate, 
-    setHoveredTemplate, 
-    setFormData, 
-    setStep, 
+
+const Step5Customization = ({
+    formData,
+    handleChange,
+    customSlugError,
+    hoveredTemplate,
+    setHoveredTemplate,
+    setFormData,
+    setStep,
     onSubmit,
     alert,
     setAlert
@@ -21,9 +21,9 @@ const Step5Customization = ({
     };
 
     const TemplateCard = ({ style, name, description, isSelected }) => (
-        <div 
+        <div
             className="card mb-3 border-0"
-            style={{ 
+            style={{
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 borderRadius: '12px',
@@ -56,7 +56,7 @@ const Step5Customization = ({
                 <i className="bi bi-palette me-2" style={{ color: '#667eea' }}></i>
                 Step 5: Customization
             </h4>
-            
+
             {/* Disclosure Notice */}
             <div className="alert d-flex align-items-center mb-4" role="alert" style={{
                 borderLeft: '4px solid #f59e0b',
@@ -71,102 +71,93 @@ const Step5Customization = ({
                     <span style={{ color: '#78350f' }}>This is temporary Customization only. Hundreds of templates and full customization available after account creation</span>
                 </div>
             </div>
-            
+
             {/* Two-Column Layout: Left = Selection, Right = Preview */}
             <div className="row g-4">
                 {/* Left Column: Template Selection */}
                 <div className="col-lg-5 col-md-12 order-lg-1 order-1">
                     <label className="form-label mb-3">Template Style</label>
-                    
+
                     <div className="mb-4">
-                        <TemplateCard 
-                            style="modern" 
-                            name="Modern" 
+                        <TemplateCard
+                            style="modern"
+                            name="Modern"
                             description="Clean, contemporary design"
                             isSelected={formData.template_style === 'modern'}
                         />
-                        <TemplateCard 
-                            style="traditional" 
-                            name="Traditional" 
+                        <TemplateCard
+                            style="traditional"
+                            name="Traditional"
                             description="Classic, professional layout"
                             isSelected={formData.template_style === 'traditional'}
                         />
-                        <TemplateCard 
-                            style="bold" 
-                            name="Bold" 
+                        <TemplateCard
+                            style="bold"
+                            name="Bold"
                             description="Striking, high-impact design"
                             isSelected={formData.template_style === 'bold'}
                         />
                     </div>
-                    
+
                     <small className="text-muted d-block mb-3">
                         <i className="bi bi-info-circle me-1"></i>
                         Hover over a template to preview, click to select.
                     </small>
-                    
+
                     {/* Color Customization - Desktop */}
                     <div className="mb-3 d-lg-block d-md-none d-none">
                         <label className="form-label mb-2">Color Customization</label>
                         <div className="row g-3">
                             <div className="col-6">
                                 <label className="form-label small">Primary Color</label>
-                                <input 
-                                    type="color" 
-                                    className="form-control form-control-color mb-2" 
-                                    name="primary_color" 
-                                    value={formData.primary_color} 
-                                    onChange={handleChange} 
+                                <input
+                                    type="color"
+                                    className="form-control form-control-color mb-2"
+                                    name="primary_color"
+                                    value={formData.primary_color}
+                                    onChange={handleChange}
                                     style={{ width: '100%', height: '50px', cursor: 'pointer' }}
                                 />
                                 <small className="text-muted small">Headers & buttons</small>
                             </div>
                             <div className="col-6">
                                 <label className="form-label small">Secondary Color</label>
-                                <input 
-                                    type="color" 
-                                    className="form-control form-control-color mb-2" 
-                                    name="secondary_color" 
-                                    value={formData.secondary_color} 
-                                    onChange={handleChange} 
+                                <input
+                                    type="color"
+                                    className="form-control form-control-color mb-2"
+                                    name="secondary_color"
+                                    value={formData.secondary_color}
+                                    onChange={handleChange}
                                     style={{ width: '100%', height: '50px', cursor: 'pointer' }}
                                 />
                                 <small className="text-muted small">Borders & accents</small>
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Full Preview Link - Desktop */}
-                    <div className="mt-3 d-lg-block d-md-none d-none">
-                        <Link 
-                            to={`/preview/${formData.template_style}?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
-                            target="_blank"
-                            className="btn btn-outline-primary w-100"
-                        >
-                            <i className="bi bi-box-arrow-up-right me-2"></i>
-                            View Full Preview
-                        </Link>
-                    </div>
+
                 </div>
-                
+
                 {/* Right Column: Template Preview Thumbnail */}
                 <div className="col-lg-7 col-md-12 order-lg-2 order-2">
                     <label className="form-label mb-2">Live Preview</label>
-                    <div 
-                        className="position-relative border rounded shadow-sm" 
-                        style={{ 
-                            border: '2px solid #dee2e6', 
-                            borderRadius: '8px', 
-                            overflow: 'hidden', 
+                    <div
+                        className="position-relative border rounded shadow-sm"
+                        style={{
+                            border: '2px solid #dee2e6',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
                             backgroundColor: '#f8f9fa',
                             minHeight: '400px',
                             maxHeight: '600px'
                         }}
                     >
-                        <img 
+                        <img
                             src={`/static/template-${hoveredTemplate || formData.template_style}-preview.png`}
                             alt={`${hoveredTemplate || formData.template_style} template preview`}
                             className="img-fluid w-100"
-                            style={{ 
+                            style={{
                                 display: 'block',
                                 height: 'auto',
                                 objectFit: 'contain'
@@ -177,13 +168,13 @@ const Step5Customization = ({
                                 if (placeholder) placeholder.style.display = 'flex';
                             }}
                         />
-                        <div 
-                            className="text-center p-4 text-muted d-none align-items-center justify-content-center" 
-                            style={{ 
-                                position: 'absolute', 
-                                top: 0, 
-                                left: 0, 
-                                right: 0, 
+                        <div
+                            className="text-center p-4 text-muted d-none align-items-center justify-content-center"
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
                                 bottom: 0,
                                 minHeight: '400px',
                                 flexDirection: 'column'
@@ -198,7 +189,7 @@ const Step5Customization = ({
                         </div>
                     </div>
                 </div>
-                
+
                 {/* Color Customization - Mobile */}
                 <div className="col-12 order-3 d-lg-none d-md-block d-block">
                     <div className="mb-3 mt-4">
@@ -206,51 +197,42 @@ const Step5Customization = ({
                         <div className="row g-3">
                             <div className="col-6">
                                 <label className="form-label small">Primary Color</label>
-                                <input 
-                                    type="color" 
-                                    className="form-control form-control-color mb-2" 
-                                    name="primary_color" 
-                                    value={formData.primary_color} 
-                                    onChange={handleChange} 
+                                <input
+                                    type="color"
+                                    className="form-control form-control-color mb-2"
+                                    name="primary_color"
+                                    value={formData.primary_color}
+                                    onChange={handleChange}
                                     style={{ width: '100%', height: '50px', cursor: 'pointer' }}
                                 />
                                 <small className="text-muted small">Headers & buttons</small>
                             </div>
                             <div className="col-6">
                                 <label className="form-label small">Secondary Color</label>
-                                <input 
-                                    type="color" 
-                                    className="form-control form-control-color mb-2" 
-                                    name="secondary_color" 
-                                    value={formData.secondary_color} 
-                                    onChange={handleChange} 
+                                <input
+                                    type="color"
+                                    className="form-control form-control-color mb-2"
+                                    name="secondary_color"
+                                    value={formData.secondary_color}
+                                    onChange={handleChange}
                                     style={{ width: '100%', height: '50px', cursor: 'pointer' }}
                                 />
                                 <small className="text-muted small">Borders & accents</small>
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Full Preview Link - Mobile */}
-                    <div className="mt-3">
-                        <Link 
-                            to={`/preview/${formData.template_style}?primary=${encodeURIComponent(formData.primary_color)}&secondary=${encodeURIComponent(formData.secondary_color)}`}
-                            target="_blank"
-                            className="btn btn-outline-primary w-100"
-                        >
-                            <i className="bi bi-box-arrow-up-right me-2"></i>
-                            View Full Preview
-                        </Link>
-                    </div>
+
                 </div>
             </div>
 
             <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Customizable temporary website address</label>
-            <input 
-                type="text" 
+            <input
+                type="text"
                 className={`form-control mb-2 ${customSlugError ? 'is-invalid' : ''}`}
-                name="custom_slug" 
-                placeholder="e.g., jeffformayor, jeffwill, firstlast, johndoe" 
+                name="custom_slug"
+                placeholder="e.g., jeffformayor, jeffwill, firstlast, johndoe"
                 value={formData.custom_slug}
                 onChange={handleChange}
                 style={inputStyle}
@@ -264,10 +246,10 @@ const Step5Customization = ({
 
             <div className="mb-3">
                 <div className="form-check">
-                    <input 
-                        className="form-check-input" 
-                        type="checkbox" 
-                        name="is_password_protected" 
+                    <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="is_password_protected"
                         id="passwordProtection"
                         checked={formData.is_password_protected}
                         onChange={handleChange}
@@ -285,10 +267,10 @@ const Step5Customization = ({
             {formData.is_password_protected && (
                 <div className="mb-3">
                     <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Password</label>
-                    <input 
-                        type="text" 
-                        className="form-control" 
-                        name="password" 
+                    <input
+                        type="text"
+                        className="form-control"
+                        name="password"
                         value={formData.password}
                         onChange={handleChange}
                         placeholder="run"
@@ -301,9 +283,9 @@ const Step5Customization = ({
                 <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mt-3 mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
                     <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
                     {alert.message}
-                    <button 
-                        type="button" 
-                        className="btn-close" 
+                    <button
+                        type="button"
+                        className="btn-close"
                         onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
                         aria-label="Close"
                     ></button>
@@ -311,8 +293,8 @@ const Step5Customization = ({
             )}
 
             <div className="d-flex gap-2 mt-4">
-                <button 
-                    className="btn" 
+                <button
+                    className="btn"
                     onClick={() => setStep(4)}
                     style={{
                         background: '#e2e8f0',
@@ -326,8 +308,8 @@ const Step5Customization = ({
                 >
                     Back
                 </button>
-                <button 
-                    className="btn btn-lg" 
+                <button
+                    className="btn btn-lg"
                     onClick={onSubmit}
                     style={{
                         background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',

@@ -13,7 +13,7 @@ const STORAGE_KEY = 'campaign_wizard_data';
 
 const Wizard = () => {
     const navigate = useNavigate();
-    
+
     // Load saved data from localStorage on mount
     const loadSavedData = () => {
         try {
@@ -141,30 +141,30 @@ const Wizard = () => {
                 formData: {
                     ...formData,
                     // Don't save File objects, but save metadata
-                    headshot: formData.headshot ? { 
-                        name: formData.headshot.name, 
-                        size: formData.headshot.size, 
-                        type: formData.headshot.type 
+                    headshot: formData.headshot ? {
+                        name: formData.headshot.name,
+                        size: formData.headshot.size,
+                        type: formData.headshot.type
                     } : null,
-                    background_picture: formData.background_picture ? { 
-                        name: formData.background_picture.name, 
-                        size: formData.background_picture.size, 
-                        type: formData.background_picture.type 
+                    background_picture: formData.background_picture ? {
+                        name: formData.background_picture.name,
+                        size: formData.background_picture.size,
+                        type: formData.background_picture.type
                     } : null,
-                    action_shot_1: formData.action_shot_1 ? { 
-                        name: formData.action_shot_1.name, 
-                        size: formData.action_shot_1.size, 
-                        type: formData.action_shot_1.type 
+                    action_shot_1: formData.action_shot_1 ? {
+                        name: formData.action_shot_1.name,
+                        size: formData.action_shot_1.size,
+                        type: formData.action_shot_1.type
                     } : null,
-                    action_shot_2: formData.action_shot_2 ? { 
-                        name: formData.action_shot_2.name, 
-                        size: formData.action_shot_2.size, 
-                        type: formData.action_shot_2.type 
+                    action_shot_2: formData.action_shot_2 ? {
+                        name: formData.action_shot_2.name,
+                        size: formData.action_shot_2.size,
+                        type: formData.action_shot_2.type
                     } : null,
-                    action_shot_3: formData.action_shot_3 ? { 
-                        name: formData.action_shot_3.name, 
-                        size: formData.action_shot_3.size, 
-                        type: formData.action_shot_3.type 
+                    action_shot_3: formData.action_shot_3 ? {
+                        name: formData.action_shot_3.name,
+                        size: formData.action_shot_3.size,
+                        type: formData.action_shot_3.type
                     } : null,
                 },
                 otpSent,
@@ -184,17 +184,17 @@ const Wizard = () => {
             try {
                 const parsed = JSON.parse(saved);
                 if (parsed.step > 1 || parsed.formData.first_name || parsed.formData.last_name) {
-                    const hasImages = parsed.formData.headshot || parsed.formData.action_shot_1 || 
-                                     parsed.formData.action_shot_2 || parsed.formData.action_shot_3;
+                    const hasImages = parsed.formData.headshot || parsed.formData.action_shot_1 ||
+                        parsed.formData.action_shot_2 || parsed.formData.action_shot_3;
                     if (hasImages) {
-                        setProgressRestored({ 
-                            show: true, 
-                            message: 'Your previous progress has been restored! Please re-upload any images.' 
+                        setProgressRestored({
+                            show: true,
+                            message: 'Your previous progress has been restored! Please re-upload any images.'
                         });
                     } else {
-                        setProgressRestored({ 
-                            show: true, 
-                            message: 'Your previous progress has been restored!' 
+                        setProgressRestored({
+                            show: true,
+                            message: 'Your previous progress has been restored!'
                         });
                     }
                     // Auto-hide after 8 seconds
@@ -222,7 +222,7 @@ const Wizard = () => {
             const first = (formData.first_name || '').trim();
             const last = (formData.last_name || '').trim();
             const generatedSlug = `${first}${last}`.toLowerCase().replace(/[^a-z0-9]/g, '');
-            
+
             setFormData(prev => {
                 // Only update if the generated slug is different from current
                 if (prev.custom_slug !== generatedSlug) {
@@ -236,17 +236,17 @@ const Wizard = () => {
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         let processedValue = value;
-        
+
         // Auto-clean custom_slug to remove invalid characters
         if (name === 'custom_slug') {
             const originalValue = value.toLowerCase();
             const hasInvalidChars = /[^a-z0-9]/.test(originalValue);
             processedValue = originalValue.replace(/[^a-z0-9]/g, '');
-            
+
             if (!customSlugManuallyEdited) {
                 setCustomSlugManuallyEdited(true);
             }
-            
+
             if (hasInvalidChars && processedValue) {
                 setCustomSlugError('Only letters and numbers allowed (no spaces, hyphens, or special characters). Invalid characters were removed.');
             } else if (hasInvalidChars && !processedValue) {
@@ -255,7 +255,7 @@ const Wizard = () => {
                 setCustomSlugError('');
             }
         }
-        
+
         // Validate election_date is in the future
         if (name === 'election_date' && value) {
             const selectedDate = new Date(value);
@@ -267,7 +267,7 @@ const Wizard = () => {
                 setElectionDateError('');
             }
         }
-        
+
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : processedValue
@@ -284,7 +284,7 @@ const Wizard = () => {
                 e.target.value = '';
                 return;
             }
-            
+
             const options = {
                 maxSizeMB: 0.5,
                 maxWidthOrHeight: 800,
@@ -305,13 +305,13 @@ const Wizard = () => {
         const pillarName = e.target.value;
         const pillarField = `pillar_${pillarNum}`;
         const descField = `pillar_${pillarNum}_desc`;
-        
+
         setFormData(prev => {
             const updates = {
                 ...prev,
                 [pillarField]: pillarName
             };
-            
+
             if (pillarName && pillarName !== 'Custom' && pillarDescriptions[pillarName]) {
                 const previousPillar = prev[pillarField];
                 if (previousPillar !== pillarName) {
@@ -324,7 +324,7 @@ const Wizard = () => {
             } else {
                 setCustomPillarMode(prev => ({ ...prev, [pillarNum]: false }));
             }
-            
+
             return updates;
         });
     };
@@ -355,10 +355,10 @@ const Wizard = () => {
             showAlert('Please provide a bio', 'warning');
             return;
         }
-        if (step === 4 && (!formData.pillar_1 || !formData.pillar_2 || !formData.pillar_3)) {
-            showAlert('Please select all 3 pillars', 'warning');
-            return;
-        }
+        // if (step === 4 && (!formData.pillar_1 || !formData.pillar_2 || !formData.pillar_3)) {
+        //     showAlert('Please select all 3 pillars', 'warning');
+        //     return;
+        // }
         if (step === 5) {
             if (formData.custom_slug && !/^[a-z0-9]+$/.test(formData.custom_slug)) {
                 setCustomSlugError('Only letters and numbers allowed (no spaces, hyphens, or special characters)');
@@ -407,9 +407,9 @@ const Wizard = () => {
             navigate('/success', { state: { submission: res.data } });
         } catch (error) {
             setLoading(false);
-            const errorMessage = error.response?.data 
-                ? (typeof error.response.data === 'string' 
-                    ? error.response.data 
+            const errorMessage = error.response?.data
+                ? (typeof error.response.data === 'string'
+                    ? error.response.data
                     : JSON.stringify(error.response.data))
                 : error.message;
             showAlert(`Submission Failed: ${errorMessage}`, 'danger');
@@ -417,15 +417,15 @@ const Wizard = () => {
     };
 
     return (
-        <div style={{ 
-            minHeight: '100vh', 
+        <div style={{
+            minHeight: '100vh',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             padding: '2rem 0'
         }}>
             <div className="container" style={{ maxWidth: '700px' }}>
                 <div className="text-center mb-4">
-                    <h2 className="mb-2" style={{ 
-                        color: '#ffffff', 
+                    <h2 className="mb-2" style={{
+                        color: '#ffffff',
                         fontWeight: '700',
                         textShadow: '0 2px 10px rgba(0,0,0,0.2)',
                         fontSize: '2.5rem'
@@ -437,10 +437,10 @@ const Wizard = () => {
                     </p>
                 </div>
 
-                <WizardProgressBar 
-                    step={step} 
-                    stepConfig={stepConfig} 
-                    totalSteps={TOTAL_STEPS} 
+                <WizardProgressBar
+                    step={step}
+                    stepConfig={stepConfig}
+                    totalSteps={TOTAL_STEPS}
                 />
 
                 {/* Progress Restored Notification - Top of Form */}
@@ -448,9 +448,9 @@ const Wizard = () => {
                     <div className="alert alert-success alert-dismissible fade show shadow-sm mb-3" role="alert" style={{ borderRadius: '12px', border: 'none' }}>
                         <i className="bi bi-check-circle-fill me-2"></i>
                         {progressRestored.message}
-                        <button 
-                            type="button" 
-                            className="btn-close" 
+                        <button
+                            type="button"
+                            className="btn-close"
                             onClick={() => setProgressRestored({ show: false, message: '' })}
                             aria-label="Close"
                         ></button>
