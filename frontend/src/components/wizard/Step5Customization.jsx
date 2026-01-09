@@ -76,37 +76,48 @@ const Step5Customization = ({
             <div className="row g-4">
                 {/* Left Column: Template Selection */}
                 <div className="col-lg-5 col-md-12 order-lg-1 order-1">
-                    <label className="form-label mb-3">Template Style</label>
 
-                    <div className="mb-4">
-                        <TemplateCard
-                            style="modern"
-                            name="Modern"
-                            description="Clean, contemporary design"
-                            isSelected={formData.template_style === 'modern'}
-                        />
-                        <TemplateCard
-                            style="traditional"
-                            name="Traditional"
-                            description="Classic, professional layout"
-                            isSelected={formData.template_style === 'traditional'}
-                        />
-                        <TemplateCard
-                            style="bold"
-                            name="Bold"
-                            description="Striking, high-impact design"
-                            isSelected={formData.template_style === 'bold'}
-                        />
+                    {/* Section 1: Template Selection */}
+                    <div className="p-3 mb-4 rounded shadow-sm" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                        <div className="d-flex align-items-center mb-3">
+                            <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style={{ width: '24px', height: '24px', fontSize: '0.9rem', fontWeight: 'bold' }}>1</div>
+                            <h6 className="fw-bold mb-0" style={{ color: '#2d3748' }}>Choose Your Style</h6>
+                        </div>
+
+                        <div className="mb-2">
+                            <TemplateCard
+                                style="modern"
+                                name="Modern"
+                                description="Clean, contemporary design"
+                                isSelected={formData.template_style === 'modern'}
+                            />
+                            <TemplateCard
+                                style="traditional"
+                                name="Traditional"
+                                description="Classic, professional layout"
+                                isSelected={formData.template_style === 'traditional'}
+                            />
+                            <TemplateCard
+                                style="bold"
+                                name="Bold"
+                                description="Striking, high-impact design"
+                                isSelected={formData.template_style === 'bold'}
+                            />
+                        </div>
+
+                        <small className="text-muted d-block">
+                            <i className="bi bi-info-circle me-1"></i>
+                            Hover to preview, click to select.
+                        </small>
                     </div>
 
-                    <small className="text-muted d-block mb-3">
-                        <i className="bi bi-info-circle me-1"></i>
-                        Hover over a template to preview, click to select.
-                    </small>
+                    {/* Section 2: Color Customization - Desktop */}
+                    <div className="p-3 mb-3 rounded shadow-sm d-lg-block d-md-none d-none" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                        <div className="d-flex align-items-center mb-3">
+                            <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style={{ width: '24px', height: '24px', fontSize: '0.9rem', fontWeight: 'bold' }}>2</div>
+                            <h6 className="fw-bold mb-0" style={{ color: '#2d3748' }}>Customize Colors</h6>
+                        </div>
 
-                    {/* Color Customization - Desktop */}
-                    <div className="mb-3 d-lg-block d-md-none d-none">
-                        <label className="form-label mb-2">Color Customization</label>
                         <div className="row g-3">
                             <div className="col-6">
                                 <label className="form-label small">Primary Color</label>
@@ -134,8 +145,6 @@ const Step5Customization = ({
                             </div>
                         </div>
                     </div>
-
-                    {/* Full Preview Link - Desktop */}
 
                 </div>
 

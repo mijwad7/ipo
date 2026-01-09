@@ -40,45 +40,53 @@ const Step2Election = ({ formData, handleChange, electionDateError, setStep, onN
                 <i className="bi bi-calendar-check me-2" style={{ color: '#667eea' }}></i>
                 Step 2: Election Details
             </h4>
-            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Riding / Zone Name</label>
-            <input
-                name="riding_zone_name"
-                className="form-control mb-3"
-                placeholder="e.g., District 5, Ward 3"
-                value={formData.riding_zone_name}
-                onChange={handleChange}
-                style={inputStyle}
-                required
-            />
-            <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Election Date</label>
-            <div className={`mb-2 ${electionDateError ? 'is-invalid' : ''}`}>
-                <DatePicker
-                    selected={selectedDate}
-                    onChange={handleDateChange}
-                    minDate={minDate}
-                    dateFormat="MMMM dd, yyyy"
-                    placeholderText="Select election date"
-                    className={`form-control ${electionDateError ? 'is-invalid' : ''}`}
-                    wrapperClassName="w-100"
-                    calendarClassName="modern-calendar"
-                    popperClassName="modern-calendar-popper"
+            {/* Section 1: Election Information */}
+            <div className="p-4 mb-4 rounded shadow-sm" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div className="d-flex align-items-center mb-3">
+                    <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style={{ width: '28px', height: '28px', fontSize: '0.9rem', fontWeight: 'bold' }}>1</div>
+                    <h5 className="fw-bold mb-0" style={{ color: '#2d3748' }}>Election Information</h5>
+                </div>
+
+                <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Riding / Zone Name</label>
+                <input
+                    name="riding_zone_name"
+                    className="form-control mb-3"
+                    placeholder="e.g., District 5, Ward 3"
+                    value={formData.riding_zone_name}
+                    onChange={handleChange}
                     style={inputStyle}
                     required
-                    showPopperArrow={false}
-                    popperPlacement="bottom-start"
-                    popperModifiers={[
-                        {
-                            name: "offset",
-                            options: {
-                                offset: [0, 8]
-                            }
-                        }
-                    ]}
                 />
+                <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Election Date</label>
+                <div className={`mb-2 ${electionDateError ? 'is-invalid' : ''}`}>
+                    <DatePicker
+                        selected={selectedDate}
+                        onChange={handleDateChange}
+                        minDate={minDate}
+                        dateFormat="MMMM dd, yyyy"
+                        placeholderText="Select election date"
+                        className={`form-control ${electionDateError ? 'is-invalid' : ''}`}
+                        wrapperClassName="w-100"
+                        calendarClassName="modern-calendar"
+                        popperClassName="modern-calendar-popper"
+                        style={inputStyle}
+                        required
+                        showPopperArrow={false}
+                        popperPlacement="bottom-start"
+                        popperModifiers={[
+                            {
+                                name: "offset",
+                                options: {
+                                    offset: [0, 8]
+                                }
+                            }
+                        ]}
+                    />
+                </div>
+                {electionDateError && (
+                    <div className="text-danger small mb-3">{electionDateError}</div>
+                )}
             </div>
-            {electionDateError && (
-                <div className="text-danger small mb-3">{electionDateError}</div>
-            )}
             {alert.show && (
                 <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
                     <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>

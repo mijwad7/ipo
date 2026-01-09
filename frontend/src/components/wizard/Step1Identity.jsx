@@ -182,108 +182,125 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                 <i className="bi bi-person-badge me-2" style={{ color: '#667eea' }}></i>
                 Step 1: Identity
             </h4>
-            <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>First Name</label>
-            <input
-                name="first_name"
-                className="form-control mb-3"
-                placeholder="First Name"
-                value={formData.first_name}
-                onChange={handleChange}
-                style={inputStyle}
-            />
-            <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Last Name</label>
-            <input
-                name="last_name"
-                className="form-control mb-3"
-                placeholder="Last Name"
-                value={formData.last_name}
-                onChange={handleChange}
-                style={inputStyle}
-            />
-            <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Email</label>
-            <input
-                name="email"
-                className={`form-control mb-1 ${emailError ? 'is-invalid' : ''}`}
-                placeholder="Email"
-                type="email"
-                value={formData.email}
-                onChange={handleEmailChange}
-                onBlur={(e) => validateEmail(e.target.value)}
-                style={inputStyle}
-            />
-            {emailError && (
-                <div className="text-danger small mb-3">{emailError}</div>
-            )}
-            <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Mobile Phone</label>
-            <div className="mb-1">
-                {/* Mobile: Stack vertically, Desktop: Horizontal */}
-                <div className="phone-input-container">
-                    <div className="d-flex phone-input-group">
-                        <select
-                            name="country_code"
-                            value={formData.country_code || '+1'}
-                            onChange={handleCountryCodeChange}
-                            className="form-select country-code-select"
+
+            {/* Section 1: Personal Profile */}
+            <div className="p-4 mb-4 rounded shadow-sm" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div className="d-flex align-items-center mb-3">
+                    <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style={{ width: '28px', height: '28px', fontSize: '0.9rem', fontWeight: 'bold' }}>1</div>
+                    <h5 className="fw-bold mb-0" style={{ color: '#2d3748' }}>Personal Profile</h5>
+                </div>
+                <input
+                    name="first_name"
+                    className="form-control mb-3"
+                    placeholder="First Name"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    style={inputStyle}
+                />
+                <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Last Name</label>
+                <input
+                    name="last_name"
+                    className="form-control mb-3"
+                    placeholder="Last Name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    style={inputStyle}
+                />
+                <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Email</label>
+                <input
+                    name="email"
+                    className={`form-control mb-1 ${emailError ? 'is-invalid' : ''}`}
+                    placeholder="Email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleEmailChange}
+                    onBlur={(e) => validateEmail(e.target.value)}
+                    style={inputStyle}
+                />
+                {emailError && (
+                    <div className="text-danger small mb-3">{emailError}</div>
+                )}
+            </div>
+
+            {/* Section 2: Phone Verification */}
+            <div className="p-4 mb-4 rounded shadow-sm" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div className="d-flex align-items-center mb-3">
+                    <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style={{ width: '28px', height: '28px', fontSize: '0.9rem', fontWeight: 'bold' }}>2</div>
+                    <h5 className="fw-bold mb-0" style={{ color: '#2d3748' }}>Phone Verification</h5>
+                </div>
+                <div className="alert alert-info py-2 px-3 mb-3 border-0 bg-white" style={{ borderRadius: '8px' }}>
+                    <small><i className="bi bi-shield-lock me-1"></i> We use this to secure your campaign HQ.</small>
+                </div>
+                <label className="form-label fw-semibold mb-2" style={{ color: '#4a5568' }}>Mobile Phone</label>
+                <div className="mb-1">
+                    {/* Mobile: Stack vertically, Desktop: Horizontal */}
+                    <div className="phone-input-container">
+                        <div className="d-flex phone-input-group">
+                            <select
+                                name="country_code"
+                                value={formData.country_code || '+1'}
+                                onChange={handleCountryCodeChange}
+                                className="form-select country-code-select"
+                                style={{
+                                    ...inputStyle,
+                                    paddingRight: '0.5rem',
+                                    width: '120px',
+                                    minWidth: '120px',
+                                    cursor: 'pointer',
+                                    flexShrink: 0
+                                }}
+                            >
+                                {COUNTRIES.map((country) => (
+                                    <option key={`${country.code}-${country.name}`} value={country.code}>
+                                        {country.flag} {country.code}
+                                    </option>
+                                ))}
+                            </select>
+                            <input
+                                name="phone"
+                                className={`form-control phone-input ${phoneError ? 'is-invalid' : ''}`}
+                                placeholder="Phone Number"
+                                value={formData.phone || ''}
+                                onChange={handlePhoneChange}
+                                onBlur={(e) => validatePhone(e.target.value)}
+                                style={{
+                                    ...inputStyle,
+                                    flex: '1',
+                                    minWidth: '0'
+                                }}
+                            />
+                        </div>
+                        <button
+                            className="btn send-otp-btn"
+                            onClick={sendOtp}
+                            disabled={sendingOtp}
                             style={{
-                                ...inputStyle,
-                                paddingRight: '0.5rem',
-                                width: '120px',
-                                minWidth: '120px',
-                                cursor: 'pointer',
+                                ...buttonStyle,
+                                opacity: sendingOtp ? 0.7 : 1,
+                                cursor: sendingOtp ? 'not-allowed' : 'pointer',
+                                whiteSpace: 'nowrap',
                                 flexShrink: 0
                             }}
+                            onMouseEnter={!sendingOtp ? handleButtonHover : undefined}
+                            onMouseLeave={!sendingOtp ? handleButtonLeave : undefined}
                         >
-                            {COUNTRIES.map((country) => (
-                                <option key={`${country.code}-${country.name}`} value={country.code}>
-                                    {country.flag} {country.code}
-                                </option>
-                            ))}
-                        </select>
-                        <input
-                            name="phone"
-                            className={`form-control phone-input ${phoneError ? 'is-invalid' : ''}`}
-                            placeholder="Phone Number"
-                            value={formData.phone || ''}
-                            onChange={handlePhoneChange}
-                            onBlur={(e) => validatePhone(e.target.value)}
-                            style={{
-                                ...inputStyle,
-                                flex: '1',
-                                minWidth: '0'
-                            }}
-                        />
+                            {sendingOtp ? (
+                                <>
+                                    <span
+                                        className="spinner-border spinner-border-sm me-2"
+                                        role="status"
+                                        aria-hidden="true"
+                                        style={{ borderColor: 'rgba(255, 255, 255, 0.3)', borderRightColor: '#ffffff' }}
+                                    ></span>
+                                    Sending...
+                                </>
+                            ) : (
+                                'Send OTP'
+                            )}
+                        </button>
                     </div>
-                    <button
-                        className="btn send-otp-btn"
-                        onClick={sendOtp}
-                        disabled={sendingOtp}
-                        style={{
-                            ...buttonStyle,
-                            opacity: sendingOtp ? 0.7 : 1,
-                            cursor: sendingOtp ? 'not-allowed' : 'pointer',
-                            whiteSpace: 'nowrap',
-                            flexShrink: 0
-                        }}
-                        onMouseEnter={!sendingOtp ? handleButtonHover : undefined}
-                        onMouseLeave={!sendingOtp ? handleButtonLeave : undefined}
-                    >
-                        {sendingOtp ? (
-                            <>
-                                <span
-                                    className="spinner-border spinner-border-sm me-2"
-                                    role="status"
-                                    aria-hidden="true"
-                                    style={{ borderColor: 'rgba(255, 255, 255, 0.3)', borderRightColor: '#ffffff' }}
-                                ></span>
-                                Sending...
-                            </>
-                        ) : (
-                            'Send OTP'
-                        )}
-                    </button>
                 </div>
-            </div>
-            <style>{`
+                <style>{`
                 .phone-input-container {
                     display: flex;
                     flex-direction: column;
@@ -347,58 +364,59 @@ const Step1Identity = ({ formData, handleChange, otpSent, setOtpSent, showAlert,
                     }
                 }
             `}</style>
-            {phoneError && (
-                <div className="text-danger small mb-3">{phoneError}</div>
-            )}
-            {otpSent && (
-                <>
-                    <label className="form-label fw-bold">One Time Password (OTP) Check</label>
-                    <input
-                        name="otp_code"
-                        className="form-control mb-3"
-                        placeholder="Enter One Time Password (OTP)"
-                        value={formData.otp_code}
-                        onChange={handleChange}
-                        style={inputStyle}
-                    />
-                    <small className="text-muted d-block mb-3">
-                        Please enter the One Time Password (OTP) code sent to your mobile phone.
-                    </small>
-                    {alert.show && (
-                        <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
-                            <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
-                            {alert.message}
-                            <button
-                                type="button"
-                                className="btn-close"
-                                onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
-                                aria-label="Close"
-                            ></button>
-                        </div>
-                    )}
-                    <button
-                        className="btn"
-                        onClick={verifyOtp}
-                        style={{ ...buttonStyle, padding: '0.75rem 2rem' }}
-                        onMouseEnter={handleButtonHover}
-                        onMouseLeave={handleButtonLeave}
-                    >
-                        Verify OTP
-                    </button>
-                </>
-            )}
-            {alert.show && !otpSent && (
-                <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mt-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
-                    <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
-                    {alert.message}
-                    <button
-                        type="button"
-                        className="btn-close"
-                        onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
-                        aria-label="Close"
-                    ></button>
-                </div>
-            )}
+                {phoneError && (
+                    <div className="text-danger small mb-3">{phoneError}</div>
+                )}
+                {otpSent && (
+                    <>
+                        <label className="form-label fw-bold">One Time Password (OTP) Check</label>
+                        <input
+                            name="otp_code"
+                            className="form-control mb-3"
+                            placeholder="Enter One Time Password (OTP)"
+                            value={formData.otp_code}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
+                        <small className="text-muted d-block mb-3">
+                            Please enter the One Time Password (OTP) code sent to your mobile phone.
+                        </small>
+                        {alert.show && (
+                            <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mb-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
+                                <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
+                                {alert.message}
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                        )}
+                        <button
+                            className="btn"
+                            onClick={verifyOtp}
+                            style={{ ...buttonStyle, padding: '0.75rem 2rem' }}
+                            onMouseEnter={handleButtonHover}
+                            onMouseLeave={handleButtonLeave}
+                        >
+                            Verify OTP
+                        </button>
+                    </>
+                )}
+                {alert.show && !otpSent && (
+                    <div className={`alert alert-${alert.type} alert-dismissible fade show shadow-sm mt-3`} role="alert" style={{ borderRadius: '12px', border: 'none' }}>
+                        <i className={`bi ${alert.type === 'success' ? 'bi-check-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2`}></i>
+                        {alert.message}
+                        <button
+                            type="button"
+                            className="btn-close"
+                            onClick={() => setAlert({ show: false, message: '', type: 'danger' })}
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

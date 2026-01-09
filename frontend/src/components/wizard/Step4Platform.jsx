@@ -34,12 +34,11 @@ const Step4Platform = ({
             </h4>
             <p style={{ color: '#718096' }}>Select your top 3 priorities (Optional / Skip)</p>
             {[1, 2, 3].map(i => (
-                <div key={i} className="mb-4 p-4 rounded" style={{
-                    border: '2px solid #e2e8f0',
-                    borderRadius: '12px',
-                    background: '#f7fafc'
-                }}>
-                    <h5 className="mb-3" style={{ color: '#2d3748', fontWeight: '600' }}>Pillar {i}</h5>
+                <div key={i} className="mb-4 p-4 rounded shadow-sm" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                    <div className="d-flex align-items-center mb-3">
+                        <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style={{ width: '28px', height: '28px', fontSize: '0.9rem', fontWeight: 'bold' }}>{i}</div>
+                        <h5 className="fw-bold mb-0" style={{ color: '#2d3748' }}>Priority {i}</h5>
+                    </div>
 
                     <label className="form-label fw-semibold" style={{ color: '#4a5568' }}>Topic</label>
                     <select
