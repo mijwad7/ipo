@@ -103,7 +103,7 @@ class SubmissionCreateView(generics.CreateAPIView):
         logger.info(f"Sending credential email to contact {submission.ghl_contact_id}")
         
         try:
-            login_url = "https://agency.hmgcareer.com/"
+            login_url = "https://login.thetrumpet.app/"
             
             message_body = (
                 f"Congratulations {submission.first_name}!<br><br>"
